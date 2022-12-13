@@ -1,21 +1,20 @@
 ﻿using SEP.Common.Enums;
 using SEP.Common.Models;
 
-namespace SEP.PayPal.Models
+namespace SEP.PayPal.DTO
 {
-    public class PayPalPayment : Payment
+    public class PayPalPaymentDTO : Payment
     {
-        PayPalPayment() { }
+        PayPalPaymentDTO() { }
 
-        public PayPalPayment(float amount, string name, string firstName, string lastName,
+        public PayPalPaymentDTO(float amount, string name, string firstName, string lastName,
             string email, DateTime date, string currency, string description, string itemName,
-            PaymentApprovalType paymentApproval, string merchantID, string token)
+            PaymentApprovalType paymentApproval, string merchantID)
             : base(amount, name, firstName, lastName, email, date, currency, description, itemName, paymentApproval)
         {
             MerchantID = merchantID;
-            Token = token;
         }
+
         public string MerchantID { get; set; }
-        public string Token { get; set; }
     }
 }

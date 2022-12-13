@@ -5,13 +5,15 @@ VisualStudioVersion = 17.3.32825.248
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SEP.WebShop", "SEP.Webshop\SEP.WebShop.csproj", "{82C6586A-4721-4E04-9EEC-3AE680F8B831}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SEP.PSP", "SEP.PSP\SEP.PSP.csproj", "{E1AE52E3-AF14-4310-97C0-2ED9D13868A4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SEP.PSP", "SEP.PSP\SEP.PSP.csproj", "{E1AE52E3-AF14-4310-97C0-2ED9D13868A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SEP.Gateway", "SEP.Gateway\SEP.Gateway.csproj", "{2076736E-996E-494B-A019-1157F0789F3C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SEP.Gateway", "SEP.Gateway\SEP.Gateway.csproj", "{2076736E-996E-494B-A019-1157F0789F3C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SEP.PayPal", "SEP.PayPal\SEP.PayPal.csproj", "{6B8BA190-F2D7-42A5-9793-F30BA3005074}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SEP.PayPal", "SEP.PayPal\SEP.PayPal.csproj", "{6B8BA190-F2D7-42A5-9793-F30BA3005074}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SEP.Common", "SEP.Common\SEP.Common.csproj", "{F87A8091-C10C-4AD0-AE03-73FB68440AC7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SEP.Common", "SEP.Common\SEP.Common.csproj", "{F87A8091-C10C-4AD0-AE03-73FB68440AC7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SEP.Autentification", "SEP.Autentification\SEP.Autentification.csproj", "{B1FDCC4B-C5D8-4D84-9D06-00D893244F14}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{F87A8091-C10C-4AD0-AE03-73FB68440AC7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F87A8091-C10C-4AD0-AE03-73FB68440AC7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F87A8091-C10C-4AD0-AE03-73FB68440AC7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B1FDCC4B-C5D8-4D84-9D06-00D893244F14}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B1FDCC4B-C5D8-4D84-9D06-00D893244F14}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B1FDCC4B-C5D8-4D84-9D06-00D893244F14}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B1FDCC4B-C5D8-4D84-9D06-00D893244F14}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

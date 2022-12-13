@@ -4,16 +4,17 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://localhost:12666",
-      "sslPort": 44317
+      "applicationUrl": "http://localhost:5480",
+      "sslPort": 44306
     }
   },
   "profiles": {
-    "SEP.Gateway": {
+    "SEP.Autentification": {
       "commandName": "Project",
       "dotnetRunMessages": true,
-      "launchBrowser": false,
-      "applicationUrl": "https://localhost:5050",
+      "launchBrowser": true,
+      "launchUrl": "swagger",
+      "applicationUrl": "https://localhost:7020;http://localhost:5020",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }

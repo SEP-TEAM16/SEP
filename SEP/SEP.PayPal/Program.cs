@@ -1,3 +1,8 @@
+using Microsoft.EntityFrameworkCore;
+using SEP.PayPal.Infrastructure;
+using SEP.PayPal.Interfaces;
+using SEP.PayPal.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,6 +11,9 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddDbContext<PayPalDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("PayPalDatabase")));
+builder.Services.AddScoped<IPayPalService, PayPalService>();
+builder.Services.AddAutoMapper(typeof(Program));
 
 var app = builder.Build();
 

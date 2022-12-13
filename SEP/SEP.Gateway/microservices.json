@@ -1,0 +1,43 @@
+﻿{
+  "GlobalConfiguration": {
+    "BaseUrl": "https://localhost:5050"
+  },
+  "Routes": [
+    {
+      "UpstreamPathTemplate": "/paypal",
+      "UpstreamHttpMethod": [ "POST" ],
+      "DownstreamPathTemplate": "/api/paypal",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5150
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/paypal/continue",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DownstreamPathTemplate": "/api/paypal/continue",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5150
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/paypal/cancel",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DownstreamPathTemplate": "/api/paypal/cancel",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5150
+        }
+      ]
+    }
+  ]
+}
