@@ -1,0 +1,73 @@
+<div class="reg">
+    <div class="rectangle" >
+        <div class="container mt-5">
+            <form class="content" (ngSubmit)="registerCompany()">
+                <h1 class="text-center"> Register Form</h1>
+                <div class="row">
+                    <div class="col-10">
+                        <input type="text" style="margin-left: 60px; margin-top: 20px;" formControlName="name" class="form-control" placeholder="Name"/>
+                        <div *ngIf="name.invalid && (name.touched || name.dirty)">
+                            <label *ngIf="name.errors?.required" style="color: red; margin-left: 20px;">Name is required</label>
+                            <label *ngIf="name.errors?.pattern" style="color: red; margin-left: 50px;">Only letters allowed. First letter must be capital.</label>
+                        </div>
+                    </div>
+                    <div class="col-10">
+                        <input type="text" style="margin-left: 60px; margin-top: 10px;" formControlName="pib" class="form-control" placeholder="PIB"/>
+                        <div *ngIf="pib.invalid && (pib.touched || pib.dirty)">
+                            <label *ngIf="pib.errors?.required" style="color: red; margin-left: 20px;">PIB is required</label>
+                            <label *ngIf="pib.errors?.pattern" style="color: red; margin-left: 50px;">Only numbers allowed.</label>
+                        </div>
+                    </div>
+                    <div class="col-10">
+                        <input type="date" style="margin-left: 60px; margin-top: 10px;" class="form-control" placeholder="Date of establishment"/>
+                        <div *ngIf="date.invalid && (date.touched || date.dirty)">
+                            <label *ngIf="date.errors?.required" style="color: red; margin-right: 300px;">Date is required</label>
+                        </div>
+                    </div>
+                    <div class="col-10">
+                        <input type="text" style="margin-left: 60px; margin-top: 10px;" formControlName="email" class="form-control" placeholder="E-mail"/>
+                        <div *ngIf="email.invalid && (email.touched || email.dirty)">
+                            <label *ngIf="email.errors?.required" style="color: red; margin-right: 300px;">E-mail is required</label>
+                            <label *ngIf="email.errors?.email" style="color: red; margin-right: 250px;">Enter valid e-mail address</label>
+                        </div>
+                    </div>
+                    <div class="col-10">
+                        <input type="text" style="margin-left: 60px; margin-top: 10px;" formControlName="phoneNumber" class="form-control" placeholder="Phone number"/>
+                        <div *ngIf="phoneNumber.invalid && (phoneNumber.touched || phoneNumber.dirty)">
+                            <label *ngIf="phoneNumber.errors?.required" style="color: red; margin-right: 240px;">Phone number is required</label>
+                            <label *ngIf="phoneNumber.errors?.pattern" style="color: red; margin-right: 270px;">Only numbers allowed</label>
+                        </div>
+                    </div>
+                    <div class="col-10">
+                        <input type="text" style="margin-left: 60px; margin-top: 10px;" formControlName="address" class="form-control" placeholder="Address"/>
+                        <div *ngIf="address.invalid && (address.touched || address.dirty)">
+                            <label *ngIf="address.errors?.required" style="color: red; margin-right: 290px;">Address is required</label>
+                            <label *ngIf="address.errors?.pattern" style="color: red; margin-right: 290px;">Enter valid address </label>
+                        </div>
+                    </div>
+                    <div class="col-10">
+                        <input type="password" style="margin-left: 60px; margin-top: 10px;" formControlName="password" class="form-control" placeholder="Password"/>
+                        <div *ngIf="password.invalid && (password.touched || password.dirty)">
+                            <label *ngIf="password.errors?.required" style="color: red; margin-right: 280px;">Password is required</label>
+                            <label *ngIf="password.errors?.pattern" style="color: red; margin-right: 190px;">Only letters and numbers allowed</label>
+                        </div>
+                    </div>
+                    <div class="col-10">
+                        <input type="password" style="margin-left: 60px; margin-top: 10px;" formControlName="secondPassword" class="form-control" placeholder="Repeat password"/>
+                        <div *ngIf="secondPassword.invalid && (secondPassword.touched || secondPassword.dirty)">
+                            <label *ngIf="secondPassword.errors?.required" style="color: red; margin-right: 280px;">Password is required</label>
+                            <label *ngIf="secondPassword.errors?.pattern" style="color: red; margin-right: 190px;" >Only letters and numbers allowed</label>
+                        </div>
+                        <div *ngIf="passwordTheSame === false">
+                            <label style="color: red; margin-right: 220px;">Passwords must be the same</label>
+                        </div>
+                    </div>
+                    <div class="col-10">
+                        <button class="btn btn-secondary" [disabled]="registerForm.invalid" style="margin-top: 20px; margin-left: 50px; width: 120px;">Register</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
