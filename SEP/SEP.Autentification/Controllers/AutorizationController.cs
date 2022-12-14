@@ -13,8 +13,8 @@ namespace SEP.Autorization.Controllers
     public class AutorizationController : ControllerBase
     {
         private readonly IMapper mapper;
-        private readonly IAutorizationService autorizationService;
-        public AutorizationController(IMapper mapper, IAutorizationService autorizationService)
+        private readonly Interfaces.IAuthorizationService autorizationService;
+        public AutorizationController(IMapper mapper, Interfaces.IAuthorizationService autorizationService)
         {
             this.mapper = mapper;
             this.autorizationService = autorizationService;
@@ -23,10 +23,10 @@ namespace SEP.Autorization.Controllers
         [HttpGet]
         [Route("authKeys")]
         [AllowAnonymous]
-        public ActionResult<List<AuthKeyDTO>> GetAuthKeys(string key)
+        public ActionResult<List<AuthKeyDTO>> GetAuthKeys()
         {
             var appSettings = new ConfigurationBuilder().AddJsonFile("appsettings.Development.json").Build();
-            if (key.Equals(appSettings.GetValue<string>("Secrets:AutorizationKey")))
+            if (Request.Headers["key"].Equals(appSettings.GetValue<string>("Secrets:AutorizationKey")))
             {
                 return mapper.Map<List<AuthKeyDTO>>(autorizationService.GetAuthKeys());
             }  
@@ -43,10 +43,11 @@ namespace SEP.Autorization.Controllers
             if (key.KeyForAutorization.Equals(appSettings.GetValue<string>("Secrets:AutorizationKey")))
             {
                 AuthKey authKey = mapper.Map<AuthKey>(key);
-                autorizationService.AddAuthKey(authKey);
+                if (!autorizationService.AddAuthKey(authKey))
+                    return BadRequest(new { message = "route already exists" });
+                
                 return mapper.Map<List<AuthKeyDTO>>(autorizationService.GetAuthKeys());
             }
-
 
             return BadRequest(new { message = "key is invalid" });
         }

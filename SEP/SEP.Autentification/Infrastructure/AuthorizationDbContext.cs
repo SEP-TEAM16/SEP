@@ -3,9 +3,9 @@ using SEP.Common.Models;
 
 namespace SEP.Autorization.Infrastructure
 {
-    public class AutorizationDbContext : DbContext
+    public class AuthorizationDbContext : DbContext
     {
-        public AutorizationDbContext(DbContextOptions options) : base(options)
+        public AuthorizationDbContext(DbContextOptions options) : base(options)
         {
         }
 
@@ -16,7 +16,7 @@ namespace SEP.Autorization.Infrastructure
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(AutorizationDbContext).Assembly);
+            modelBuilder.ApplyConfigurationsFromAssembly(typeof(AuthorizationDbContext).Assembly);
 
         }
     }

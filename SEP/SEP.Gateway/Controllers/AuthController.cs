@@ -13,10 +13,10 @@ namespace SEP.Gateway.Controllers
     [Route("auth")]
     public class AuthController : ControllerBase
     {
-        private List<AuthKey> authKeys { get; set; }
+        private List<AuthKey> AuthKeys { get; set; }
         public AuthController()
         {
-            authKeys = new List<AuthKey>();
+            AuthKeys = new List<AuthKey>();
             var getdata = "";
             JavaScriptSerializer jss = new JavaScriptSerializer();
 
@@ -24,11 +24,8 @@ namespace SEP.Gateway.Controllers
             httpRequest.Method = "GET";
             httpRequest.ContentType = "application/json";
 
-            var streamWriter = new StreamWriter(httpRequest.GetRequestStream());
             var appSettings = new ConfigurationBuilder().AddJsonFile("appsettings.Development.json").Build();
-            streamWriter.Write(appSettings.GetValue<string>("Secrets:AutorizationKey"));
-            streamWriter.Close();
-
+            httpRequest.Headers["key"] = appSettings.GetValue<string>("Secrets:AutorizationKey");
 
             using (HttpWebResponse webresponse = (HttpWebResponse)httpRequest.GetResponse())
             using (Stream stream = webresponse.GetResponseStream())
@@ -37,8 +34,7 @@ namespace SEP.Gateway.Controllers
                 getdata = reader.ReadToEnd();
             }
 
-            authKeys = jss.Deserialize<dynamic>(getdata);
-
+            AuthKeys = jss.Deserialize<List<AuthKey>>(getdata);
         }
 
         [HttpPost]
@@ -46,12 +42,10 @@ namespace SEP.Gateway.Controllers
         [AllowAnonymous]
         public ActionResult<AuthToken> GetPayPalAuthentication(string route, [FromBody] string key)
         {
-            foreach (AuthKey authKey in authKeys)
+            foreach (AuthKey authKey in AuthKeys)
             {
                 if (key.Equals(authKey.Key) && route.Equals(authKey.Route))
-                {
                     return new PayPalApiTokenService().GenerateToken(authKey.Key);
-                }
             }
 
             return BadRequest(new { message = "key is invalid" });
@@ -74,7 +68,6 @@ namespace SEP.Gateway.Controllers
             streamWriter.Write(jss.Serialize(authKeyWithKeyDTO));
             streamWriter.Close();
 
-
             using (HttpWebResponse webresponse = (HttpWebResponse)httpRequest.GetResponse())
             using (Stream stream = webresponse.GetResponseStream())
             using (StreamReader reader = new StreamReader(stream))
@@ -82,7 +75,7 @@ namespace SEP.Gateway.Controllers
                 getdata = reader.ReadToEnd();
             }
 
-            authKeys = jss.Deserialize<dynamic>(getdata);
+            AuthKeys = jss.Deserialize<List<AuthKey>>(getdata);
         }
     }
 }

@@ -2,9 +2,9 @@
 
 namespace SEP.Autorization.Interfaces
 {
-    public interface IAutorizationService
+    public interface IAuthorizationService
     {
         public List<AuthKey> GetAuthKeys();
-        public void AddAuthKey(AuthKey authKey);
+        public bool AddAuthKey(AuthKey authKey);
     }
 }
