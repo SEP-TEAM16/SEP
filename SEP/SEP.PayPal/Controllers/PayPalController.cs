@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Nancy.Json;
+using SEP.Common.Models;
 using SEP.PayPal.DTO;
 using SEP.PayPal.Interfaces;
 using SEP.PayPal.Models;
+using System.Net;
 using System.Net.Mime;
 
 namespace SEP.PayPal.Controllers

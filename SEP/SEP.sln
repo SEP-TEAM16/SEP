@@ -13,7 +13,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SEP.PayPal", "SEP.PayPal\SE
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SEP.Common", "SEP.Common\SEP.Common.csproj", "{F87A8091-C10C-4AD0-AE03-73FB68440AC7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SEP.Autentification", "SEP.Autentification\SEP.Autentification.csproj", "{B1FDCC4B-C5D8-4D84-9D06-00D893244F14}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SEP.Autorization", "SEP.Autentification\SEP.Autorization.csproj", "{B1FDCC4B-C5D8-4D84-9D06-00D893244F14}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

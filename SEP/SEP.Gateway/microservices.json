@@ -8,6 +8,10 @@
       "UpstreamHttpMethod": [ "POST" ],
       "DownstreamPathTemplate": "/api/paypal",
       "DownstreamScheme": "https",
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "auth_scheme",
+        "AllowedScopes": []
+      },
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
