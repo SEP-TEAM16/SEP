@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Company } from 'src/app/model/company';
 
 @Component({
   selector: 'app-register',
@@ -9,12 +10,15 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 export class RegisterComponent implements OnInit {
   registerForm:any;
   passwordTheSame: boolean = true;
+  userExists: boolean = false;
+  dateExists: boolean = true;
+  company: Company = {} as Company;
 
   constructor() { }
 
   ngOnInit(): void {
     this.registerForm = new FormGroup({
-      "name": new FormControl(null, [Validators.required,Validators.pattern('[A-ZŠĐČĆŽ]{1}[a-zšđčćž]+')]),
+      "name": new FormControl(null, [Validators.required,Validators.pattern('([A-ZŠĐČĆŽ]{1}[a-zšđčćž]+ *)+')]),
       "pib": new FormControl(null, [Validators.required,Validators.pattern('[0-9]{13}')]),
       "email": new FormControl(null, [Validators.required,Validators.email]),
       "phoneNumber": new FormControl(null, [Validators.required,Validators.pattern('[0-9]{6,10}')]),
@@ -36,9 +40,6 @@ export class RegisterComponent implements OnInit {
   get phoneNumber(){
     return this.registerForm.get('phoneNumber');
   }
-  get date() {
-    return this.registerForm.get('date');
-  }
   get address() {
     return this.registerForm.get('address');
   }
@@ -49,5 +50,19 @@ export class RegisterComponent implements OnInit {
     return this.registerForm.get('secondPassword');
   }
 
-  registerCompany() {}
+  registerCompany() {
+    let date = document.getElementById('establishment') as HTMLInputElement;
+    if(date.value === '') {
+      this.dateExists = false
+    } else
+      this.dateExists = true
+
+    if(this.registerForm.get('password').value === this.registerForm.get('secondPassword').value) {
+      this.passwordTheSame = true;
+      
+    }else{
+      this.passwordTheSame = false;
+      return;
+    }
+  }
 }
