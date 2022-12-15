@@ -27,9 +27,6 @@ namespace SEP.PayPal.Services
         {
             try
             {
-                string value = payPalPayment.Amount.ToString(CultureInfo.CreateSpecificCulture("en-GB"));
-                float amount = float.Parse(value);
-                payPalPayment.Amount = amount;
                 payPalPayment.Date = DateTime.Now;
                 payPalPayment.Currency = "USD";
                 return AuthorizePayment(payPalPayment);
@@ -42,20 +39,23 @@ namespace SEP.PayPal.Services
         public bool Pay(string paymentId, string payerId, string token)
         {
             PayPalPayment payPalPayment = payPalDbContext.PayPalPayment.FirstOrDefault(x => x.Token == token);
-
-            try
+            if (payPalPayment != null)
             {
-                ExecutePayment(paymentId, payerId);
-                payPalPayment.PaymentApproval = PaymentApprovalType.Success;
-                payPalDbContext.SaveChanges();
-                return true;
+                try
+                {
+                    ExecutePayment(paymentId, payerId);
+                    payPalPayment.PaymentApproval = PaymentApprovalType.Success;
+                    payPalDbContext.SaveChanges();
+                    return true;
+                }
+                catch (Exception ex)
+                {
+                    payPalPayment.PaymentApproval = PaymentApprovalType.Rejected;
+                    payPalDbContext.SaveChanges();
+                    return false;
+                }
             }
-            catch (Exception ex)
-            {
-                payPalPayment.PaymentApproval = PaymentApprovalType.Rejected;
-                payPalDbContext.SaveChanges();
-                return false;
-            }
+            return false;
         }
 
         public void Cancel(string token)
@@ -113,11 +113,11 @@ namespace SEP.PayPal.Services
         {
             Details details = new Details();
             details.shipping = "0.00";
-            details.subtotal = payPalPayment.Amount.ToString(CultureInfo.CreateSpecificCulture("en-GB"));
+            details.subtotal = payPalPayment.Amount.ToString("0.00").Replace(',', '.');
             details.tax = "0.00";
             Amount amount = new Amount();
             amount.currency = payPalPayment.Currency;
-            amount.total = payPalPayment.Amount.ToString(CultureInfo.CreateSpecificCulture("en-GB"));
+            amount.total = payPalPayment.Amount.ToString("0.00").Replace(',', '.');
             amount.details = details;
             Transaction transaction = new Transaction();
             transaction.amount = amount;
@@ -127,7 +127,7 @@ namespace SEP.PayPal.Services
             Item item = new Item();
             item.currency = payPalPayment.Currency;
             item.name = payPalPayment.ItemName;
-            item.price = payPalPayment.Amount.ToString(CultureInfo.CreateSpecificCulture("en-GB"));
+            item.price = payPalPayment.Amount.ToString("0.00").Replace(',', '.');
             item.tax = "0.00";
             item.quantity = "1";
             items.Add(item);

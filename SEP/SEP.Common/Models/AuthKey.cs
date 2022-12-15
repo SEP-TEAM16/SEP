@@ -6,11 +6,14 @@ namespace SEP.Common.Models
     {
         public string Key { get; set; }
         public string Route { get; set; }
+        public string Type { get; set; }
 
-        public AuthKey(string key, string route, int id = 0)
+        public AuthKey(string key, string route, string type, int id)
         {
+            Id = id;
             Key = key;
             Route = route;
+            Type = type;
         }
     }
 }

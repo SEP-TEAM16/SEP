@@ -37,19 +37,24 @@ namespace SEP.Autorization.Controllers
         [HttpPost]
         [Route("addAuthKey")]
         [AllowAnonymous]
-        public ActionResult<List<AuthKeyDTO>> AddAuthKey([FromBody] AuthKeyWithKeyDTO key)
+        public ActionResult<List<AuthKeyDTO>> AddAuthKey([FromBody] List<AuthKeyWithKeyDTO> keys)
         {
             var appSettings = new ConfigurationBuilder().AddJsonFile("appsettings.Development.json").Build();
-            if (key.KeyForAutorization.Equals(appSettings.GetValue<string>("Secrets:AutorizationKey")))
+            foreach (var key in keys)
             {
-                AuthKey authKey = mapper.Map<AuthKey>(key);
-                if (!autorizationService.AddAuthKey(authKey))
-                    return BadRequest(new { message = "route already exists" });
-                
-                return mapper.Map<List<AuthKeyDTO>>(autorizationService.GetAuthKeys());
+                if (key.KeyForAutorization.Equals(appSettings.GetValue<string>("Secrets:AutorizationKey")))
+                {
+                    AuthKey authKey = mapper.Map<AuthKey>(key);
+                    if (!autorizationService.AddAuthKey(authKey))
+                        return BadRequest(new { message = "route already exists" });
+                } else
+                {
+                    return BadRequest(new { message = "key is invalid" });
+                }
             }
 
-            return BadRequest(new { message = "key is invalid" });
+            return mapper.Map<List<AuthKeyDTO>>(autorizationService.GetAuthKeys());
+
         }
     }
 }

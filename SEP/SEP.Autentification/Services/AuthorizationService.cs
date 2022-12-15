@@ -10,6 +10,8 @@ namespace SEP.Autorization.Services
         public AuthorizationService(AuthorizationDbContext autorizationDbContext)
         {
             this.autorizationDbContext = autorizationDbContext;
+            autorizationDbContext.AuthKeys.RemoveRange(this.autorizationDbContext.AuthKeys.ToList());
+            autorizationDbContext.SaveChanges();
         }
 
         public List<AuthKey> GetAuthKeys()

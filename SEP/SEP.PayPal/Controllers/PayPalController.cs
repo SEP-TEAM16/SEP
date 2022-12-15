@@ -26,17 +26,22 @@ namespace SEP.PayPal.Controllers
         [Consumes(MediaTypeNames.Application.Json)]
         public string GetApprovalLink([FromBody] PayPalPaymentDTO payPalPaymentDTO)
         {
-            PayPalPayment payPalPayment = mapper.Map<PayPalPayment>(payPalPaymentDTO);
-            return payPalService.GetApprovalLink(payPalPayment);
+            HttpRequest request = Request;
+            if (request.Headers["senderPort"].ToString().Equals("5050"))
+            {
+                PayPalPayment payPalPayment = mapper.Map<PayPalPayment>(payPalPaymentDTO);
+                return payPalService.GetApprovalLink(payPalPayment);
+            }
+            return "You don't have access";
         }
 
-        [HttpGet("/continue")]
+        [HttpGet("continue")]
         public bool Continue(string paymentId, string token, string payerId)
         {
             return payPalService.Pay(paymentId, payerId, token);
         }
 
-        [HttpGet("/cancel")]
+        [HttpGet("cancel")]
         public void Cancel(string token)
         {
             payPalService.Cancel(token);

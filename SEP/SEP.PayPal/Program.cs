@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Nancy.Json;
+using SEP.Common.DTO;
 using SEP.Common.Models;
 using SEP.PayPal.Infrastructure;
 using SEP.PayPal.Interfaces;
@@ -42,8 +43,11 @@ httpRequest.ContentType = "application/json";
 
 var streamWriter = new StreamWriter(httpRequest.GetRequestStream());
 var appSettings = new ConfigurationBuilder().AddJsonFile("appsettings.Development.json").Build();
-AuthKey authKey = new AuthKey(appSettings.GetValue<string>("Info:Key"), appSettings.GetValue<string>("Info:Route"));
-streamWriter.Write(jss.Serialize(authKey));
+List<AuthKeyWithPortDTO> authKeys = new List<AuthKeyWithPortDTO>();
+authKeys.Add(new AuthKeyWithPortDTO(appSettings.GetValue<string>("Info:Key"), appSettings.GetValue<string>("Info:Route"), int.Parse(appSettings.GetValue<string>("Info:Port")), true, appSettings.GetValue<string>("Info:RouteType")));
+authKeys.Add(new AuthKeyWithPortDTO(appSettings.GetValue<string>("Info:Key"), appSettings.GetValue<string>("Info:Route1"), int.Parse(appSettings.GetValue<string>("Info:Port")), false, appSettings.GetValue<string>("Info:Route1Type")));
+authKeys.Add(new AuthKeyWithPortDTO(appSettings.GetValue<string>("Info:Key"), appSettings.GetValue<string>("Info:Route2"), int.Parse(appSettings.GetValue<string>("Info:Port")), false, appSettings.GetValue<string>("Info:Route2Type")));
+streamWriter.Write(jss.Serialize(authKeys));
 streamWriter.Close();
 httpRequest.GetResponse();
 

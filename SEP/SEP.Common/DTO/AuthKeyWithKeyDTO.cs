@@ -6,7 +6,7 @@ namespace SEP.Common.DTO
     {
         public string KeyForAutorization { get; set; }
 
-        public AuthKeyWithKeyDTO(string key, string route, string keyForAutorization) : base(key, route)
+        public AuthKeyWithKeyDTO(string key, string route, string keyForAutorization, string type) : base(key, route, type, 0)
         {
             KeyForAutorization = keyForAutorization;
         }
