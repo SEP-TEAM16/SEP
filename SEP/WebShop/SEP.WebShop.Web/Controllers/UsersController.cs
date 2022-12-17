@@ -60,14 +60,16 @@ namespace SEP.WebShop.Web.Controllers
             Result<WebShopUser> result = usersFactory.Create(Guid.NewGuid(), user.Username, user.Password, user.EmailAddress, user.Name, user.City, user.Street, user.UserType);
             if (result.IsFailure)
             {
-                return BadRequest();
+                return BadRequest(result.Error);
             }
             Result createUserResult = _webShopUserService.Create(result.Value);
 
             if (createUserResult.IsFailure)
-                return BadRequest();
+                return BadRequest(createUserResult.Error);
 
-            return Created("api/users/" + result.Value.Id.ToString(), string.Empty);
+            WebShopUserDto createdUser = usersDtoFactory.Create(result.Value);
+
+            return Created("api/users/" + result.Value.Id.ToString(), createdUser);
 
         }
 

@@ -7,7 +7,7 @@ namespace SEP.WebShop.Web.DtoFactories
     {
         public WebShopUserDto Create(WebShopUser user)
         {
-            return new WebShopUserDto(user.Id, user.Username, user.EmailAddress, user.Password, user.Name, user.Address.City, user.Address.Street, user.UserType);
+            return new WebShopUserDto(user.Id, user.Username, string.Empty, user.EmailAddress, user.Name, user.Address.City, user.Address.Street, user.UserType);
         }
     }
 }
