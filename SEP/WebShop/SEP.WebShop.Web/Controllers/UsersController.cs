@@ -45,7 +45,7 @@ namespace SEP.WebShop.Web.Controllers
 
             if (!isPasswordVerified)
             {
-                return BadRequest(new { message = "Password you entered does not match users password" });
+                return BadRequest(new { message = "Password you entered does not match user's password" });
             }
 
             var response = new AuthenticationResponse(user.Value, _jwtUtils.GenerateToken(user.Value));

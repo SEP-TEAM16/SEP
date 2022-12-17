@@ -23,6 +23,7 @@ namespace SEP.WebShop.Core.Entities
             UserType = userType;
         }
 
+
         public abstract WebShopUser Update(WebShopUser webShopUser);
     }
 }

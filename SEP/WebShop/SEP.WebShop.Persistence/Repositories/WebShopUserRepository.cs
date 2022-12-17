@@ -103,6 +103,10 @@ namespace SEP.WebShop.Persistence.Repositories
             using SqlCommand command = new SqlCommand("delete from dbo.Users where id = @id", _connection, _transaction);
             command.Parameters.AddWithValue("@id", id);
             command.ExecuteNonQuery();
+
+            using SqlCommand subscriptionCommand = new SqlCommand("delete from dbo.Subscriptions where companyId = @companyId", _connection, _transaction);
+            subscriptionCommand.Parameters.AddWithValue("@companyId", id);
+            subscriptionCommand.ExecuteNonQuery();
         }
 
         public void Update(WebShopUser entity)

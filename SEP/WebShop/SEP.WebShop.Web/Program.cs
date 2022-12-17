@@ -3,11 +3,11 @@ using Microsoft.IdentityModel.Tokens;
 using SEP.WebShop.Core.Repositories;
 using SEP.WebShop.Core.Services;
 using SEP.WebShop.Persistence.Repositories;
-using System.Data.SqlClient;
-using System.Data;
-using System.Text;
 using SEP.WebShop.Web.Authorization;
 using SEP.WebShop.Web.Helpers;
+using System.Data;
+using System.Data.SqlClient;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,8 +51,12 @@ builder.Services.AddScoped<IJwtUtils, JwtUtils>();
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IWebShopUserRepository, WebShopUserRepository>();
+builder.Services.AddScoped<ISubscriptionOptionRepository, SubscriptionOptionRepository>();
+builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
 
 builder.Services.AddScoped<WebShopUserService>();
+builder.Services.AddScoped<SubscriptionOptionService>();
+builder.Services.AddScoped<SubscriptionService>();
 
 builder.Services.AddControllersWithViews();
 
