@@ -6,27 +6,26 @@ namespace SEP.Autorization.Services
 {
     public class AuthorizationService : IAuthorizationService
     {
-        private readonly AuthorizationDbContext autorizationDbContext;
+        private readonly AuthorizationDbContext _autorizationDbContext;
         public AuthorizationService(AuthorizationDbContext autorizationDbContext)
         {
-            this.autorizationDbContext = autorizationDbContext;
-            autorizationDbContext.AuthKeys.RemoveRange(this.autorizationDbContext.AuthKeys.ToList());
+            _autorizationDbContext = autorizationDbContext;
+            autorizationDbContext.AuthKeys.RemoveRange(_autorizationDbContext.AuthKeys.ToList());
             autorizationDbContext.SaveChanges();
         }
 
         public List<AuthKey> GetAuthKeys()
         {
-            return autorizationDbContext.AuthKeys.ToList();
+            return _autorizationDbContext.AuthKeys.ToList();
         }
         public bool AddAuthKey(AuthKey authKey)
         {
-            if (autorizationDbContext.AuthKeys.FirstOrDefault(key => key.Route.Equals(authKey.Route)) is not null)
+            if (_autorizationDbContext.AuthKeys.FirstOrDefault(key => key.Route.Equals(authKey.Route)) is not null)
                 return false;
 
-            autorizationDbContext.AuthKeys.Add(authKey);
-            autorizationDbContext.SaveChanges();
+            _autorizationDbContext.AuthKeys.Add(authKey);
+            _autorizationDbContext.SaveChanges();
             return true;
-
         }
     }
 }

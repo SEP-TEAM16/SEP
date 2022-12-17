@@ -15,23 +15,27 @@ namespace SEP.Gateway.Controllers
     [Route("auth")]
     public class AuthController : ControllerBase
     {
+        private readonly ILogger<AuthController> _logger;
         private List<AuthKey> AuthKeys { get; set; }
-        public AuthController()
-        {
-            AuthKeys = new List<AuthKey>();
-            var getdata = "";
-            JavaScriptSerializer jss = new JavaScriptSerializer();
 
-            HttpWebRequest httpRequest = (HttpWebRequest)HttpWebRequest.Create("https://localhost:5250/authKeys");
+        public AuthController(ILogger<AuthController> logger)
+        {
+            _logger = logger;
+
+            AuthKeys = new List<AuthKey>();
+            var getdata = string.Empty;
+            var jss = new JavaScriptSerializer();
+
+            var httpRequest = (HttpWebRequest) HttpWebRequest.Create("https://localhost:5250/authKeys");
             httpRequest.Method = "GET";
             httpRequest.ContentType = "application/json";
 
             var appSettings = new ConfigurationBuilder().AddJsonFile("appsettings.Development.json").Build();
             httpRequest.Headers["key"] = appSettings.GetValue<string>("Secrets:AutorizationKey");
 
-            using (HttpWebResponse webresponse = (HttpWebResponse)httpRequest.GetResponse())
-            using (Stream stream = webresponse.GetResponseStream())
-            using (StreamReader reader = new StreamReader(stream))
+            using (var webresponse = (HttpWebResponse) httpRequest.GetResponse())
+            using (var stream = webresponse.GetResponseStream())
+            using (var reader = new StreamReader(stream))
             {
                 getdata = reader.ReadToEnd();
             }
@@ -39,10 +43,12 @@ namespace SEP.Gateway.Controllers
             AuthKeys = jss.Deserialize<List<AuthKey>>(getdata);
             if(AuthKeys.Count == 0)
             {
-                var item = new MicroservicesDTO();
-                item.GlobalConfiguration = new GlobalConfigurationDTO("https://localhost:5050");
-                item.Routes = new List<RouteDTO>();
-                StreamWriter sw = new StreamWriter("microservices.json");
+                var item = new MicroservicesDTO
+                {
+                    GlobalConfiguration = new GlobalConfigurationDTO("https://localhost:5050"),
+                    Routes = new List<RouteDTO>()
+                };
+                var sw = new StreamWriter("microservices.json");
                 sw.Write(jss.Serialize(item));
                 sw.Close();
             }
@@ -53,12 +59,14 @@ namespace SEP.Gateway.Controllers
         [AllowAnonymous]
         public ActionResult<AuthToken> GetPayPalAuthentication(string route, [FromBody] string key)
         {
-            foreach (AuthKey authKey in AuthKeys)
+            _logger.LogInformation("Gateway get PayPal authentication executing...");
+            foreach (var authKey in AuthKeys)
             {
                 if (key.Equals(authKey.Key) && route.Equals(authKey.Route))
-                    return new PayPalApiTokenService().GenerateToken(authKey.Key);
+                    return PayPalApiTokenService.GenerateToken(authKey.Key);
             }
 
+            _logger.LogWarning("Key is invalid.");
             return BadRequest(new { message = "key is invalid" });
         }
 
@@ -66,16 +74,18 @@ namespace SEP.Gateway.Controllers
         [AllowAnonymous]
         public void AddMicroservice([FromBody] List<AuthKeyWithPortDTO> keys)
         {
-            var getdata = "";
-            JavaScriptSerializer jss = new JavaScriptSerializer();
+            _logger.LogInformation("Gateway add microservice executing...");
 
-            HttpWebRequest httpRequest = (HttpWebRequest)HttpWebRequest.Create("https://localhost:5250/addAuthKey");
+            var getdata = string.Empty;
+            var jss = new JavaScriptSerializer();
+
+            var httpRequest = (HttpWebRequest) HttpWebRequest.Create("https://localhost:5250/addAuthKey");
             httpRequest.Method = "POST";
             httpRequest.ContentType = "application/json";
 
             var appSettings = new ConfigurationBuilder().AddJsonFile("appsettings.Development.json").Build();
             var streamWriter = new StreamWriter(httpRequest.GetRequestStream());
-            List<AuthKeyWithKeyDTO> authKeysWithKeyDTOs = new List<AuthKeyWithKeyDTO>();
+            var authKeysWithKeyDTOs = new List<AuthKeyWithKeyDTO>();
             foreach (var key in keys)
             {
                 authKeysWithKeyDTOs.Add(new AuthKeyWithKeyDTO(key.Key, key.Route, appSettings.GetValue<string>("Secrets:AutorizationKey"), key.Type));
@@ -83,50 +93,53 @@ namespace SEP.Gateway.Controllers
             streamWriter.Write(jss.Serialize(authKeysWithKeyDTOs));
             streamWriter.Close();
 
-            using (HttpWebResponse webresponse = (HttpWebResponse)httpRequest.GetResponse())
-            if(webresponse.StatusCode == HttpStatusCode.OK)
+            using (var webresponse = (HttpWebResponse) httpRequest.GetResponse())
+            if (webresponse.StatusCode == HttpStatusCode.OK)
             {
-                    using (Stream stream = webresponse.GetResponseStream())
-                    using (StreamReader reader = new StreamReader(stream))
-                    {
-                        getdata = reader.ReadToEnd();
-                    }
+                using (var stream = webresponse.GetResponseStream())
+                using (var reader = new StreamReader(stream))
+                {
+                    getdata = reader.ReadToEnd();
+                }
 
-                    AuthKeys = jss.Deserialize<List<AuthKey>>(getdata);
-                    MicroservicesDTO item = new MicroservicesDTO();
-                    using (StreamReader r = new StreamReader("microservices.json"))
-                    {
-                        string json = r.ReadToEnd();
-                        item = JsonConvert.DeserializeObject<MicroservicesDTO>(json);
+                AuthKeys = jss.Deserialize<List<AuthKey>>(getdata);
+                var item = new MicroservicesDTO();
+                using (var r = new StreamReader("microservices.json"))
+                {
+                    var json = r.ReadToEnd();
+                    item = JsonConvert.DeserializeObject<MicroservicesDTO>(json);
+                }
 
-                    }
-                    if (item.Routes == null)
+                item ??= new MicroservicesDTO();
+                item.Routes ??= new List<RouteDTO>();
+
+                foreach (var key in keys)
+                {
+                    var httpMethods = new List<string>
                     {
-                        item.Routes = new List<RouteDTO>();
-                    }
-                    foreach (var key in keys)
+                        key.Type
+                    };
+                    var authOptinons = new AuthentificationOptionsDTO("auth_scheme", new List<string>());
+                    var downstreamPort = new DownstreamHostAndPortsDTO("localhost", key.Port);
+                    var downstreamPorts = new List<DownstreamHostAndPortsDTO>
                     {
-                        var httpMethods = new List<string>();
-                        httpMethods.Add(key.Type);
-                        var authOptinons = new AuthentificationOptionsDTO("auth_scheme", new List<string>());
-                        var downstreamPort = new DownstreamHostAndPortsDTO("localhost", key.Port);
-                        var downstreamPorts = new List<DownstreamHostAndPortsDTO>();
-                        downstreamPorts.Add(downstreamPort);
-                        if (key.NeedAuth)
-                        {
-                            string senderPort = "5050";
-                            UpstreamHeaderTransformDTO upstreamHeaderTransform = new UpstreamHeaderTransformDTO(senderPort);
-                            item.Routes.Add(new RouteDTO("/" + key.Route, httpMethods, "/api/" + key.Route, "https", authOptinons, downstreamPorts, upstreamHeaderTransform));
-                        } else
-                        {
-                            item.Routes.Add(new RouteDTO("/" + key.Route, httpMethods, "/api/" + key.Route, "https", downstreamPorts));
-                        }
-                        
+                        downstreamPort
+                    };
+                    if (key.NeedAuth)
+                    {
+                        var senderPort = "5050";
+                        var upstreamHeaderTransform = new UpstreamHeaderTransformDTO(senderPort);
+                        item.Routes.Add(new RouteDTO("/" + key.Route, httpMethods, "/api/" + key.Route, "https", authOptinons, downstreamPorts, upstreamHeaderTransform));
                     }
-                    StreamWriter sw = new StreamWriter("microservices.json");
-                    sw.Write(jss.Serialize(item));
-                    sw.Close();
-                } 
+                    else
+                    {
+                        item.Routes.Add(new RouteDTO("/" + key.Route, httpMethods, "/api/" + key.Route, "https", downstreamPorts));
+                    }
+                }
+                var sw = new StreamWriter("microservices.json");
+                sw.Write(jss.Serialize(item));
+                sw.Close();
+            } 
         }
     }
 }

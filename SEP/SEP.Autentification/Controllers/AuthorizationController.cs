@@ -1,23 +1,23 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SEP.Autorization.Interfaces;
 using SEP.Common.DTO;
 using SEP.Common.Models;
-using System.IO;
 
 namespace SEP.Autorization.Controllers
 {
     [ApiController]
     [Route("")]
-    public class AutorizationController : ControllerBase
+    public class AuthorizationController : ControllerBase
     {
-        private readonly IMapper mapper;
-        private readonly Interfaces.IAuthorizationService autorizationService;
-        public AutorizationController(IMapper mapper, Interfaces.IAuthorizationService autorizationService)
+        private readonly IMapper _mapper;
+        private readonly ILogger<AuthorizationController> _logger;
+        private readonly Interfaces.IAuthorizationService _autorizationService;
+        public AuthorizationController(IMapper mapper, ILogger<AuthorizationController> logger, Interfaces.IAuthorizationService autorizationService)
         {
-            this.mapper = mapper;
-            this.autorizationService = autorizationService;
+            _mapper = mapper;
+            _logger = logger;
+            _autorizationService = autorizationService;
         }
 
         [HttpGet]
@@ -25,12 +25,14 @@ namespace SEP.Autorization.Controllers
         [AllowAnonymous]
         public ActionResult<List<AuthKeyDTO>> GetAuthKeys()
         {
+            _logger.LogInformation("Authorization get auth keys executong...");
             var appSettings = new ConfigurationBuilder().AddJsonFile("appsettings.Development.json").Build();
             if (Request.Headers["key"].Equals(appSettings.GetValue<string>("Secrets:AutorizationKey")))
             {
-                return mapper.Map<List<AuthKeyDTO>>(autorizationService.GetAuthKeys());
-            }  
+                return _mapper.Map<List<AuthKeyDTO>>(_autorizationService.GetAuthKeys());
+            }
 
+            _logger.LogWarning("Key is invalid.");
             return BadRequest(new { message = "key is invalid" });
         }
 
@@ -39,22 +41,27 @@ namespace SEP.Autorization.Controllers
         [AllowAnonymous]
         public ActionResult<List<AuthKeyDTO>> AddAuthKey([FromBody] List<AuthKeyWithKeyDTO> keys)
         {
+            _logger.LogInformation("Authorization add auth key executong...");
             var appSettings = new ConfigurationBuilder().AddJsonFile("appsettings.Development.json").Build();
             foreach (var key in keys)
             {
                 if (key.KeyForAutorization.Equals(appSettings.GetValue<string>("Secrets:AutorizationKey")))
                 {
-                    AuthKey authKey = mapper.Map<AuthKey>(key);
-                    if (!autorizationService.AddAuthKey(authKey))
+                    var authKey = _mapper.Map<AuthKey>(key);
+                    if (!_autorizationService.AddAuthKey(authKey))
+                    {
+                        _logger.LogWarning("Route already exists.");
                         return BadRequest(new { message = "route already exists" });
-                } else
+                    }
+                }
+                else
                 {
+                    _logger.LogWarning("Key is invalid.");
                     return BadRequest(new { message = "key is invalid" });
                 }
             }
 
-            return mapper.Map<List<AuthKeyDTO>>(autorizationService.GetAuthKeys());
-
+            return _mapper.Map<List<AuthKeyDTO>>(_autorizationService.GetAuthKeys());
         }
     }
 }

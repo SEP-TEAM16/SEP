@@ -1,3 +1,5 @@
+using Serilog;
+
 namespace SEP.Gateway
 {
     public class Program
@@ -10,8 +12,23 @@ namespace SEP.Gateway
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
-                {
+                { 
                     webBuilder.UseStartup<Startup>();
+                })
+                .ConfigureLogging(s =>
+                {
+                    var configuration = new ConfigurationBuilder()
+                        .AddEnvironmentVariables()
+                        .AddCommandLine(args)
+                        .AddJsonFile("appsettings.json")
+                        .Build();
+
+                    var logger = new LoggerConfiguration()
+                        .ReadFrom.Configuration(configuration)
+                        .Enrich.FromLogContext()
+                        .CreateLogger();
+                    s.ClearProviders();
+                    s.AddSerilog(logger);
                 });
     }
 }

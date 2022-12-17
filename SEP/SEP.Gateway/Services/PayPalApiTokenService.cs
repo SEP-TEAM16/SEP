@@ -8,7 +8,7 @@ namespace SEP.Gateway.Services
 {
     public class PayPalApiTokenService
     {
-        public AuthToken GenerateToken(string authKey)
+        public static AuthToken GenerateToken(string authKey)
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("some_big_key_value_here_secret"));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256Signature);
@@ -26,9 +26,11 @@ namespace SEP.Gateway.Services
                                               expires: expirationDate,
                                               signingCredentials: credentials);
 
-            var authToken = new AuthToken();
-            authToken.Token = new JwtSecurityTokenHandler().WriteToken(token);
-            authToken.ExpirationDate = expirationDate;
+            var authToken = new AuthToken
+            {
+                Token = new JwtSecurityTokenHandler().WriteToken(token),
+                ExpirationDate = expirationDate
+            };
 
             return authToken;
         }

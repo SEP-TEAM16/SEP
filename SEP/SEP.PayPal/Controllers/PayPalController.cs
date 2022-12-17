@@ -1,11 +1,8 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Nancy.Json;
-using SEP.Common.Models;
 using SEP.PayPal.DTO;
 using SEP.PayPal.Interfaces;
 using SEP.PayPal.Models;
-using System.Net;
 using System.Net.Mime;
 
 namespace SEP.PayPal.Controllers
@@ -14,37 +11,44 @@ namespace SEP.PayPal.Controllers
     [ApiController]
     public class PayPalController : ControllerBase
     {
-        private readonly IMapper mapper;
-        private readonly IPayPalService payPalService;
-        public PayPalController(IMapper mapper, IPayPalService payPalService)
+        private readonly IMapper _mapper;
+        private readonly ILogger<PayPalController> _logger;
+        private readonly IPayPalService _payPalService;
+
+        public PayPalController(IMapper mapper, ILogger<PayPalController> logger, IPayPalService payPalService)
         {
-            this.mapper = mapper;
-            this.payPalService = payPalService;
+            _mapper = mapper;
+            _logger = logger;
+            _payPalService = payPalService;
         }
 
         [HttpPost]
         [Consumes(MediaTypeNames.Application.Json)]
         public string GetApprovalLink([FromBody] PayPalPaymentDTO payPalPaymentDTO)
         {
-            HttpRequest request = Request;
-            if (request.Headers["senderPort"].ToString().Equals("5050"))
+            _logger.LogInformation("Pay pal get approval link executing...");
+            if (Request.Headers["senderPort"].ToString().Equals("5050"))
             {
-                PayPalPayment payPalPayment = mapper.Map<PayPalPayment>(payPalPaymentDTO);
-                return payPalService.GetApprovalLink(payPalPayment);
+                var payPalPayment = _mapper.Map<PayPalPayment>(payPalPaymentDTO);
+                return _payPalService.GetApprovalLink(payPalPayment);
             }
+
+            _logger.LogWarning("You don't have access.");
             return "You don't have access";
         }
 
         [HttpGet("continue")]
         public bool Continue(string paymentId, string token, string payerId)
         {
-            return payPalService.Pay(paymentId, payerId, token);
+            _logger.LogInformation("Pay pal continue executing...");
+            return _payPalService.Pay(paymentId, payerId, token);
         }
 
         [HttpGet("cancel")]
         public void Cancel(string token)
         {
-            payPalService.Cancel(token);
+            _logger.LogInformation("Pay pal cancel executing...");
+            _payPalService.Cancel(token);
         }
     }
 }

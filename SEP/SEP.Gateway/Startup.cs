@@ -25,7 +25,6 @@ namespace SEP.Gateway
 
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddAuthentication().AddJwtBearer("auth_scheme", options =>
             {
                 options.TokenValidationParameters = new TokenValidationParameters()
@@ -40,7 +39,7 @@ namespace SEP.Gateway
 
             });
 
-            services.AddOcelot(OcelotConfiguration);
+            services.AddOcelot(OcelotConfiguration);services.AddLogging();
 
             services.AddSingleton<AuthController, AuthController>();
             services.AddMvc().AddControllersAsServices();
