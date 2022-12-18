@@ -22,6 +22,10 @@ namespace SEP.PSP.Services
             AuthKeys = new List<AuthKey>();
             AuthKeys = GetAuthKeys();
             _mapper = mapper;
+            PSPDbContext.Metchants.RemoveRange(PSPDbContext.Metchants.ToList());
+            PSPDbContext.Subscriptions.RemoveRange(PSPDbContext.Subscriptions.ToList());
+            PSPDbContext.PSPPayments.RemoveRange(PSPDbContext.PSPPayments.ToList());
+            PSPDbContext.SaveChanges();
         }
 
         public PSPPaymentDTO MakePayPalPayment(PSPPaymentDTO PSPPaymentDTO)
@@ -36,7 +40,7 @@ namespace SEP.PSP.Services
 
             var getdata = string.Empty;
             var jss = new JavaScriptSerializer();
-            var authKey = AuthKeys.Where(a => a.PaymentMicroserviceType.Equals(paymentMicroserviceType)).First();
+            var authKey = AuthKeys.Where(a => a.PaymentMicroserviceType.Equals(PaymentMicroserviceType.Paypal)).First();
 
             var httpRequest = (HttpWebRequest)HttpWebRequest.Create("https://localhost:5050/" + authKey.Route);
             httpRequest.Method = "POST";

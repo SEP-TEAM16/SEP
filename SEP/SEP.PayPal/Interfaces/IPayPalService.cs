@@ -6,6 +6,6 @@ namespace SEP.PayPal.Interfaces
     {
         public string GetApprovalLink(PayPalPayment payPalPayment);
         public PayPalPayment Pay(string paymentId, string payerId, string token);
-        public void Cancel(string token);
+        public PayPalPayment Cancel(string token);
     }
 }

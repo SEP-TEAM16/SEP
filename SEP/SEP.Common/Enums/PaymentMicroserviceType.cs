@@ -5,6 +5,8 @@
         Paypal,
         QR,
         Card,
-        Bitcoin
+        Bitcoin,
+        PSP,
+        None
     }
 }

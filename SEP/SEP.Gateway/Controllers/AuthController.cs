@@ -88,7 +88,7 @@ namespace SEP.Gateway.Controllers
             var authKeysWithKeyDTOs = new List<AuthKeyWithKeyDTO>();
             foreach (var key in keys)
             {
-                authKeysWithKeyDTOs.Add(new AuthKeyWithKeyDTO(key.Key, key.Route, appSettings.GetValue<string>("Secrets:AutorizationKey"), key.Type));
+                authKeysWithKeyDTOs.Add(new AuthKeyWithKeyDTO(key.Key, key.Route, appSettings.GetValue<string>("Secrets:AutorizationKey"), key.Type, key.PaymentMicroserviceType));
             }
             streamWriter.Write(jss.Serialize(authKeysWithKeyDTOs));
             streamWriter.Close();

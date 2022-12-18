@@ -1,4 +1,5 @@
-﻿using SEP.Common.Models;
+﻿using SEP.Common.Enums;
+using SEP.Common.Models;
 
 namespace SEP.Common.DTO
 {
@@ -7,7 +8,7 @@ namespace SEP.Common.DTO
         public int Port { get; set; }
         public bool NeedAuth { get; set; }
 
-        public AuthKeyWithPortDTO(string key, string route, int port, bool needAuth, string type) : base(key, route, type, 0)
+        public AuthKeyWithPortDTO(string key, string route, int port, bool needAuth, string type, PaymentMicroserviceType paymentMicroserviceType) : base(key, route, type, 0, paymentMicroserviceType)
         {
             Port = port;
             NeedAuth = needAuth;

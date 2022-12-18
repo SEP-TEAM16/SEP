@@ -23,6 +23,8 @@ namespace SEP.PayPal.Services
             CLIENT_ID = appSettings.GetValue<string>("Secrets:CLIENT_ID");
             CLIENT_SECRET = appSettings.GetValue<string>("Secrets:CLIENT_SECRET");
             MODE = appSettings.GetValue<string>("Secrets:MODE");
+            payPalDbContext.PayPalPayment.RemoveRange(payPalDbContext.PayPalPayment.ToList());
+            payPalDbContext.SaveChanges();
         }
 
         public string GetApprovalLink(PayPalPayment payPalPayment)
@@ -62,11 +64,12 @@ namespace SEP.PayPal.Services
             return null;
         }
 
-        public void Cancel(string token)
+        public PayPalPayment Cancel(string token)
         {
             var payPalPayment = _payPalDbContext.PayPalPayment.FirstOrDefault(x => x.Token == token);
             payPalPayment.PaymentApproval = PaymentApprovalType.Canceled;
             _payPalDbContext.SaveChanges();
+            return payPalPayment;
         }
         private string AuthorizePayment(PayPalPayment payPalPayment)
         {
