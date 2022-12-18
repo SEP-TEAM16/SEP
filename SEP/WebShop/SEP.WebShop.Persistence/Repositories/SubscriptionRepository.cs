@@ -24,9 +24,9 @@ namespace SEP.WebShop.Persistence.Repositories
         public IEnumerable<Subscription> FindAll()
         {
             List<Subscription> subscriptions = new List<Subscription>();
-            using SqlCommand command = new SqlCommand("select subs.id, subs.expirationDateTime, subs.subscriptionOptionId, subs.companyId, " +
-                "subOpts.id, subOpts.subscriptionType, subOpts.name, " +
-                "usr.id, usr.username, usr.password, usr.emailAddress, usr.name, usr.city, usr.street, usr.type " +
+            using SqlCommand command = new SqlCommand("select subs.id, subs.expirationDateTime, subs.subscriptionOptionId, subs.companyId, " + //0-3
+                "subOpts.id, subOpts.subscriptionType, subOpts.name, " + //4-6
+                "usr.id, usr.username, usr.password, usr.emailAddress, usr.name, usr.city, usr.street, usr.userType " + //7-14
                 "from dbo.Subscriptions as subs join dbo.SubscriptionOptions as subOpts on subs.subscriptionOptionId = subOpts.id " +
                 "join dbo.Users as usr on subs.companyId = usr.id", _connection, _transaction);
 
@@ -34,11 +34,11 @@ namespace SEP.WebShop.Persistence.Repositories
             {
                 while (reader.Read())
                 {
-                    SubscriptionOption subscriptionOption = SubscriptionOption.Create(reader.GetGuid("subOpts.id"), (SubscriptionType)reader.GetInt32("subOpts.subscriptionType"), reader.GetString("subOpts.name")).Value;
+                    SubscriptionOption subscriptionOption = SubscriptionOption.Create(reader.GetGuid(4), (SubscriptionType)reader.GetInt32(5), reader.GetString(6)).Value;
                     Company company = (Company)_webShopUserFactory.Create(
-                           reader.GetGuid("usr.id"), reader.GetString("usr.username"), reader.GetString("usr.password"), reader.GetString("usr.emailAddress"), reader.GetString("usr.name"),
-                           reader.GetString("usr.city"), reader.GetString("usr.street"), (UserType)reader.GetInt32("usr.userType")).Value;
-                    subscriptions.Add(Subscription.Create(reader.GetGuid("id"), reader.GetDateTime("expirationDateTime"), subscriptionOption, company).Value);
+                           reader.GetGuid(7), reader.GetString(8), reader.GetString(9), reader.GetString(10), reader.GetString(11),
+                           reader.GetString(12), reader.GetString(13), (UserType)reader.GetInt32(14)).Value;
+                    subscriptions.Add(Subscription.Create(reader.GetGuid(0), reader.GetDateTime(1), subscriptionOption, company).Value);
                 }
             }
             return subscriptions;
@@ -46,9 +46,9 @@ namespace SEP.WebShop.Persistence.Repositories
 
         public Maybe<Subscription> FindById(Guid id)
         {
-            using SqlCommand command = new SqlCommand("select subs.id, subs.expirationDateTime, subs.subscriptionOptionId, subs.companyId, " +
-               "subOpts.id, subOpts.subscriptionType, subOpts.name, " +
-               "usr.id, usr.username, usr.password, usr.emailAddress, usr.name, usr.city, usr.street, usr.type " +
+            using SqlCommand command = new SqlCommand("select subs.id, subs.expirationDateTime, subs.subscriptionOptionId, subs.companyId, " + //0-3
+               "subOpts.id, subOpts.subscriptionType, subOpts.name, " + //4-6
+               "usr.id, usr.username, usr.password, usr.emailAddress, usr.name, usr.city, usr.street, usr.userType " + //7-14
                "from dbo.Subscriptions as subs join dbo.SubscriptionOptions as subOpts on subs.subscriptionOptionId = subOpts.id " +
                "join dbo.Users as usr on subs.companyId = usr.id where subs.id = @id", _connection, _transaction);
             command.Parameters.AddWithValue("@id", id);
@@ -58,11 +58,11 @@ namespace SEP.WebShop.Persistence.Repositories
                 {
                     return Maybe<Subscription>.None;
                 }
-                SubscriptionOption subscriptionOption = SubscriptionOption.Create(reader.GetGuid("subOpts.id"), (SubscriptionType)reader.GetInt32("subOpts.subscriptionType"), reader.GetString("subOpts.name")).Value;
+                SubscriptionOption subscriptionOption = SubscriptionOption.Create(reader.GetGuid(4), (SubscriptionType)reader.GetInt32(5), reader.GetString(6)).Value;
                 Company company = (Company)_webShopUserFactory.Create(
-                       reader.GetGuid("usr.id"), reader.GetString("usr.username"), reader.GetString("usr.password"), reader.GetString("usr.emailAddress"), reader.GetString("usr.name"),
-                       reader.GetString("usr.city"), reader.GetString("usr.street"), (UserType)reader.GetInt32("usr.userType")).Value;
-               return Subscription.Create(reader.GetGuid("id"), reader.GetDateTime("expirationDateTime"), subscriptionOption, company).Value;
+                       reader.GetGuid(7), reader.GetString(8), reader.GetString(9), reader.GetString(10), reader.GetString(11),
+                       reader.GetString(12), reader.GetString(13), (UserType)reader.GetInt32(14)).Value;
+                return Subscription.Create(reader.GetGuid(0), reader.GetDateTime(1), subscriptionOption, company).Value;
             }
         }
 
