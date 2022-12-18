@@ -1,6 +1,6 @@
 ﻿using SEP.Common.Models;
 
-namespace SEP.Webshop.Models
+namespace SEP.WebShop.Models
 {
     public class User : Entity
     {

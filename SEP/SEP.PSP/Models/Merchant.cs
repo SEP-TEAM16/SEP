@@ -2,8 +2,15 @@
 
 namespace SEP.PSP.Models
 {
-    public class Merchant
+    public class Merchant : Entity
     {
-        public ServiceSecret ServiceSecret { get; set; }
+        public string Port { get; set; }
+        public string Key { get; set; }
+        public Merchant() { }
+        public Merchant(string port, string key)
+        {
+            Port = port;
+            Key = key;
+        }
     }
 }
