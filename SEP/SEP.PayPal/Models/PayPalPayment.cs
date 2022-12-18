@@ -5,6 +5,9 @@ namespace SEP.PayPal.Models
 {
     public class PayPalPayment : Payment
     {
+        public string MerchantID { get; set; }
+        public string Token { get; set; }
+
         PayPalPayment() { }
 
         public PayPalPayment(float amount, string name, string firstName, string lastName,
@@ -15,7 +18,5 @@ namespace SEP.PayPal.Models
             MerchantID = merchantID;
             Token = token;
         }
-        public string MerchantID { get; set; }
-        public string Token { get; set; }
     }
 }

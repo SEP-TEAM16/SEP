@@ -38,10 +38,12 @@ namespace SEP.PayPal.Controllers
         }
 
         [HttpGet("continue")]
-        public bool Continue(string paymentId, string token, string payerId)
+        public ActionResult<PayPalPaymentDTO> Continue(string paymentId, string token, string payerId)
         {
             _logger.LogInformation("Pay pal continue executing...");
-            return _payPalService.Pay(paymentId, payerId, token);
+            var payPalPayment = _payPalService.Pay(paymentId, payerId, token);
+            var payPalPaymentDTO = _mapper.Map<PayPalPaymentDTO>(payPalPayment);
+            return payPalPaymentDTO;
         }
 
         [HttpGet("cancel")]

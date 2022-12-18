@@ -39,24 +39,24 @@ namespace SEP.PayPal.Services
                 return null;
             }
         }
-        public bool Pay(string paymentId, string payerId, string token)
+        public PayPalPayment Pay(string paymentId, string payerId, string token)
         {
             var payPalPayment = _payPalDbContext.PayPalPayment.FirstOrDefault(x => x.Token == token);
             if (payPalPayment != null)
             {
                 try
                 {
-                    ExecutePayment(paymentId, payerId);
+                    var payment = ExecutePayment(paymentId, payerId);
                     payPalPayment.PaymentApproval = PaymentApprovalType.Success;
                     _payPalDbContext.SaveChanges();
-                    return true;
+                    return payPalPayment;
                 }
                 catch (Exception ex)
                 {
                     _logger.LogError(ex.Message);
                     payPalPayment.PaymentApproval = PaymentApprovalType.Rejected;
                     _payPalDbContext.SaveChanges();
-                    return false;
+                    return payPalPayment;
                 }
             }
             return false;
@@ -175,7 +175,7 @@ namespace SEP.PayPal.Services
             }
             return approvalLink;
         }
-        private Payment ExecutePayment(String paymentId, String payerId)
+        private Payment ExecutePayment(string paymentId, string payerId)
         {
             var paymentExecution = new PaymentExecution()
             {

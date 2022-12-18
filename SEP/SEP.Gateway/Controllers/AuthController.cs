@@ -46,7 +46,7 @@ namespace SEP.Gateway.Controllers
                 var item = new MicroservicesDTO
                 {
                     GlobalConfiguration = new GlobalConfigurationDTO("https://localhost:5050"),
-                    Routes = new List<RouteDTO>()
+                    Routes = new()
                 };
                 var sw = new StreamWriter("microservices.json");
                 sw.Write(jss.Serialize(item));

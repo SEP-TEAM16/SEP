@@ -5,6 +5,8 @@ namespace SEP.PayPal.DTO
 {
     public class PayPalPaymentDTO : Payment
     {
+        public string MerchantID { get; set; }
+
         PayPalPaymentDTO() { }
 
         public PayPalPaymentDTO(float amount, string name, string firstName, string lastName,
@@ -14,7 +16,5 @@ namespace SEP.PayPal.DTO
         {
             MerchantID = merchantID;
         }
-
-        public string MerchantID { get; set; }
     }
 }
