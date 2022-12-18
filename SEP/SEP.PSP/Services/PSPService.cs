@@ -38,7 +38,7 @@ namespace SEP.PSP.Services
             var jss = new JavaScriptSerializer();
             var authKey = AuthKeys.Where(a => a.PaymentMicroserviceType.Equals(paymentMicroserviceType)).First();
 
-            var httpRequest = (HttpWebRequest)HttpWebRequest.Create("https://localhost:5050/auth/" + authKey.Route);
+            var httpRequest = (HttpWebRequest)HttpWebRequest.Create("https://localhost:5050/" + authKey.Route);
             httpRequest.Method = "POST";
             httpRequest.ContentType = "application/json";
             httpRequest.Headers.Add("Authorization", $"Bearer {authToken.Token}");
