@@ -59,7 +59,7 @@ namespace SEP.PayPal.Services
                     return payPalPayment;
                 }
             }
-            return false;
+            return null;
         }
 
         public void Cancel(string token)

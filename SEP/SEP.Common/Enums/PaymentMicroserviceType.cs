@@ -1,0 +1,10 @@
+﻿namespace SEP.Common.Enums
+{
+    public enum PaymentMicroserviceType
+    {
+        Paypal,
+        QR,
+        Card,
+        Bitcoin
+    }
+}

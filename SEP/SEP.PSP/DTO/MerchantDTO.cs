@@ -1,13 +1,13 @@
 ﻿using SEP.Common.Models;
 
-namespace SEP.PSP.Models
+namespace SEP.PSP.DTO
 {
-    public class Merchant : Entity
+    public class MerchantDTO : Entity
     {
         public string Port { get; set; }
         public string Key { get; set; }
-        public Merchant() { }
-        public Merchant(string port, string key)
+        public MerchantDTO() { }
+        public MerchantDTO(string port, string key)
         {
             Port = port;
             Key = key;
