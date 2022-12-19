@@ -1,10 +1,10 @@
-export interface Company {
+export interface WebShopUser {
     id: number;
+    userType: number;
     name: string;
-    pib: number;
-    address: string;
-    dateOfEstablishment: Date;
-    email: string;
-    phoneNumber: number;
+    city: string;
+    street: string;
+    username: string;
+    emailAddress: string;
     password: string;
 }

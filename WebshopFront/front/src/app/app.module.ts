@@ -9,6 +9,7 @@ import { RegisterComponent } from './components/register/register.component';
 import { HomePageComponent } from './components/home-page/home-page.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoggedCompanyPageComponent } from './components/logged-company-page/logged-company-page.component';
+import { ServicesPageComponent } from './components/services-page/services-page.component';
 
 @NgModule({
   declarations: [
@@ -17,6 +18,7 @@ import { LoggedCompanyPageComponent } from './components/logged-company-page/log
     RegisterComponent,
     HomePageComponent,
     LoggedCompanyPageComponent,
+    ServicesPageComponent,
   ],
   imports: [
     BrowserModule,

@@ -9,7 +9,21 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Text;
 
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.WithOrigins("http://localhost:4200",
+                                              "https://localhost:4200")
+                                .AllowAnyHeader()
+                                .AllowAnyMethod();
+                      });
+});
 
 var key = Encoding.ASCII.GetBytes(builder.Configuration.GetSection("AppSettings")["SecurityKey"]);
 
@@ -78,7 +92,7 @@ app.UseMiddleware<JwtMiddleware>();
 app.UseAuthentication();
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-app.UseCors();
+app.UseCors(MyAllowSpecificOrigins);
 app.UseRouting();
 app.UseAuthorization();
 app.MapControllers();

@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Company } from 'src/app/model/company';
+import { Router } from '@angular/router';
+import { WebShopUser } from 'src/app/model/company';
+import { UserService } from '../../services/user.service';
 
 @Component({
   selector: 'app-register',
@@ -11,37 +13,36 @@ export class RegisterComponent implements OnInit {
   registerForm:any;
   passwordTheSame: boolean = true;
   userExists: boolean = false;
-  dateExists: boolean = true;
-  company: Company = {} as Company;
+  user: WebShopUser = {} as WebShopUser;
 
-  constructor() { }
+  constructor(private userService: UserService, private router: Router) { }
 
   ngOnInit(): void {
     this.registerForm = new FormGroup({
       "name": new FormControl(null, [Validators.required,Validators.pattern('([A-ZŠĐČĆŽ]{1}[a-zšđčćž]+ *)+')]),
-      "pib": new FormControl(null, [Validators.required,Validators.pattern('[0-9]{13}')]),
       "email": new FormControl(null, [Validators.required,Validators.email]),
-      "phoneNumber": new FormControl(null, [Validators.required,Validators.pattern('[0-9]{6,10}')]),
-      "address": new FormControl(null, [Validators.required,Validators.pattern('([A-ZŠĐČĆŽ]{1}[a-zšđčćž]+ )+[0-9]+')]),
-      "password": new FormControl(null, [Validators.required,Validators.pattern('[a-zA-Z0-9]*')]),
-      "secondPassword": new FormControl(null, [Validators.required,Validators.pattern('[a-zA-Z0-9]*')])
+      "username": new FormControl(null, [Validators.required,Validators.pattern('([A-ZŠĐČĆŽa-zšđčćž0-9]+)')]),
+      "city": new FormControl(null, [Validators.required,Validators.pattern('[A-ZŠĐČĆŽ]{1}[a-zšđčćž]+( [A-ZŠĐČĆŽa-zšđčćž]{1}[a-zšđčćž]*)*')]),
+      "street": new FormControl(null, [Validators.required,Validators.pattern('([A-ZŠĐČĆŽ]{1}[a-zšđčćž]+ )+[0-9]+')]),
+      "password": new FormControl(null, [Validators.required,Validators.pattern('[a-zA-Z0-9]{8,50}')]),
+      "secondPassword": new FormControl(null, [Validators.required,Validators.pattern('[a-zA-Z0-9]{8,50}')])
     });
   }
 
   get name() {
     return this.registerForm.get('name');
   }
-  get pib() {
-    return this.registerForm.get('pib');
+  get username() {
+    return this.registerForm.get('username');
   }
   get email(){
     return this.registerForm.get('email');
   }
-  get phoneNumber(){
-    return this.registerForm.get('phoneNumber');
+  get city(){
+    return this.registerForm.get('city');
   }
-  get address() {
-    return this.registerForm.get('address');
+  get street() {
+    return this.registerForm.get('street');
   }
   get password() {
     return this.registerForm.get('password');
@@ -50,17 +51,17 @@ export class RegisterComponent implements OnInit {
     return this.registerForm.get('secondPassword');
   }
 
-  registerCompany() {
-    let date = document.getElementById('establishment') as HTMLInputElement;
-    if(date.value === '') {
-      this.dateExists = false
-    } else
-      this.dateExists = true
-
+  registerUser() {
     if(this.registerForm.get('password').value === this.registerForm.get('secondPassword').value) {
       this.passwordTheSame = true;
-      
-    }else{
+      let type = document.getElementById('userType') as HTMLSelectElement
+      this.user.userType = parseInt(type.value)
+      this.userService.registerUser(this.user).subscribe(ret => {
+        console.log(ret)
+        alert('Successfully registered!')
+        this.router.navigate(['/'])
+      })
+    } else{
       this.passwordTheSame = false;
       return;
     }
