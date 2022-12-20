@@ -14,12 +14,14 @@ namespace SEP.WebShop.Web.Controllers
     [ApiController]
     public class SubscriptionsController : ControllerBase
     {
+        private readonly ILogger<SubscriptionsController> _logger;
         private readonly ISubscriptionRepository _subscriptionRepository;
         private readonly SubscriptionService _subscriptionService;
         private readonly SubscriptionDtoFactory _subscriptionDtoFactory;
 
-        public SubscriptionsController(ISubscriptionRepository subscriptionRepository, SubscriptionService subscriptionService)
+        public SubscriptionsController(ILogger<SubscriptionsController> logger, ISubscriptionRepository subscriptionRepository, SubscriptionService subscriptionService)
         {
+            _logger = logger;
             _subscriptionRepository = subscriptionRepository;
             _subscriptionService = subscriptionService;
             _subscriptionDtoFactory = new SubscriptionDtoFactory();
@@ -28,6 +30,7 @@ namespace SEP.WebShop.Web.Controllers
         [HttpGet]
         public IActionResult GetAllSubscriptions()
         {
+            _logger.LogInformation("WebShop subscriptions GetAll executing...");
             return Ok(_subscriptionRepository.FindAll().Select(item => _subscriptionDtoFactory.Create(item)));
         }
 
@@ -35,7 +38,7 @@ namespace SEP.WebShop.Web.Controllers
         [HttpPost]
         public IActionResult MakeSubscription()
         {
-
+            _logger.LogInformation("WebShop subscriptions MakeSubscription executing...");
             //Maybe<WebShopUser> user = _subscriptionService.FindByUsername(authenticationRequest.Username);
 
             //if (user.HasNoValue)
