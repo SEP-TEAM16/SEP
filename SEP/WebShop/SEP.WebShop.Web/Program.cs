@@ -98,4 +98,21 @@ app.UseRouting();
 app.UseAuthorization();
 app.MapControllers();
 
+try
+{
+    HttpClient client = new HttpClient();
+    client.DefaultRequestHeaders.Add("senderPort", "7035");
+    client.DefaultRequestHeaders.Add("Content-Type", "application/json");
+    var response = await client.PostAsJsonAsync("https://localhost:7038/api/psp/subscribe", 0);
+    if (response.IsSuccessStatusCode)
+    {
+        SecurityHelper.SecurityKey = await response.Content.ReadAsStringAsync();
+    }
+}
+catch (Exception e)
+{
+    //TO-DO Console log error
+}
+
+
 app.Run();
