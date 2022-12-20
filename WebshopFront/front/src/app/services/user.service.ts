@@ -1,7 +1,8 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { WebShopUser } from 'src/app/model/company';
+import { WebShopUser } from 'src/app/model/webshopuser';
+import { AuthenticationResponse } from '../model/authentication-response';
 
 @Injectable({
   providedIn: 'root'
@@ -20,10 +21,10 @@ export class UserService {
     return this.http.post<WebShopUser>(this.registerUserUrl, user, {headers: headers});
   }
 
-  public loginUser(user: WebShopUser): Observable<WebShopUser> {
+  public loginUser(user: WebShopUser): Observable<AuthenticationResponse> {
     let headers = new HttpHeaders();
     headers.append('Content-Type', 'application/json');
 
-    return this.http.post<WebShopUser>(this.loginUserUrl, user, {headers: headers});
+    return this.http.post<AuthenticationResponse>(this.loginUserUrl, user, {headers: headers});
   }
 }

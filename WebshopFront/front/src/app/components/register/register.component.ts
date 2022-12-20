@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { WebShopUser } from 'src/app/model/company';
+import { WebShopUser } from 'src/app/model/webshopuser';
 import { UserService } from '../../services/user.service';
 
 @Component({

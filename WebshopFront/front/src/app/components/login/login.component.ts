@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { WebShopUser } from 'src/app/model/company';
+import { WebShopUser } from 'src/app/model/webshopuser';
 import { UserService } from '../../services/user.service';
 
 @Component({
@@ -26,6 +26,7 @@ export class LoginComponent implements OnInit {
   loginUser() {
     this.userService.loginUser(this.user).subscribe(ret => {
       this.notFounded = false
+      localStorage.setItem('token', ret.token)
       if(ret.userType === 1)
         this.router.navigate(['loggedCompany'])
       else
