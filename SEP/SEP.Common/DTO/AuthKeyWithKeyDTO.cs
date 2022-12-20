@@ -7,7 +7,8 @@ namespace SEP.Common.DTO
     {
         public string KeyForAutorization { get; set; }
 
-        public AuthKeyWithKeyDTO(string key, string route, string keyForAutorization, string type, PaymentMicroserviceType paymentMicroserviceType) : base(key, route, type, 0, paymentMicroserviceType)
+        public AuthKeyWithKeyDTO() : base() { }
+        public AuthKeyWithKeyDTO(string key, string route, string keyForAutorization, string type, int paymentMicroserviceType) : base(key, route, type, 0, paymentMicroserviceType)
         {
             KeyForAutorization = keyForAutorization;
         }

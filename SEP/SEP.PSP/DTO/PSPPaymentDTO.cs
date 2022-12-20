@@ -8,11 +8,12 @@ namespace SEP.PSP.DTO
     {
         public Merchant Merchant { get; set; }
         public string Key { get; set; }
-        PSPPaymentDTO() { }
+
+        public PSPPaymentDTO() : base() { }
         public PSPPaymentDTO(float amount, string name, string firstName, string lastName,
             string email, DateTime date, string currency, string description, string itemName,
-            PaymentApprovalType paymentApproval, Merchant merchant)
-            : base(amount, name, firstName, lastName, email, date, currency, description, itemName, paymentApproval)
+            PaymentApprovalType paymentApproval, string identityToken, Merchant merchant)
+            : base(amount, name, firstName, lastName, email, date, currency, description, itemName, paymentApproval, identityToken)
         {
             Merchant = merchant;
         }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SEP.PayPal.Infrastructure;
 
@@ -11,9 +12,11 @@ using SEP.PayPal.Infrastructure;
 namespace SEP.PayPal.Migrations
 {
     [DbContext(typeof(PayPalDbContext))]
-    partial class PayPalDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221219194108_IdentityToken")]
+    partial class IdentityToken
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

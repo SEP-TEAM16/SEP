@@ -5,7 +5,8 @@ namespace SEP.Common.DTO
 {
     public class AuthKeyDTO : AuthKey
     {
-        public AuthKeyDTO(string key, string route, string type, PaymentMicroserviceType paymentMicroserviceType) : base(key, route, type, 0, paymentMicroserviceType)
+        public AuthKeyDTO() : base() { }
+        public AuthKeyDTO(string key, string route, string type, int paymentMicroserviceType) : base(key, route, type, 0, paymentMicroserviceType)
         {
         }
     }

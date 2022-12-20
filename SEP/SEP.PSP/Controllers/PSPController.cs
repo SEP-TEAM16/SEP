@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using SEP.Common.Enums;
 using SEP.PSP.DTO;
 using SEP.PSP.Interfaces;
 using SEP.PSP.Models;
@@ -24,29 +24,43 @@ namespace SEP.PSP.Controllers
             _PSPService = PSPService;
         }
 
-        [HttpPost]
+        [HttpPost("payPaypal")]
         [Consumes(MediaTypeNames.Application.Json)]
-        public PSPPaymentDTO MakePayPalPayment([FromBody] PSPPaymentDTO PSPPaymentDTO)
+        public string MakePayPalPayment([FromBody] PSPPaymentDTO PSPPaymentDTO)
         {
             _logger.LogInformation("PSP make payment executing...");
             return _PSPService.MakePayPalPayment(PSPPaymentDTO);
-
         }
 
-        [HttpPost]
+        [HttpPost("subscribe")]
         [Consumes(MediaTypeNames.Application.Json)]
-        public string SubscribeWebshopToPayment([FromBody] SubscriptionDTO subscriptionDTO)
+        public string SubscribeWebshopToPayment([FromBody] int serviceType)
         {
             _logger.LogInformation("PSP make subscription executing...");
-            var subscription = _mapper.Map<Subscription>(subscriptionDTO);
+            var subscription = _mapper.Map<Subscription>(new SubscriptionDTO() { Merchant = new(), PaymentMicroserviceType = (PaymentMicroserviceType) serviceType});
             subscription.Merchant.Port = Request.Headers["senderPort"].ToString();
             if (subscription.Merchant.Port.IsNullOrEmpty())
-            {
-                return "";
-            }
+                return string.Empty;
+
             subscription = _PSPService.SubscribeWebshopToPayment(subscription);
             _logger.LogWarning("PSP make subscription ended...");
             return subscription.Merchant.Key;
+        }
+
+        [HttpPost("continue")]
+        [Consumes(MediaTypeNames.Application.Json)]
+        public void Continue([FromBody] PSPPayPalPaymentDTO pspPayPalPaymentDTO)
+        {
+            _logger.LogInformation("PSP continue payment executing...");
+            _PSPService.EditPayPalPayment(pspPayPalPaymentDTO.ConvertToPSPPayment());
+        }
+
+        [HttpPost("cancel")]
+        [Consumes(MediaTypeNames.Application.Json)]
+        public void Cancel([FromBody] PSPPayPalPaymentDTO pspPayPalPaymentDTO)
+        {
+            _logger.LogInformation("PSP cancel payment executing...");
+            _PSPService.EditPayPalPayment(pspPayPalPaymentDTO.ConvertToPSPPayment());
         }
     }
 }

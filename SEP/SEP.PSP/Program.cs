@@ -21,8 +21,8 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<PSPDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("PSPDatabase")));
-builder.Services.AddScoped<IPSPService, PSPService>();
+builder.Services.AddDbContext<PSPDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("PSPDatabase")), ServiceLifetime.Singleton);
+builder.Services.AddSingleton<IPSPService, PSPService>();
 builder.Services.AddAutoMapper(typeof(Program));
 
 var app = builder.Build();
@@ -50,8 +50,8 @@ var streamWriter = new StreamWriter(httpRequest.GetRequestStream());
 var appSettings = new ConfigurationBuilder().AddJsonFile("appsettings.Development.json").Build();
 var authKeys = new List<AuthKeyWithPortDTO>
 {
-    new AuthKeyWithPortDTO(appSettings.GetValue<string>("Info:Key"), appSettings.GetValue<string>("Info:Route"), int.Parse(appSettings.GetValue<string>("Info:Port")), false, appSettings.GetValue<string>("Info:RouteType"), PaymentMicroserviceType.PSP),
-    new AuthKeyWithPortDTO(appSettings.GetValue<string>("Info:Key"), appSettings.GetValue<string>("Info:Route1"), int.Parse(appSettings.GetValue<string>("Info:Port")), false, appSettings.GetValue<string>("Info:Route1Type"), PaymentMicroserviceType.PSP)
+    new AuthKeyWithPortDTO(appSettings.GetValue<string>("Info:Key"), appSettings.GetValue<string>("Info:Route1"), int.Parse(appSettings.GetValue<string>("Info:Port")), false, appSettings.GetValue<string>("Info:Route1Type"), 4),
+    new AuthKeyWithPortDTO(appSettings.GetValue<string>("Info:Key"), appSettings.GetValue<string>("Info:Route2"), int.Parse(appSettings.GetValue<string>("Info:Port")), false, appSettings.GetValue<string>("Info:Route2Type"), 4)
 };
 streamWriter.Write(jss.Serialize(authKeys));
 streamWriter.Close();

@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Nancy.Json;
+using SEP.Common.DTO;
 using SEP.Common.Enums;
 using SEP.Common.Models;
 using SEP.PSP.DTO;
@@ -7,6 +8,8 @@ using SEP.PSP.Infrastructure;
 using SEP.PSP.Interfaces;
 using SEP.PSP.Models;
 using System.Net;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace SEP.PSP.Services
 {
@@ -22,32 +25,33 @@ namespace SEP.PSP.Services
             AuthKeys = new List<AuthKey>();
             AuthKeys = GetAuthKeys();
             _mapper = mapper;
-            PSPDbContext.Metchants.RemoveRange(PSPDbContext.Metchants.ToList());
+            PSPDbContext.Merchants.RemoveRange(PSPDbContext.Merchants.ToList());
             PSPDbContext.Subscriptions.RemoveRange(PSPDbContext.Subscriptions.ToList());
             PSPDbContext.PSPPayments.RemoveRange(PSPDbContext.PSPPayments.ToList());
             PSPDbContext.SaveChanges();
         }
 
-        public PSPPaymentDTO MakePayPalPayment(PSPPaymentDTO PSPPaymentDTO)
+        public string MakePayPalPayment(PSPPaymentDTO pspPaymentDto)
         {
-            var merchant = _PSPDbContext.Metchants.Where(mer => mer.Key.Equals(PSPPaymentDTO.Key)).First();
-            if (merchant == null)
-            {
+            var merchant = _PSPDbContext.Merchants.FirstOrDefault(mer => mer.Key.Equals(pspPaymentDto.Key));
+            if (merchant is null)
                 return null;
-            }
-            var payPalPayment = _mapper.Map<PSPPayment>(PSPPaymentDTO);
+
+            var payPalPayment = _mapper.Map<PSPPayment>(pspPaymentDto);
             var authToken = GetBearerToken(PaymentMicroserviceType.Paypal);
 
             var getdata = string.Empty;
             var jss = new JavaScriptSerializer();
-            var authKey = AuthKeys.Where(a => a.PaymentMicroserviceType.Equals(PaymentMicroserviceType.Paypal)).First();
+            var authKey = AuthKeys.FirstOrDefault(a => a.PaymentMicroserviceType.Equals(PaymentMicroserviceType.Paypal));
 
-            var httpRequest = (HttpWebRequest)HttpWebRequest.Create("https://localhost:5050/" + authKey.Route);
+            var httpRequest = (HttpWebRequest) HttpWebRequest.Create("https://localhost:5050/" + authKey.Route);
             httpRequest.Method = "POST";
             httpRequest.ContentType = "application/json";
             httpRequest.Headers.Add("Authorization", $"Bearer {authToken.Token}");
             var streamWriter = new StreamWriter(httpRequest.GetRequestStream());
-            streamWriter.Write(payPalPayment);
+            var pspPayPalPaymentDto = payPalPayment.ConvertToPSPPayPalPaymentDTO();
+            pspPayPalPaymentDto.MerchantId = merchant.Id.ToString();
+            streamWriter.Write(JsonSerializer.Serialize(pspPayPalPaymentDto));
             streamWriter.Close();
 
             using (var webresponse = (HttpWebResponse)httpRequest.GetResponse())
@@ -57,22 +61,42 @@ namespace SEP.PSP.Services
                 getdata = reader.ReadToEnd();
             }
 
-            payPalPayment = jss.Deserialize<PSPPayment>(getdata);
+            payPalPayment.PaymentApproval = PaymentApprovalType.Pending;
+            payPalPayment.Date = DateTime.Now;
+            payPalPayment.Currency = "USD";
+            payPalPayment.Merchant = merchant;
             _PSPDbContext.PSPPayments.Add(payPalPayment);
             _PSPDbContext.SaveChanges();
-            return _mapper.Map<PSPPaymentDTO>(payPalPayment);
+            return getdata;
+        }
 
+        public void EditPayPalPayment(PSPPayment PSPPayment)
+        {
+            var payPalPayment = _PSPDbContext.PSPPayments.FirstOrDefault(payment => payment.IdentityToken.Equals(PSPPayment.IdentityToken));
+            
+            if (payPalPayment is null)
+            {
+                _logger.LogWarning("Payment could not be found!");
+                return;
+            }
 
+            payPalPayment.PaymentApproval = PSPPayment.PaymentApproval;
+            payPalPayment.Date = PSPPayment.Date;
+            payPalPayment.Currency = PSPPayment.Currency;
+
+            _PSPDbContext.SaveChanges();
         }
 
         public Subscription SubscribeWebshopToPayment(Subscription subscription)
         {
-            Merchant merchant = _PSPDbContext.Metchants.Where(mer => mer.Port.Equals(subscription.Merchant.Port)).First();
+            var merchant = _PSPDbContext.Merchants.FirstOrDefault(mer => mer.Port.Equals(subscription.Merchant.Port));
             if (merchant == null)
             {
-                merchant = new Merchant();
-                merchant.Port = subscription.Merchant.Port;
-                merchant.Key = "sadasdnasd"; //random kljuc
+                merchant = new Merchant
+                {
+                    Port = subscription.Merchant.Port,
+                    Key = "sadasdnasd" //random kljuc
+                };
                 subscription.Merchant = merchant;
                 _PSPDbContext.Subscriptions.Add(subscription);
             } else {
@@ -125,13 +149,13 @@ namespace SEP.PSP.Services
         {
             var getdata = string.Empty;
             var jss = new JavaScriptSerializer();
-            var authKey = AuthKeys.Where(a => a.PaymentMicroserviceType.Equals(paymentMicroserviceType)).First();
+            var authKey = AuthKeys.FirstOrDefault(a => a.PaymentMicroserviceType.Equals(paymentMicroserviceType));
 
-            var httpRequest = (HttpWebRequest)HttpWebRequest.Create("https://localhost:5050/auth/"+authKey.Route);
+            var httpRequest = (HttpWebRequest)HttpWebRequest.Create("https://localhost:5050/auth/" + authKey.Route);
             httpRequest.Method = "POST";
             httpRequest.ContentType = "application/json";
             var streamWriter = new StreamWriter(httpRequest.GetRequestStream());
-            streamWriter.Write(authKey.Key);
+            streamWriter.Write(jss.Serialize(new StringDTO(authKey.Key)));
             streamWriter.Close();
 
             using (var webresponse = (HttpWebResponse)httpRequest.GetResponse())

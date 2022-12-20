@@ -10,6 +10,7 @@ namespace SEP.Common.Models
         public string Type { get; set; }
         public PaymentMicroserviceType PaymentMicroserviceType { get; set; }
 
+        public AuthKey() { }
         public AuthKey(string key, string route, string type, int id, PaymentMicroserviceType paymentMicroserviceType)
         {
             Id = id;
@@ -17,6 +18,15 @@ namespace SEP.Common.Models
             Route = route;
             Type = type;
             PaymentMicroserviceType = paymentMicroserviceType;
+        }
+
+        public AuthKey(string key, string route, string type, int id, int paymentMicroserviceType)
+        {
+            Id = id;
+            Key = key;
+            Route = route;
+            Type = type;
+            PaymentMicroserviceType = (PaymentMicroserviceType) paymentMicroserviceType;
         }
     }
 }

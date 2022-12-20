@@ -11,13 +11,12 @@ namespace SEP.PSP.Infrastructure
 
         public DbSet<PSPPayment> PSPPayments { get; set; }
         public DbSet<Subscription> Subscriptions { get; set; }
-        public DbSet<Merchant> Metchants { get; set; }
+        public DbSet<Merchant> Merchants { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(PSPDbContext).Assembly);
-
         }
     }
 }

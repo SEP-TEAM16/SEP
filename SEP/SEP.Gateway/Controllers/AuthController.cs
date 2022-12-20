@@ -57,12 +57,12 @@ namespace SEP.Gateway.Controllers
         [HttpPost]
         [Route("{route}")]
         [AllowAnonymous]
-        public ActionResult<AuthToken> GetPayPalAuthentication(string route, [FromBody] string key)
+        public ActionResult<AuthToken> GetPayPalAuthentication(string route, [FromBody] StringDTO key)
         {
             _logger.LogInformation("Gateway get PayPal authentication executing...");
             foreach (var authKey in AuthKeys)
             {
-                if (key.Equals(authKey.Key) && route.Equals(authKey.Route))
+                if (key.Value.Equals(authKey.Key) && route.Equals(authKey.Route))
                     return PayPalApiTokenService.GenerateToken(authKey.Key);
             }
 
@@ -88,7 +88,7 @@ namespace SEP.Gateway.Controllers
             var authKeysWithKeyDTOs = new List<AuthKeyWithKeyDTO>();
             foreach (var key in keys)
             {
-                authKeysWithKeyDTOs.Add(new AuthKeyWithKeyDTO(key.Key, key.Route, appSettings.GetValue<string>("Secrets:AutorizationKey"), key.Type, key.PaymentMicroserviceType));
+                authKeysWithKeyDTOs.Add(new AuthKeyWithKeyDTO(key.Key, key.Route, appSettings.GetValue<string>("Secrets:AutorizationKey"), key.Type, (int) key.PaymentMicroserviceType));
             }
             streamWriter.Write(jss.Serialize(authKeysWithKeyDTOs));
             streamWriter.Close();
@@ -107,6 +107,7 @@ namespace SEP.Gateway.Controllers
                 using (var r = new StreamReader("microservices.json"))
                 {
                     var json = r.ReadToEnd();
+                    r.Close();
                     item = JsonConvert.DeserializeObject<MicroservicesDTO>(json);
                 }
 

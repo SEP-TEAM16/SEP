@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SEP.PSP.Infrastructure;
 
@@ -11,9 +12,11 @@ using SEP.PSP.Infrastructure;
 namespace SEP.PSP.Migrations
 {
     [DbContext(typeof(PSPDbContext))]
-    partial class PSPDbContextModelSnapshot : ModelSnapshot
+    [Migration("20221219193721_IdentityToken")]
+    partial class IdentityToken
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -40,7 +43,7 @@ namespace SEP.PSP.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Merchants");
+                    b.ToTable("Metchants");
                 });
 
             modelBuilder.Entity("SEP.PSP.Models.PSPPayment", b =>

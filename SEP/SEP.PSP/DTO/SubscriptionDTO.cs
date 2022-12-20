@@ -8,7 +8,12 @@ namespace SEP.PSP.DTO
     {
         public Merchant Merchant { get; set; }
         public PaymentMicroserviceType PaymentMicroserviceType { get; set; }
+
         public SubscriptionDTO() { }
+        public SubscriptionDTO(PaymentMicroserviceType paymentMicroserviceType)
+        {
+            PaymentMicroserviceType = paymentMicroserviceType;
+        }
         public SubscriptionDTO(Merchant merchant, PaymentMicroserviceType paymentMicroserviceType)
         {
             Merchant = merchant;

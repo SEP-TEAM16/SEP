@@ -10,6 +10,7 @@
         public AuthentificationOptionsDTO AuthenticationOptions { get; set; }
         public List<DownstreamHostAndPortsDTO> DownstreamHostAndPorts { get; set; }
 
+        public RouteDTO() { }
         public RouteDTO(string upstreamPathTemplate, List<string> upstreamHttpMethod, string downstreamPathTemplate, string downstreamScheme, AuthentificationOptionsDTO authentificationOptions, List<DownstreamHostAndPortsDTO> downstreamHostAndPorts, UpstreamHeaderTransformDTO upstreamHeaderTransform)
         {
             UpstreamPathTemplate = upstreamPathTemplate;

@@ -18,8 +18,8 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContext<AuthorizationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("AuthorizationDatabase")));
-builder.Services.AddScoped<IAuthorizationService, AuthorizationService>();
+builder.Services.AddDbContext<AuthorizationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("AuthorizationDatabase")), ServiceLifetime.Singleton);
+builder.Services.AddSingleton<IAuthorizationService, AuthorizationService>();
 builder.Services.AddAutoMapper(typeof(Program));
 
 var app = builder.Build();
