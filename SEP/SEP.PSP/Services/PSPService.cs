@@ -106,6 +106,36 @@ namespace SEP.PSP.Services
             payPalPayment.Currency = PSPPayment.Currency;
 
             _PSPDbContext.SaveChanges();
+
+            try
+            {
+                var jss = new JavaScriptSerializer();
+                var getdata = string.Empty;
+                var httpRequest = PSPPayment.PaymentApproval == PaymentApprovalType.Success 
+                    ? (HttpWebRequest)HttpWebRequest.Create("https://localhost:7035/api/payment/continue")
+                    : (HttpWebRequest)HttpWebRequest.Create("https://localhost:7035/api/payment/cancel");
+                httpRequest.Method = "POST";
+                httpRequest.ContentType = "application/json";
+
+                var appSettings = new ConfigurationBuilder().AddJsonFile("appsettings.Development.json").Build();
+                httpRequest.Headers["key"] = appSettings.GetValue<string>("Secrets:AutorizationKey");
+
+                var streamWriter = new StreamWriter(httpRequest.GetRequestStream());
+                streamWriter.Write(jss.Serialize(new StringDTO(PSPPayment.IdentityToken)));
+                streamWriter.Close();
+
+                using (var webresponse = (HttpWebResponse)httpRequest.GetResponse())
+                using (var stream = webresponse.GetResponseStream())
+                using (var reader = new StreamReader(stream))
+                {
+                    getdata = reader.ReadToEnd();
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogWarning("Couldn't contact webshop");
+            }
+
         }
 
         public Subscription SubscribeWebshopToPayment(Subscription subscription)

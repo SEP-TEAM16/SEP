@@ -12,8 +12,9 @@ namespace SEP.WebShop.Core.Entities
         public Currency Currency { get; }
         public Guid SubscriptionId { get; }
         public PaymentStatus PaymentStatus { get; }
+        public string IdentityToken { get; }
 
-        private Payment(Guid id, Name itemName, Price price, Currency currency, Guid subscriptionId, PaymentStatus paymentStatus)
+        private Payment(Guid id, Name itemName, Price price, Currency currency, Guid subscriptionId, PaymentStatus paymentStatus, string identityToken)
         {
             Id = id;
             ItemName = itemName;
@@ -21,10 +22,11 @@ namespace SEP.WebShop.Core.Entities
             Currency = currency;
             SubscriptionId = subscriptionId;
             PaymentStatus = paymentStatus;
+            IdentityToken = identityToken;
         }
 
 
-        public static Result<Payment> Create(Guid id, string name, double price, string currency, Guid subscriptionId, PaymentStatus paymentStatus)
+        public static Result<Payment> Create(Guid id, string name, double price, string currency, Guid subscriptionId, PaymentStatus paymentStatus, string identityToken)
         {
             Result<Name> nameResult = Name.Create(name);
             Result<Price> priceResult = Price.Create(price);
@@ -33,9 +35,9 @@ namespace SEP.WebShop.Core.Entities
             {
                 return Result.Failure<Payment>("Payment creating failed because of invalid parameters");
             }
-            return Result.Success(new Payment(id, nameResult.Value, priceResult.Value, currencyResult.Value, subscriptionId, paymentStatus));
+            return Result.Success(new Payment(id, nameResult.Value, priceResult.Value, currencyResult.Value, subscriptionId, paymentStatus, identityToken));
         }
 
-        public Payment Update(Payment payment) => Create(Id, payment.ItemName, payment.Price, payment.Currency, payment.SubscriptionId, payment.PaymentStatus).Value;
+        public Payment Update(Payment payment) => Create(Id, payment.ItemName, payment.Price, payment.Currency, payment.SubscriptionId, payment.PaymentStatus, payment.IdentityToken).Value;
     }
 }

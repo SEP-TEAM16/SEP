@@ -20,26 +20,27 @@ namespace SEP.WebShop.Persistence.Repositories
 
         public void Add(Payment entity)
         {
-            using SqlCommand command = new SqlCommand("insert into dbo.Payments(id, itemName, price, currency, subscriptionId, paymentStatus) values(@id, @itemName, @price, @currency, @subscriptionId, @paymentStatus)", _connection, _transaction);
+            using SqlCommand command = new SqlCommand("insert into dbo.Payments(id, itemName, price, currency, subscriptionId, paymentStatus, identityToken) values(@id, @itemName, @price, @currency, @subscriptionId, @paymentStatus, @identityToken)", _connection, _transaction);
             command.Parameters.AddWithValue("@id", entity.Id);
             command.Parameters.AddWithValue("@itemName", entity.ItemName.ToString());
             command.Parameters.AddWithValue("@price", entity.Price.ToDouble());
             command.Parameters.AddWithValue("@currency", entity.Currency.ToString());
             command.Parameters.AddWithValue("@subscriptionId", entity.SubscriptionId);
             command.Parameters.AddWithValue("@paymentStatus", entity.PaymentStatus);
+            command.Parameters.AddWithValue("@identityToken", entity.IdentityToken);
             command.ExecuteNonQuery();
         }
 
         public IEnumerable<Payment> FindAll()
         {
             List<Payment> payments = new List<Payment>();
-            using SqlCommand command = new SqlCommand("select id, itemName, price, currency, subscriptionId, paymentStatus from dbo.Payments", _connection, _transaction);
+            using SqlCommand command = new SqlCommand("select id, itemName, price, currency, subscriptionId, paymentStatus, identityToken from dbo.Payments", _connection, _transaction);
 
             using (SqlDataReader reader = command.ExecuteReader())
             {
                 while (reader.Read())
                 {
-                    payments.Add(Payment.Create(reader.GetGuid("id"), reader.GetString("itemName"), reader.GetDouble("price"), reader.GetString("currency"), reader.GetGuid("subscriptionId"), (PaymentStatus)reader.GetInt32("paymentStatus")).Value);
+                    payments.Add(Payment.Create(reader.GetGuid("id"), reader.GetString("itemName"), reader.GetDouble("price"), reader.GetString("currency"), reader.GetGuid("subscriptionId"), (PaymentStatus)reader.GetInt32("paymentStatus"), reader.GetString("identityToken")).Value);
                 }
             }
             return payments;
@@ -47,7 +48,7 @@ namespace SEP.WebShop.Persistence.Repositories
 
         public Maybe<Payment> FindById(Guid id)
         {
-            using SqlCommand command = new SqlCommand("select id, itemName, price, currency, subscriptionId, paymentStatus from dbo.Payments where id = @id", _connection, _transaction);
+            using SqlCommand command = new SqlCommand("select id, itemName, price, currency, subscriptionId, paymentStatus, identityToken from dbo.Payments where id = @id", _connection, _transaction);
             command.Parameters.AddWithValue("@id", id);
             using (SqlDataReader reader = command.ExecuteReader())
             {
@@ -55,7 +56,7 @@ namespace SEP.WebShop.Persistence.Repositories
                 {
                     return Maybe<Payment>.None;
                 }
-                return Payment.Create(reader.GetGuid("id"), reader.GetString("itemName"), reader.GetDouble("price"), reader.GetString("currency"), reader.GetGuid("subscriptionId"), (PaymentStatus)reader.GetInt32("paymentStatus")).Value;
+                return Payment.Create(reader.GetGuid("id"), reader.GetString("itemName"), reader.GetDouble("price"), reader.GetString("currency"), reader.GetGuid("subscriptionId"), (PaymentStatus)reader.GetInt32("paymentStatus"), reader.GetString("identityToken")).Value;
             }
         }
 
@@ -68,14 +69,29 @@ namespace SEP.WebShop.Persistence.Repositories
 
         public void Update(Payment entity)
         {
-            using SqlCommand command = new SqlCommand("update dbo.Payments set itemName = @itemName, price = @price, currency = @currency, subscriptionId = @subscriptionId, paymentStatus = @paymentStatus where id = @id", _connection, _transaction);
+            using SqlCommand command = new SqlCommand("update dbo.Payments set itemName = @itemName, price = @price, currency = @currency, subscriptionId = @subscriptionId, paymentStatus = @paymentStatus, identityToken = @identityToken where id = @id", _connection, _transaction);
             command.Parameters.AddWithValue("@id", entity.Id);
             command.Parameters.AddWithValue("@itemName", entity.ItemName.ToString());
             command.Parameters.AddWithValue("@price", entity.Price.ToDouble());
             command.Parameters.AddWithValue("@currency", entity.Currency.ToString());
             command.Parameters.AddWithValue("@subscriptionId", entity.SubscriptionId);
             command.Parameters.AddWithValue("@paymentStatus", entity.PaymentStatus);
+            command.Parameters.AddWithValue("@identityToken", entity.IdentityToken);
             command.ExecuteNonQuery();
+        }
+
+        public Maybe<Payment> FindByIdentityToken(string identityToken)
+        {
+            using SqlCommand command = new SqlCommand("select id, itemName, price, currency, subscriptionId, paymentStatus, identityToken from dbo.Payments where identityToken = @identityToken", _connection, _transaction);
+            command.Parameters.AddWithValue("@identityToken", identityToken);
+            using (SqlDataReader reader = command.ExecuteReader())
+            {
+                if (!reader.Read())
+                {
+                    return Maybe<Payment>.None;
+                }
+                return Payment.Create(reader.GetGuid("id"), reader.GetString("itemName"), reader.GetDouble("price"), reader.GetString("currency"), reader.GetGuid("subscriptionId"), (PaymentStatus)reader.GetInt32("paymentStatus"), reader.GetString("identityToken")).Value;
+            }
         }
     }
 }

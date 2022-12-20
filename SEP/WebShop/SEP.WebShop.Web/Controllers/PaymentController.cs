@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using CSharpFunctionalExtensions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Nancy.Json;
 using SEP.WebShop.Core.Entities;
@@ -21,14 +22,16 @@ namespace SEP.WebShop.Web.Controllers
         private readonly ILogger<PaymentController> _logger;
         private readonly PaymentService _paymentService;
         private readonly ISubscriptionRepository _subscriptionRepository;
+        private readonly IPaymentRepository _paymentRepository;
         private readonly IWebShopUserRepository _userRepository;
         private readonly IJwtUtils _jwtUtils;
         private IMessageProducer _messageProducer;
 
-        public PaymentController(ILogger<PaymentController> logger, PaymentService paymentService, ISubscriptionRepository subscriptionRepository, IWebShopUserRepository userRepository, IJwtUtils jwtUtils, IMessageProducer messageProducer)
+        public PaymentController(ILogger<PaymentController> logger, PaymentService paymentService, IPaymentRepository paymentRepository, ISubscriptionRepository subscriptionRepository, IWebShopUserRepository userRepository, IJwtUtils jwtUtils, IMessageProducer messageProducer)
         {
             _logger = logger;
             _paymentService = paymentService;
+            _paymentRepository = paymentRepository; 
             _subscriptionRepository = subscriptionRepository;
             _userRepository = userRepository;
             _jwtUtils = jwtUtils;
@@ -61,7 +64,7 @@ namespace SEP.WebShop.Web.Controllers
             paymentDto.Amount = 100;
             paymentDto.Description = "description";
             paymentDto.Key = "sadasdnasd";
-            var payment = _paymentService.Create(Payment.Create(Guid.NewGuid(), paymentDto.ItemName, paymentDto.Amount, paymentDto.Currency, Guid.NewGuid(), PaymentStatus.pending).Value);
+            var payment = _paymentService.Create(Payment.Create(Guid.NewGuid(), paymentDto.ItemName, paymentDto.Amount, paymentDto.Currency, Guid.NewGuid(), PaymentStatus.pending, paymentDto.IdentityToken).Value);
             //_messageProducer.SendMessage<PaymentDto>(paymentDto, "makePayment", "7035");
 
             var jss = new JavaScriptSerializer();
@@ -75,6 +78,42 @@ namespace SEP.WebShop.Web.Controllers
             streamWriter.Close();
             httpRequest.GetResponse();
 
+            return Ok();
+        }
+
+        [HttpPost("continue")]
+        [AllowAnonymous]
+        public IActionResult ContinuePayment(string identityToken)
+        {
+            _logger.LogInformation("WebShop payment continue reached. Payment successful...");
+            Maybe<Payment> paymentResult = _paymentRepository.FindByIdentityToken(identityToken);
+            if (paymentResult.HasNoValue)
+            {
+                return BadRequest("Payment with specified identity token doesn't exist");
+            }
+            var payment = paymentResult.Value;
+            if (_paymentService.Update(Payment.Create(payment.Id, payment.ItemName, payment.Price, payment.Currency, payment.SubscriptionId, PaymentStatus.success, payment.IdentityToken).Value).IsFailure)
+            {
+                return BadRequest("Couldn't update payment");
+            }
+            return Ok();
+        }
+
+        [HttpPost("cancel")]
+        [AllowAnonymous]
+        public IActionResult CancelPayment(string identityToken)
+        {
+            _logger.LogInformation("WebShop payment cancel reached. Payment canceled...");
+            Maybe<Payment> paymentResult = _paymentRepository.FindByIdentityToken(identityToken);
+            if (paymentResult.HasNoValue)
+            {
+                return BadRequest("Payment with specified identity token doesn't exist");
+            }
+            var payment = paymentResult.Value;
+            if(_paymentService.Update(Payment.Create(payment.Id, payment.ItemName, payment.Price, payment.Currency, payment.SubscriptionId, PaymentStatus.canceled, payment.IdentityToken).Value).IsFailure)
+            {
+                return BadRequest("Couldn't update payment");
+            }
             return Ok();
         }
     }
