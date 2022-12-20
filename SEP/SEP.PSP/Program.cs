@@ -57,4 +57,7 @@ streamWriter.Write(jss.Serialize(authKeys));
 streamWriter.Close();
 httpRequest.GetResponse();
 
+var buildServiceProvider = builder.Services.BuildServiceProvider();
+var someSingletonService = buildServiceProvider.GetRequiredService<IPSPService>();
+
 app.Run();

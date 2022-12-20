@@ -5,6 +5,7 @@ using SEP.WebShop.Core.Services;
 using SEP.WebShop.Persistence.Repositories;
 using SEP.WebShop.Web.Authorization;
 using SEP.WebShop.Web.Helpers;
+using SEP.WebShop.Web.RabbitMQ;
 using Serilog;
 using System.Data;
 using System.Data.SqlClient;
@@ -80,6 +81,8 @@ builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 builder.Services.AddScoped<WebShopUserService>();
 builder.Services.AddScoped<SubscriptionOptionService>();
 builder.Services.AddScoped<SubscriptionService>();
+builder.Services.AddScoped<PaymentService>();
+builder.Services.AddScoped<IMessageProducer, RabbitMQProducer>();
 
 builder.Services.AddControllersWithViews();
 
