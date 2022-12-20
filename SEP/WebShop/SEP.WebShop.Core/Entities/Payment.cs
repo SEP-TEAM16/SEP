@@ -35,5 +35,7 @@ namespace SEP.WebShop.Core.Entities
             }
             return Result.Success(new Payment(id, nameResult.Value, priceResult.Value, currencyResult.Value, subscriptionId, paymentStatus));
         }
+
+        public Payment Update(Payment payment) => Create(Id, payment.ItemName, payment.Price, payment.Currency, payment.SubscriptionId, payment.PaymentStatus).Value;
     }
 }

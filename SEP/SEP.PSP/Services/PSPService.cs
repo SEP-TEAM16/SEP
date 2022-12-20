@@ -1,5 +1,8 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Connections;
 using Nancy.Json;
+using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
 using SEP.Common.DTO;
 using SEP.Common.Enums;
 using SEP.Common.Models;
@@ -8,6 +11,7 @@ using SEP.PSP.Infrastructure;
 using SEP.PSP.Interfaces;
 using SEP.PSP.Models;
 using System.Net;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
@@ -29,6 +33,23 @@ namespace SEP.PSP.Services
             PSPDbContext.Subscriptions.RemoveRange(PSPDbContext.Subscriptions.ToList());
             PSPDbContext.PSPPayments.RemoveRange(PSPDbContext.PSPPayments.ToList());
             PSPDbContext.SaveChanges();
+
+           /* var factory = new ConnectionFactory { HostName = "localhost" };
+            var connection = factory.CreateConnection();
+            using var channel = connection.CreateModel();
+            channel.QueueDeclare("makePayment", exclusive: false);
+
+            var consumer = new EventingBasicConsumer(channel);
+            consumer.Received += (model, eventArgs) =>
+            {
+                var body = eventArgs.Body.ToArray();
+                var message = Encoding.UTF8.GetString(body);
+
+                MakePayPalPayment(JsonSerializer.Deserialize<PSPPaymentDTO>(message));
+            };
+
+            channel.BasicConsume(queue: "makePayment", autoAck: true, consumer: consumer);
+            Console.ReadKey();*/
         }
 
         public string MakePayPalPayment(PSPPaymentDTO pspPaymentDto)
