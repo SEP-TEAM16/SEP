@@ -1,15 +1,17 @@
-<div style="background-color: rgba(128, 128, 128, 0.259);"> 
-    <div class="row">
+<div style="background-color: rgba(128, 128, 128, 0.259);">
+    <div class="row" *ngIf="options.length > 0">
         <div class="col-5">
-            <label style=" font-size: 20px; margin-top: 50px; margin-left: 250px;"> Choose your service package: </label>
+            <label style=" font-size: 20px; margin-top: 50px; margin-left: 250px;"> Choose your service package:
+            </label>
         </div>
         <div class="col-3" style=" font-size: 20px; margin-top: 50px;">
-            <input type="radio" id="monthaccess" name="fav_language" value="One time access for a month" style="margin-left: 10px;">
-            <label for="One time access for a month">One time access for a month</label><br>
-            <input type="radio" id="monthsubscribe" name="fav_language" value="Subscribe for a month">
-            <label for="Subscribe for a month">Subscribe for a month</label><br>
-            <input type="radio" id="yearsubscribe" name="fav_language" value="Subscribe for a year">
-            <label for="Subscribe for a year">Subscribe for a year</label> 
+
+            <div class="subscription-option" *ngFor="let item of options">
+                <input type="radio" id="{{'sub-' + item.id}}" name="{{item.name}}" value="{{item.id}}"
+                    (click)="onOptionSelect(item.subscriptionType)" style="margin-left: 10px;" [checked]="checked === item.subscriptionType">
+                  <label for="{{'sub-' + item.id}}">{{item.name}}</label><br>
+
+            </div>
         </div>
     </div>
     <div class="row">
