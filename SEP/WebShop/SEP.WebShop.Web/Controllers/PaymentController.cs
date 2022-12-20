@@ -53,7 +53,8 @@ namespace SEP.WebShop.Web.Controllers
             {
                 paymentDto.FirstName = user.Name.ToString().Split(" ")[0];
                 paymentDto.LastName = user.Name.ToString().Split(" ")[1];
-            } else
+            } 
+            else
             {
                 paymentDto.FirstName = user.Name.ToString();
                 paymentDto.LastName = user.Name.ToString();
@@ -76,9 +77,16 @@ namespace SEP.WebShop.Web.Controllers
             var streamWriter = new StreamWriter(httpRequest.GetRequestStream());
             streamWriter.Write(jss.Serialize(paymentDto));
             streamWriter.Close();
-            httpRequest.GetResponse();
 
-            return Ok();
+            var getdata = string.Empty;
+            using (var webresponse = (HttpWebResponse)httpRequest.GetResponse())
+            using (var stream = webresponse.GetResponseStream())
+            using (var reader = new StreamReader(stream))
+            {
+                getdata = reader.ReadToEnd();
+            }
+
+            return Ok(getdata);
         }
 
         [HttpPost("continue")]
