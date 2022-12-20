@@ -5,6 +5,7 @@ using SEP.WebShop.Core.Services;
 using SEP.WebShop.Persistence.Repositories;
 using SEP.WebShop.Web.Authorization;
 using SEP.WebShop.Web.Helpers;
+using Serilog;
 using System.Data;
 using System.Data.SqlClient;
 using System.Text;
@@ -12,6 +13,13 @@ using System.Text;
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 var builder = WebApplication.CreateBuilder(args);
+
+var logger = new LoggerConfiguration()
+    .ReadFrom.Configuration(builder.Configuration)
+    .Enrich.FromLogContext()
+    .CreateLogger();
+builder.Logging.ClearProviders();
+builder.Logging.AddSerilog(logger);
 
 builder.Services.AddCors(options =>
 {

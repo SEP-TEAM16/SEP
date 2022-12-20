@@ -16,14 +16,17 @@ namespace SEP.WebShop.Web.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
+        private readonly ILogger<UsersController> _logger;
         private readonly IWebShopUserRepository _webShopUserRepository;
         private readonly IJwtUtils _jwtUtils;
         private readonly WebShopUserService _webShopUserService;
         private WebShopUserDtoFactory usersDtoFactory;
         private WebShopUserFactory usersFactory;
 
-        public UsersController(IWebShopUserRepository webShopUserRepository, WebShopUserService webShopUserService, IJwtUtils jwtUtils)
+        public UsersController(ILogger<UsersController> logger, IWebShopUserRepository webShopUserRepository, 
+            WebShopUserService webShopUserService, IJwtUtils jwtUtils)
         {
+            _logger = logger;
             _webShopUserRepository = webShopUserRepository;
             _jwtUtils = jwtUtils;
             _webShopUserService = webShopUserService;
@@ -35,16 +38,20 @@ namespace SEP.WebShop.Web.Controllers
         [HttpPost("auth")]
         public IActionResult Authenticate(AuthenticationRequest authenticationRequest)
         {
-
+            _logger.LogInformation("WebShop user authenticate executing...");
             Maybe<WebShopUser> user = _webShopUserRepository.FindByUsername(authenticationRequest.Username);
 
             if (user.HasNoValue)
-                return BadRequest(new { message = "User with specified username does not exists" });
-
+            {
+                _logger.LogWarning($"User with specified username ({authenticationRequest.Username}) does not exist.");
+                return BadRequest(new { message = "User with specified username does not exist" });
+            }
+            
             bool isPasswordVerified = user.Value.Password.Verify(authenticationRequest.Password);
 
             if (!isPasswordVerified)
             {
+                _logger.LogWarning("Password you entered does not match user's password.");
                 return BadRequest(new { message = "Password you entered does not match user's password" });
             }
 
@@ -57,20 +64,24 @@ namespace SEP.WebShop.Web.Controllers
         [HttpPost]
         public IActionResult Register(WebShopUserDto user)
         {
+            _logger.LogInformation("WebShop user authenticate executing...");
             Result<WebShopUser> result = usersFactory.Create(Guid.NewGuid(), user.Username, user.Password, user.EmailAddress, user.Name, user.City, user.Street, user.UserType);
             if (result.IsFailure)
             {
+                _logger.LogWarning("WebShop user creation error.");
                 return BadRequest(result.Error);
             }
             Result createUserResult = _webShopUserService.Create(result.Value);
 
             if (createUserResult.IsFailure)
+            {
+                _logger.LogWarning("WebShop user save to database error.");
                 return BadRequest(createUserResult.Error);
+            }
 
             WebShopUserDto createdUser = usersDtoFactory.Create(result.Value);
 
             return Created("api/users/" + result.Value.Id.ToString(), createdUser);
-
         }
 
     }
