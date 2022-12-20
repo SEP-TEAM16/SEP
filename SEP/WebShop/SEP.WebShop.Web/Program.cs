@@ -67,6 +67,7 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IWebShopUserRepository, WebShopUserRepository>();
 builder.Services.AddScoped<ISubscriptionOptionRepository, SubscriptionOptionRepository>();
 builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
+builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
 
 builder.Services.AddScoped<WebShopUserService>();
 builder.Services.AddScoped<SubscriptionOptionService>();

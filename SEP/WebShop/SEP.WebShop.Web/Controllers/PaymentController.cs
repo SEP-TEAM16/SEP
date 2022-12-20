@@ -1,0 +1,27 @@
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using SEP.WebShop.Core.Repositories;
+
+namespace SEP.WebShop.Web.Controllers
+{
+    [Route("api/payment")]
+    [Authorize]
+    [ApiController]
+    public class PaymentController : ControllerBase
+    {
+        private readonly IPaymentRepository _paymentRepository;
+        private readonly ISubscriptionRepository _subscriptionRepository;
+
+        public PaymentController(IPaymentRepository paymentRepository, ISubscriptionRepository subscriptionRepository)
+        {
+            _paymentRepository = paymentRepository;
+            _subscriptionRepository = subscriptionRepository;
+        }
+
+        [HttpPost]
+        public IActionResult MakeAPayment()
+        {
+            return Ok();
+        }
+    }
+}

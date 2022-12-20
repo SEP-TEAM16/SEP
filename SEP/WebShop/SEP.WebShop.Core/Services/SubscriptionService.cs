@@ -56,7 +56,7 @@ namespace SEP.WebShop.Core.Services
                 return Result.Failure("Company with ID specified doesn't exist");
             DateTime expirationDateTime = 
                 (subscriptionOption.SubscriptionType == SubscriptionType.annual) ? DateTime.Now.AddYears(1) : DateTime.Now.AddMonths(1);
-            Result<Subscription> subscriptionResult = Subscription.Create(Guid.NewGuid(), expirationDateTime, subscriptionOption, company);
+            Result<Subscription> subscriptionResult = Subscription.Create(Guid.NewGuid(), expirationDateTime, SubscriptionStatus.created,  subscriptionOption, company);
             if (subscriptionResult.IsFailure)
                 return Result.Failure(subscriptionResult.Error);
             _subscriptionRepository.Add(subscriptionResult.Value);

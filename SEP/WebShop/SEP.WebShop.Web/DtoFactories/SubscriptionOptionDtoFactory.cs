@@ -7,7 +7,7 @@ namespace SEP.WebShop.Web.DtoFactories
     {
         public SubscriptionOptionDto Create(SubscriptionOption option)
         {
-            return new SubscriptionOptionDto(option.Id, option.SubscriptionType, option.Name);
+            return new SubscriptionOptionDto(option.Id, option.SubscriptionType, option.Name, option.Price, option.Currency);
         }
     }
 }

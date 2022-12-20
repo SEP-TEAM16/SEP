@@ -22,13 +22,13 @@ namespace SEP.WebShop.Persistence.Repositories
         public IEnumerable<SubscriptionOption> FindAll()
         {
             List<SubscriptionOption> subscriptionOptions = new List<SubscriptionOption>();
-            using SqlCommand command = new SqlCommand("select id, subscriptionType, name from dbo.SubscriptionOptions", _connection, _transaction);
+            using SqlCommand command = new SqlCommand("select id, subscriptionType, name, price, currency from dbo.SubscriptionOptions", _connection, _transaction);
 
             using (SqlDataReader reader = command.ExecuteReader())
             {
                 while (reader.Read())
                 {
-                    subscriptionOptions.Add(SubscriptionOption.Create(reader.GetGuid("id"), (SubscriptionType)reader.GetInt32("subscriptionType"), reader.GetString("name")).Value);
+                    subscriptionOptions.Add(SubscriptionOption.Create(reader.GetGuid("id"), (SubscriptionType)reader.GetInt32("subscriptionType"), reader.GetString("name"), reader.GetDouble("price"), reader.GetString("currency")).Value);
                 }
             }
             return subscriptionOptions;
@@ -36,7 +36,7 @@ namespace SEP.WebShop.Persistence.Repositories
 
         public Maybe<SubscriptionOption> FindById(Guid id)
         {
-            using SqlCommand command = new SqlCommand("select id, subscriptionType, name from dbo.SubscriptionOptions where id = @id", _connection, _transaction);
+            using SqlCommand command = new SqlCommand("select id, subscriptionType, name, price, currency from dbo.SubscriptionOptions where id = @id", _connection, _transaction);
             command.Parameters.AddWithValue("@id", id);
             using (SqlDataReader reader = command.ExecuteReader())
             {
@@ -44,16 +44,18 @@ namespace SEP.WebShop.Persistence.Repositories
                 {
                     return Maybe<SubscriptionOption>.None;
                 }
-                return SubscriptionOption.Create(reader.GetGuid("id"), (SubscriptionType)reader.GetInt32("subscriptionType"), reader.GetString("name")).Value;
+                return SubscriptionOption.Create(reader.GetGuid("id"), (SubscriptionType)reader.GetInt32("subscriptionType"), reader.GetString("name"), reader.GetDouble("price"), reader.GetString("currency")).Value;
             }
         }
 
         public void Update(SubscriptionOption entity)
         {
-            using SqlCommand command = new SqlCommand("update dbo.SubscriptionOptions set subscriptionType = @subscriptionType, name = @name where id = @id", _connection, _transaction);
+            using SqlCommand command = new SqlCommand("update dbo.SubscriptionOptions set subscriptionType = @subscriptionType, name = @name, price = @price, currency = @currency where id = @id", _connection, _transaction);
             command.Parameters.AddWithValue("@id", entity.Id);
-            command.Parameters.AddWithValue("@name", entity.Name.ToString());
             command.Parameters.AddWithValue("@subscriptionType", entity.SubscriptionType);
+            command.Parameters.AddWithValue("@name", entity.Name.ToString());
+            command.Parameters.AddWithValue("@price", entity.Price.ToDouble());
+            command.Parameters.AddWithValue("@currency", entity.Currency.ToString());
             command.ExecuteNonQuery();
         }
 
@@ -70,10 +72,12 @@ namespace SEP.WebShop.Persistence.Repositories
 
         public void Add(SubscriptionOption entity)
         {
-            using SqlCommand command = new SqlCommand("insert into dbo.SubscriptionOptions(id, subscriptionType, name) values(@id, @subscriptionType, @name)", _connection, _transaction);
+            using SqlCommand command = new SqlCommand("insert into dbo.SubscriptionOptions(id, subscriptionType, name, price, currency) values(@id, @subscriptionType, @name, @price, @currency)", _connection, _transaction);
             command.Parameters.AddWithValue("@id", entity.Id);
             command.Parameters.AddWithValue("@subscriptionType", entity.SubscriptionType);
             command.Parameters.AddWithValue("@name", entity.Name.ToString());
+            command.Parameters.AddWithValue("@price", entity.Price.ToDouble());
+            command.Parameters.AddWithValue("@currency", entity.Currency.ToString());
             command.ExecuteNonQuery();
         }
     }
