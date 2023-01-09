@@ -7,6 +7,7 @@
         Card,
         Bitcoin,
         PSP,
-        None
+        None,
+        Card1
     }
 }

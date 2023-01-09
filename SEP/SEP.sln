@@ -21,6 +21,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SEP.WebShop.Web", "WebShop\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SEP.Authorization", "SEP.Authentication\SEP.Authorization.csproj", "{B1FDCC4B-C5D8-4D84-9D06-00D893244F14}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SEP.Bank", "SEP.Bank\SEP.Bank.csproj", "{97C55EE0-4E38-4431-A65D-368220299961}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,10 @@ Global
 		{B1FDCC4B-C5D8-4D84-9D06-00D893244F14}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B1FDCC4B-C5D8-4D84-9D06-00D893244F14}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B1FDCC4B-C5D8-4D84-9D06-00D893244F14}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97C55EE0-4E38-4431-A65D-368220299961}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97C55EE0-4E38-4431-A65D-368220299961}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97C55EE0-4E38-4431-A65D-368220299961}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97C55EE0-4E38-4431-A65D-368220299961}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
