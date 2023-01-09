@@ -6,7 +6,6 @@ namespace SEP.Bank.DTO
     public class BankPaymentDTO : Payment
     {
         public string MerchantId { get; set; }
-        public Address Address { get; set; }
         public DateTime Expiration { get; set; }
         public string Number { get; set; }
         public string SecurityCode { get; set; }
@@ -15,11 +14,10 @@ namespace SEP.Bank.DTO
 
         public BankPaymentDTO(float amount, string name, string firstName, string lastName,
             string email, DateTime date, string currency, string description, string itemName,
-            PaymentApprovalType paymentApproval, string identityToken, string merchantId, Address address, DateTime expiration, string number, string securityCode)
+            PaymentApprovalType paymentApproval, string identityToken, string merchantId, DateTime expiration, string number, string securityCode)
             : base(amount, name, firstName, lastName, email, date, currency, description, itemName, paymentApproval, identityToken)
         {
             MerchantId = merchantId;
-            Address = address;
             Expiration = expiration;
             Number = number;
             SecurityCode = securityCode;
@@ -27,11 +25,10 @@ namespace SEP.Bank.DTO
 
         public BankPaymentDTO(float amount, string name, string firstName, string lastName,
             string email, DateTime date, string currency, string description, string itemName,
-            int paymentApproval, string identityToken, string merchantId, Address address, DateTime expiration, string number, string securityCode)
+            int paymentApproval, string identityToken, string merchantId, DateTime expiration, string number, string securityCode)
             : base(amount, name, firstName, lastName, email, date, currency, description, itemName, (PaymentApprovalType) paymentApproval, identityToken)
         {
             MerchantId = merchantId;
-            Address = address;
             Expiration = expiration;
             Number = number;
             SecurityCode = securityCode;

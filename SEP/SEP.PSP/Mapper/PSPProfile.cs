@@ -9,6 +9,8 @@ namespace SEP.PSP.Mapper
         public PSPProfile() {
             CreateMap<PSPPayment, PSPPaymentDTO>();
             CreateMap<PSPPaymentDTO, PSPPayment>();
+            CreateMap<PSPPayment, PSPBankPaymentDTO>();
+            CreateMap<PSPBankPaymentDTO, PSPPayment>();
             CreateMap<Subscription, SubscriptionDTO>();
             CreateMap<SubscriptionDTO, Subscription>();
             CreateMap<Merchant, MerchantDTO>();

@@ -22,5 +22,11 @@ namespace SEP.PSP.Models
             var merchantId = Merchant.Id.ToString();
             return new PSPPayPalPaymentDTO(Amount, Name, FirstName, LastName, Email, Date, Currency, Description, ItemName, PaymentApproval, IdentityToken, merchantId);
         }
+
+        public PSPPayPalPaymentDTO ConvertToPSPBankPaymentDTO()
+        {
+            var merchantId = Merchant.Id.ToString();
+            return new PSPPayPalPaymentDTO(Amount, Name, FirstName, LastName, Email, Date, Currency, Description, ItemName, PaymentApproval, IdentityToken, merchantId);
+        }
     }
 }

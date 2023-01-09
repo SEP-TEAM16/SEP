@@ -33,7 +33,7 @@ namespace SEP.Bank.Controllers
 
         [HttpPost]
         [Consumes(MediaTypeNames.Application.Json)]
-        public string Redirect([FromBody] BankPaymentDTO bankPaymentDTO)
+        public string Redirect([FromBody] BankPaymentWithoutCardDTO bankPaymentDTO)
         {
             _logger.LogInformation("Redirect");
             if (Request.Headers["senderPort"].ToString().Equals("5050"))
@@ -50,13 +50,10 @@ namespace SEP.Bank.Controllers
         public BankPaymentDTO Pay([FromBody] BankPaymentDTO bankPaymentDTO)
         {
             _logger.LogInformation("Check if this bank");
-            if (Request.Headers["senderPort"].ToString().Equals("5050"))
+            if (bankPaymentDTO.Number.StartsWith(Pan))
             {
-                if (bankPaymentDTO.Number.StartsWith(Pan))
-                {
-                    var bankPayment = _mapper.Map<BankPayment>(bankPaymentDTO);
-                    return _mapper.Map<BankPaymentDTO>(_bankService.Pay(bankPayment));
-                }
+                var bankPayment = _mapper.Map<BankPayment>(bankPaymentDTO);
+                return _mapper.Map<BankPaymentDTO>(_bankService.Pay(bankPayment));
             }
 
             _logger.LogWarning("You don't have access.");

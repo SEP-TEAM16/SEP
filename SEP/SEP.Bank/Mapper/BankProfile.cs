@@ -10,6 +10,8 @@ namespace SEP.Bank.Mapper
         {
             CreateMap<BankPayment, BankPaymentDTO>();
             CreateMap<BankPaymentDTO, BankPayment>();
+            CreateMap<BankPayment, BankPaymentWithoutCardDTO>();
+            CreateMap<BankPaymentWithoutCardDTO, BankPayment>();
         }
     }
 }

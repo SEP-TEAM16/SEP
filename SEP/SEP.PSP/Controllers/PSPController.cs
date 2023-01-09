@@ -32,6 +32,14 @@ namespace SEP.PSP.Controllers
             return _PSPService.MakePayPalPayment(PSPPaymentDTO);
         }
 
+        [HttpPost("payBank")]
+        [Consumes(MediaTypeNames.Application.Json)]
+        public string MakeBankPayment([FromBody] PSPPaymentDTO PSPPaymentDTO)
+        {
+            _logger.LogInformation("PSP make payment executing...");
+            return _PSPService.MakeBankPayment(PSPPaymentDTO);
+        }
+
         [HttpPost("subscribe")]
         [Consumes(MediaTypeNames.Application.Json)]
         public string SubscribeWebshopToPayment([FromBody] int serviceType)

@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\SEP.Common\SEP.Common.csproj" />
     <ProjectReference Include="..\SEP.WebShop.Persistence\SEP.WebShop.Persistence.csproj" />
   </ItemGroup>
 

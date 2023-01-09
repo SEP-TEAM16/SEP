@@ -44,8 +44,8 @@ namespace SEP.Bank.Services
                     ExpYear = bankPaymentDetails.Expiration.Year.ToString(),
                     Name = bankPaymentDetails.FirstName + " " + bankPaymentDetails.LastName,
                     Cvc = bankPaymentDetails.SecurityCode,
-                    AddressLine1 = bankPaymentDetails.Address.Street,
-                    AddressCity = bankPaymentDetails.Address.City,
+                    AddressLine1 = "Puskinova",
+                    AddressCity = "Novi Sad",
                     AddressCountry = "Serbia",
                 },
             };
@@ -69,6 +69,7 @@ namespace SEP.Bank.Services
                 Charge charge = chargeService.Create(chargeOptions);
                 bankPaymentDetails.PaymentApproval = PaymentApprovalType.Success;
                 _bankDbContext.BankPayment.Update(bankPaymentDetails);
+                _bankDbContext.SaveChanges();
                 return bankPaymentDetails;
             }
             catch (Exception e)
@@ -76,6 +77,7 @@ namespace SEP.Bank.Services
                 _logger.LogError(e.Message);
                 bankPaymentDetails.PaymentApproval = PaymentApprovalType.Rejected;
                 _bankDbContext.BankPayment.Update(bankPaymentDetails);
+                _bankDbContext.SaveChanges();
                 return bankPaymentDetails;
             }
         }
@@ -83,7 +85,11 @@ namespace SEP.Bank.Services
         public string Save(BankPayment bankPayment)
         {
             bankPayment.PaymentApproval = PaymentApprovalType.Pending;
+            bankPayment.Number = "";
+            bankPayment.Expiration = new DateTime();
+            bankPayment.SecurityCode = "";
             _bankDbContext.BankPayment.Add(bankPayment);
+            _bankDbContext.SaveChanges();
             return bankPayment.Id.ToString();
         }
 
