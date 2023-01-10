@@ -27,7 +27,7 @@ namespace SEP.Bank.Controllers
             _logger = logger;
             _bankService = bankService;
             var appSettings = new ConfigurationBuilder().AddJsonFile("appsettings.Development.json").Build();
-            Pan = appSettings.GetValue<string>("PaymentMicroserviceType");
+            Pan = appSettings.GetValue<string>("Pan");
             Front = appSettings.GetValue<string>("FrontUrl");
         }
 
@@ -46,18 +46,25 @@ namespace SEP.Bank.Controllers
         }
 
         [HttpPost("pay")]
-        [Consumes(MediaTypeNames.Application.Json)]
-        public BankPaymentDTO Pay([FromBody] BankPaymentDTO bankPaymentDTO)
+        public BankPaymentDTO Pay([FromForm] string id, [FromForm] string securityCode, [FromForm] string number, [FromForm] string month, [FromForm] string year)
         {
+            CardDTO cardDTO = new CardDTO(id, month, year, number, securityCode);
             _logger.LogInformation("Check if this bank");
-            if (bankPaymentDTO.Number.StartsWith(Pan))
+            if (cardDTO.Number.StartsWith(Pan))
             {
-                var bankPayment = _mapper.Map<BankPayment>(bankPaymentDTO);
-                return _mapper.Map<BankPaymentDTO>(_bankService.Pay(bankPayment));
+                return _mapper.Map<BankPaymentDTO>(_bankService.Pay(cardDTO));
             }
 
             _logger.LogWarning("You don't have access.");
             return null;
+        }
+
+        [HttpGet("get")]
+        [Consumes(MediaTypeNames.Application.Json)]
+        public ActionResult Get(string id)
+        {
+
+            return base.Content("<!DOCTYPE html>\r\n<html>\r\n<body>\r\n<script>\r\ndocument.addEventListener(\"DOMContentLoaded\", function(){\r\ndocument.getElementById(\"id\").value = " + id + ";\r\n});\r\n</script>\r\n<div>\r\n    <div>\r\n        <h1>Confirm Purchase</h1>\r\n    </div>\r\n    <div>\r\n        <form action=\"" + Front + "\" method=\"post\">\r\n            <input hidden type=\"text\" name=\"id\" id=\"id\">\r\n            <div>\r\n                <label>CVV</label>\r\n                <input type=\"text\" name=\"securityCode\" id=\"securityCode\">\r\n            </div>\r\n            <div id=\"card-number-field\">\r\n                <label>Card Number</label>\r\n                <input type=\"text\" name=\"number\" id=\"number\">\r\n            </div>\r\n            <div id=\"expiration-date\">\r\n                <label>Expiration Date</label>\r\n                <select name=\"month\">\r\n                    <option value=\"1\">January</option>\r\n                    <option value=\"2\">February </option>\r\n                    <option value=\"3\">March</option>\r\n                    <option value=\"4\">April</option>\r\n                    <option value=\"5\">May</option>\r\n                    <option value=\"6\">June</option>\r\n                    <option value=\"7\">July</option>\r\n                    <option value=\"8\">August</option>\r\n                    <option value=\"9\">September</option>\r\n                    <option value=\"10\">October</option>\r\n                    <option value=\"11\">November</option>\r\n                    <option value=\"12\">December</option>\r\n                </select>\r\n                <select name=\"year\">\r\n                    <option value=\"2016\"> 2016</option>\r\n                    <option value=\"2017\"> 2017</option>\r\n                    <option value=\"2018\"> 2018</option>\r\n                    <option value=\"2019\"> 2019</option>\r\n                    <option value=\"2020\"> 2020</option>\r\n                    <option value=\"2021\"> 2021</option>\r\n\t     <option value=\"2022\"> 2022</option>\r\n                </select>\r\n            </div>\r\n            <div id=\"pay-now\">\r\n                <button type=\"submit\" id=\"confirm-purchase\">Confirm</button>\r\n            </div>\r\n        </form>\r\n    </div>\r\n</div>\r\n</body>\r\n</html>");
         }
     }
 }

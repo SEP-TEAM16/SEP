@@ -1,4 +1,5 @@
-﻿using SEP.Bank.Infrastructure;
+﻿using SEP.Bank.DTO;
+using SEP.Bank.Infrastructure;
 using SEP.Bank.Interfaces;
 using SEP.Bank.Models;
 using SEP.Common.Enums;
@@ -23,14 +24,16 @@ namespace SEP.Bank.Services
             bankContext.SaveChanges();
         }
 
-        public BankPayment Pay(BankPayment bankPayment)
+        public BankPayment Pay(CardDTO cardDTO)
         {
-            BankPayment bankPaymentDetails = _bankDbContext.BankPayment.SingleOrDefault(b => b.Id == bankPayment.Id);
+            BankPayment bankPaymentDetails = _bankDbContext.BankPayment.SingleOrDefault(b => b.Id == int.Parse(cardDTO.Id));
             _logger.LogInformation("Creating stripe payment");
             StripeConfiguration.ApiKey = API_KEY;
-            bankPaymentDetails.Number = bankPayment.Number;
-            bankPaymentDetails.Expiration = bankPayment.Expiration;
-            bankPaymentDetails.SecurityCode = bankPayment.SecurityCode;
+            bankPaymentDetails.Number = cardDTO.Number;
+            bankPaymentDetails.Expiration = new DateTime();
+            bankPaymentDetails.Expiration.AddYears(int.Parse(cardDTO.Year) - bankPaymentDetails.Expiration.Year);
+            bankPaymentDetails.Expiration.AddMonths((int.Parse(cardDTO.Month) - 1) - bankPaymentDetails.Expiration.Month);
+            bankPaymentDetails.SecurityCode = cardDTO.SecurityCode;
             var chargeService = new ChargeService();
             String value = bankPaymentDetails.Amount.ToString("0.00").Replace(',', '.');
             float amount = float.Parse(value);
