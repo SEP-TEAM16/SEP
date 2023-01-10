@@ -140,6 +140,57 @@ namespace SEP.WebShop.Web.Controllers
             return Ok(getdata);
         }
 
+        [HttpPost("qr")]
+        public IActionResult MakeAQRPayment()
+        {
+            _logger.LogInformation("WebShop make payment executing...");
+            var paymentDto = new PaymentBankDto();
+            if (!_jwtUtils.ValidateToken(Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last()).HasValue)
+                return null;
+            var user = _userRepository.FindById(_jwtUtils.ValidateToken(Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last()).Value).Value;
+            paymentDto.Merchant = new MerchantDto(0, "dasd", "7035");
+            paymentDto.Currency = "USD";
+            paymentDto.Email = user.EmailAddress;
+            if (user.UserType.Equals(UserType.candidate))
+            {
+                paymentDto.FirstName = user.Name.ToString().Split(" ")[0];
+                paymentDto.LastName = user.Name.ToString().Split(" ")[1];
+            }
+            else
+            {
+                paymentDto.FirstName = user.Name.ToString();
+                paymentDto.LastName = user.Name.ToString();
+                paymentDto.Name = user.Name.ToString();
+            }
+            paymentDto.IdentityToken = Guid.NewGuid().ToString();
+            paymentDto.ItemName = "Package 1";
+            paymentDto.Amount = 100;
+            paymentDto.Description = "description";
+            paymentDto.Key = "sadasdnasd";
+            //var payment = _paymentService.Create(Payment.Create(Guid.NewGuid(), paymentDto.ItemName, paymentDto.Amount, paymentDto.Currency, Guid.NewGuid(), PaymentStatus.pending, paymentDto.IdentityToken).Value);
+            //_messageProducer.SendMessage<PaymentDto>(paymentDto, "makePayment", "7035");
+
+            var jss = new JavaScriptSerializer();
+
+            var httpRequest = (HttpWebRequest)HttpWebRequest.Create("https://localhost:7038/api/psp/payQR");
+            httpRequest.Method = "POST";
+            httpRequest.ContentType = "application/json";
+
+            var streamWriter = new StreamWriter(httpRequest.GetRequestStream());
+            streamWriter.Write(jss.Serialize(paymentDto));
+            streamWriter.Close();
+
+            var getdata = string.Empty;
+            using (var webresponse = (HttpWebResponse)httpRequest.GetResponse())
+            using (var stream = webresponse.GetResponseStream())
+            using (var reader = new StreamReader(stream))
+            {
+                getdata = reader.ReadToEnd();
+            }
+
+            return Ok(getdata);
+        }
+
         [HttpPost("continue")]
         [AllowAnonymous]
         public IActionResult ContinuePayment(string identityToken)

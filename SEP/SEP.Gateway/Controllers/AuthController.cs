@@ -57,9 +57,25 @@ namespace SEP.Gateway.Controllers
         [HttpPost]
         [Route("{route}")]
         [AllowAnonymous]
-        public ActionResult<AuthToken> GetPayPalAuthentication(string route, [FromBody] StringDTO key)
+        public ActionResult<AuthToken> GetAuthentication1(string route, [FromBody] StringDTO key)
         {
-            _logger.LogInformation("Gateway get PayPal authentication executing...");
+            _logger.LogInformation("Gateway get authentication executing...");
+            foreach (var authKey in AuthKeys)
+            {
+                if (key.Value.Equals(authKey.Key) && route.Equals(authKey.Route))
+                    return PayPalApiTokenService.GenerateToken(authKey.Key);
+            }
+
+            _logger.LogWarning("Key is invalid.");
+            return BadRequest(new { message = "key is invalid" });
+        }
+
+        [HttpPost]
+        [Route("{route}/{route2}")]
+        [AllowAnonymous]
+        public ActionResult<AuthToken> GetAuthentication(string route, [FromBody] StringDTO key)
+        {
+            _logger.LogInformation("Gateway get authentication executing...");
             foreach (var authKey in AuthKeys)
             {
                 if (key.Value.Equals(authKey.Key) && route.Equals(authKey.Route))

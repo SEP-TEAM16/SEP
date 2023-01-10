@@ -23,7 +23,11 @@ namespace SEP.Bank.Services
             bankContext.BankPayment.RemoveRange(_bankDbContext.BankPayment.ToList());
             bankContext.SaveChanges();
         }
-
+        public BankPayment GetById(string id)
+        {
+            BankPayment bankPaymentDetails = _bankDbContext.BankPayment.SingleOrDefault(b => b.Id == int.Parse(id));
+            return bankPaymentDetails;
+        }
         public BankPayment Pay(CardDTO cardDTO)
         {
             BankPayment bankPaymentDetails = _bankDbContext.BankPayment.SingleOrDefault(b => b.Id == int.Parse(cardDTO.Id));

@@ -52,7 +52,8 @@ var streamWriter = new StreamWriter(httpRequest.GetRequestStream());
 var appSettings = new ConfigurationBuilder().AddJsonFile("appsettings.Development.json").Build();
 var authKeys = new List<AuthKeyWithPortDTO>
 {
-    new AuthKeyWithPortDTO(appSettings.GetValue<string>("Info:Key"), appSettings.GetValue<string>("Info:Route"), int.Parse(appSettings.GetValue<string>("Info:Port")), true, appSettings.GetValue<string>("Info:RouteType"), 2)
+    new AuthKeyWithPortDTO(appSettings.GetValue<string>("Info:Key"), appSettings.GetValue<string>("Info:Route"), int.Parse(appSettings.GetValue<string>("Info:Port")), true, appSettings.GetValue<string>("Info:RouteType"), 2),
+    new AuthKeyWithPortDTO(appSettings.GetValue<string>("Info:Key"), appSettings.GetValue<string>("Info:Route1"), int.Parse(appSettings.GetValue<string>("Info:Port")), true, appSettings.GetValue<string>("Info:RouteType1"), 1)
 };
 streamWriter.Write(jss.Serialize(authKeys));
 streamWriter.Close();

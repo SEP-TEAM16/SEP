@@ -129,6 +129,44 @@ namespace SEP.PSP.Services
             _PSPDbContext.SaveChanges();
             return getdata;
         }
+        public string MakeQRPayment(PSPPaymentDTO pspPaymentDto)
+        {
+            var merchant = _PSPDbContext.Merchants.FirstOrDefault(mer => mer.Key.Equals(pspPaymentDto.Key));
+            if (merchant is null)
+                return null;
+
+            var bankPayment = _mapper.Map<PSPPayment>(pspPaymentDto);
+            var authToken = GetBearerToken(PaymentMicroserviceType.QR);
+
+            var getdata = string.Empty;
+            var jss = new JavaScriptSerializer();
+            var authKey = AuthKeys.FirstOrDefault(a => a.PaymentMicroserviceType.Equals(PaymentMicroserviceType.QR));
+
+            var httpRequest = (HttpWebRequest)HttpWebRequest.Create("https://localhost:5050/" + authKey.Route);
+            httpRequest.Method = "POST";
+            httpRequest.ContentType = "application/json";
+            httpRequest.Headers.Add("Authorization", $"Bearer {authToken.Token}");
+            var streamWriter = new StreamWriter(httpRequest.GetRequestStream());
+            var pspBankPaymentDto = bankPayment.ConvertToPSPBankPaymentDTO();
+            pspBankPaymentDto.MerchantId = merchant.Id.ToString();
+            streamWriter.Write(JsonSerializer.Serialize(pspBankPaymentDto));
+            streamWriter.Close();
+
+            using (var webresponse = (HttpWebResponse)httpRequest.GetResponse())
+            using (var stream = webresponse.GetResponseStream())
+            using (var reader = new StreamReader(stream))
+            {
+                getdata = reader.ReadToEnd();
+            }
+
+            bankPayment.PaymentApproval = PaymentApprovalType.Pending;
+            bankPayment.Date = DateTime.Now;
+            bankPayment.Currency = "USD";
+            bankPayment.Merchant = merchant;
+            _PSPDbContext.PSPPayments.Add(bankPayment);
+            _PSPDbContext.SaveChanges();
+            return getdata;
+        }
 
         public void EditPayPalPayment(PSPPayment PSPPayment)
         {
