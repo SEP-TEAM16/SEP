@@ -90,7 +90,46 @@ namespace SEP.PSP.Services
             _PSPDbContext.SaveChanges();
             return getdata;
         }
+        public void MakeBitcoinPayment(PSPBitcoinPaymentDTO pspBitcoinPaymentDtoo)
+        {
+            var merchant = _PSPDbContext.Merchants.FirstOrDefault(mer => mer.Key.Equals(pspBitcoinPaymentDtoo.Key));
+            if (merchant is null)
+                return;
 
+            var bitcoinPayment = _mapper.Map<PSPPayment>(pspBitcoinPaymentDtoo);
+            var authToken = GetBearerToken(PaymentMicroserviceType.Bitcoin);
+
+            var getdata = string.Empty;
+            var jss = new JavaScriptSerializer();
+            var authKey = AuthKeys.FirstOrDefault(a => a.PaymentMicroserviceType.Equals(PaymentMicroserviceType.Bitcoin));
+
+            var httpRequest = (HttpWebRequest)HttpWebRequest.Create("https://localhost:5050/" + authKey.Route);
+            httpRequest.Method = "POST";
+            httpRequest.ContentType = "application/json";
+            httpRequest.Headers.Add("Authorization", $"Bearer {authToken.Token}");
+            var streamWriter = new StreamWriter(httpRequest.GetRequestStream());
+            var pspBitcoinPaymentDto = bitcoinPayment.ConvertToPSPBitcoinPaymentDTO();
+            pspBitcoinPaymentDto.MerchantId = merchant.Id.ToString();
+            pspBitcoinPaymentDto.PublicKey = pspBitcoinPaymentDtoo.PublicKey;
+            pspBitcoinPaymentDto.PrivateKey = pspBitcoinPaymentDtoo.PrivateKey;
+            streamWriter.Write(JsonSerializer.Serialize(pspBitcoinPaymentDto));
+            streamWriter.Close();
+
+            using (var webresponse = (HttpWebResponse)httpRequest.GetResponse())
+            using (var stream = webresponse.GetResponseStream())
+            using (var reader = new StreamReader(stream))
+            {
+                getdata = reader.ReadToEnd();
+            }
+            PSPBitcoinPaymentDTO fromBack = jss.Deserialize<PSPBitcoinPaymentDTO>(getdata);
+            bitcoinPayment.PaymentApproval = fromBack.PaymentApproval;
+            bitcoinPayment.Date = DateTime.Now;
+            bitcoinPayment.Currency = fromBack.Currency;
+            bitcoinPayment.Merchant = merchant;
+            _PSPDbContext.PSPPayments.Add(bitcoinPayment);
+            _PSPDbContext.SaveChanges();
+            return;
+        }
         public string MakeBankPayment(PSPPaymentDTO pspPaymentDto)
         {
             var merchant = _PSPDbContext.Merchants.FirstOrDefault(mer => mer.Key.Equals(pspPaymentDto.Key));

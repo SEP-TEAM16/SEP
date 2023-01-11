@@ -28,5 +28,11 @@ namespace SEP.PSP.Models
             var merchantId = Merchant.Id.ToString();
             return new PSPPayPalPaymentDTO(Amount, Name, FirstName, LastName, Email, Date, Currency, Description, ItemName, PaymentApproval, IdentityToken, merchantId);
         }
+
+        public PSPBitcoinPaymentDTO ConvertToPSPBitcoinPaymentDTO()
+        {
+            var merchantId = Merchant.Id.ToString();
+            return new PSPBitcoinPaymentDTO(Amount, Name, FirstName, LastName, Email, Date, Currency, Description, ItemName, PaymentApproval, IdentityToken, merchantId);
+        }
     }
 }

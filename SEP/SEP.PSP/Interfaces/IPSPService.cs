@@ -8,6 +8,7 @@ namespace SEP.PSP.Interfaces
         public Subscription SubscribeWebshopToPayment(Subscription subscription);
         public string MakePayPalPayment(PSPPaymentDTO PSPPaymentDTO);
         public string MakeBankPayment(PSPPaymentDTO PSPPaymentDTO);
+        public void MakeBitcoinPayment(PSPBitcoinPaymentDTO PSPBitcoinPaymentDTO);
         public string MakeQRPayment(PSPPaymentDTO PSPPaymentDTO);
         public void EditPayPalPayment(PSPPayment PSPPayment);
         public void UpdatePayment(PSPPayment PSPPayment);

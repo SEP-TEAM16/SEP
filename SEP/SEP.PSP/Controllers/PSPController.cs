@@ -43,6 +43,40 @@ namespace SEP.PSP.Controllers
             return _PSPService.MakeBankPayment(PSPPaymentDTO);
         }
 
+        [HttpPost("payBitcoin")]
+        [Consumes(MediaTypeNames.Application.Json)]
+        public void MakeBitcoinPayment([FromBody] PSPBitcoinPaymentDTO PSPBitcoinPaymentDTO)
+        {
+            _logger.LogInformation("PSP make payment executing...");
+            _PSPService.MakeBitcoinPayment(PSPBitcoinPaymentDTO);
+            try
+            {
+                var jss = new JavaScriptSerializer();
+                var getdata = string.Empty;
+                var httpRequest = (HttpWebRequest)HttpWebRequest.Create("https://localhost:7035/api/payment/updateBitcoin");
+                httpRequest.Method = "POST";
+                httpRequest.ContentType = "application/json";
+
+                var appSettings = new ConfigurationBuilder().AddJsonFile("appsettings.Development.json").Build();
+                httpRequest.Headers["key"] = appSettings.GetValue<string>("Secrets:AutorizationKey");
+
+                var streamWriter = new StreamWriter(httpRequest.GetRequestStream());
+                streamWriter.Write(jss.Serialize(new StringDTO(PSPBitcoinPaymentDTO.IdentityToken)));
+                streamWriter.Close();
+
+                using (var webresponse = (HttpWebResponse)httpRequest.GetResponse())
+                using (var stream = webresponse.GetResponseStream())
+                using (var reader = new StreamReader(stream))
+                {
+                    getdata = reader.ReadToEnd();
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogWarning("Couldn't contact webshop");
+            }
+        }
+
         [HttpPost("payQR")]
         [Consumes(MediaTypeNames.Application.Json)]
         public string MakeQRPayment([FromBody] PSPPaymentDTO PSPPaymentDTO)
