@@ -168,6 +168,21 @@ namespace SEP.PSP.Services
             return getdata;
         }
 
+        public void UpdatePayment(PSPPayment PSPPayment)
+        {
+            var payPalPayment = _PSPDbContext.PSPPayments.FirstOrDefault(payment => payment.IdentityToken.Equals(PSPPayment.IdentityToken));
+
+            if (payPalPayment is null)
+            {
+                _logger.LogWarning("Payment could not be found!");
+                return;
+            }
+
+            payPalPayment.PaymentApproval = PSPPayment.PaymentApproval;
+
+            _PSPDbContext.SaveChanges();
+        }
+
         public void EditPayPalPayment(PSPPayment PSPPayment)
         {
             var payPalPayment = _PSPDbContext.PSPPayments.FirstOrDefault(payment => payment.IdentityToken.Equals(PSPPayment.IdentityToken));

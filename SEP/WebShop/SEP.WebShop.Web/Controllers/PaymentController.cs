@@ -209,6 +209,24 @@ namespace SEP.WebShop.Web.Controllers
             return Ok();
         }
 
+        [HttpPost("update")]
+        [AllowAnonymous]
+        public IActionResult UpdatePayment([FromBody] PaymentBankDto paymentBankDto)
+        {
+            _logger.LogInformation("WebShop payment update reached. Payment successful...");
+            Maybe<Payment> paymentResult = _paymentRepository.FindByIdentityToken(paymentBankDto.IdentityToken);
+            if (paymentResult.HasNoValue)
+            {
+                return BadRequest("Payment with specified identity token doesn't exist");
+            }
+            var payment = paymentResult.Value;
+            if (_paymentService.Update(Payment.Create(payment.Id, payment.ItemName, payment.Price, payment.Currency, payment.SubscriptionId, PaymentStatus.success, payment.IdentityToken).Value).IsFailure)
+            {
+                return BadRequest("Couldn't update payment");
+            }
+            return Ok();
+        }
+
         [HttpPost("cancel")]
         [AllowAnonymous]
         public IActionResult CancelPayment(string identityToken)

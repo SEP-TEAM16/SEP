@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using Nancy.Json;
+using SEP.Common.DTO;
 using SEP.Common.Enums;
 using SEP.PSP.DTO;
 using SEP.PSP.Interfaces;
 using SEP.PSP.Models;
+using System.Net;
 using System.Net.Mime;
 
 namespace SEP.PSP.Controllers
@@ -69,6 +72,41 @@ namespace SEP.PSP.Controllers
         {
             _logger.LogInformation("PSP continue payment executing...");
             _PSPService.EditPayPalPayment(pspPayPalPaymentDTO.ConvertToPSPPayment());
+        }
+
+        [HttpPost("update")]
+        [Consumes(MediaTypeNames.Application.Json)]
+        public void Update([FromBody] PSPBankPaymentDTO pspBankPaymentDTO)
+        {
+            _logger.LogInformation("PSP update payment executing...");
+            _PSPService.UpdatePayment(pspBankPaymentDTO.ConvertToPSPPayment());
+
+            try
+            {
+                var jss = new JavaScriptSerializer();
+                var getdata = string.Empty;
+                var httpRequest = (HttpWebRequest)HttpWebRequest.Create("https://localhost:7035/api/payment/update");
+                httpRequest.Method = "POST";
+                httpRequest.ContentType = "application/json";
+
+                var appSettings = new ConfigurationBuilder().AddJsonFile("appsettings.Development.json").Build();
+                httpRequest.Headers["key"] = appSettings.GetValue<string>("Secrets:AutorizationKey");
+
+                var streamWriter = new StreamWriter(httpRequest.GetRequestStream());
+                streamWriter.Write(jss.Serialize(pspBankPaymentDTO));
+                streamWriter.Close();
+
+                using (var webresponse = (HttpWebResponse)httpRequest.GetResponse())
+                using (var stream = webresponse.GetResponseStream())
+                using (var reader = new StreamReader(stream))
+                {
+                    getdata = reader.ReadToEnd();
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogWarning("Couldn't contact webshop");
+            }
         }
 
         [HttpPost("cancel")]

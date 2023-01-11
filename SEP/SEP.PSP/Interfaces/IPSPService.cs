@@ -10,5 +10,6 @@ namespace SEP.PSP.Interfaces
         public string MakeBankPayment(PSPPaymentDTO PSPPaymentDTO);
         public string MakeQRPayment(PSPPaymentDTO PSPPaymentDTO);
         public void EditPayPalPayment(PSPPayment PSPPayment);
+        public void UpdatePayment(PSPPayment PSPPayment);
     }
 }

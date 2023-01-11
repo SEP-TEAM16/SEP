@@ -70,17 +70,28 @@ namespace SEP.Bank.Controllers
         }
 
         [HttpPost("pay")]
-        public BankPaymentDTO Pay([FromForm] string id, [FromForm] string securityCode, [FromForm] string number, [FromForm] string month, [FromForm] string year)
+        public void Pay([FromForm] string id, [FromForm] string securityCode, [FromForm] string number, [FromForm] string month, [FromForm] string year)
         {
             CardDTO cardDTO = new CardDTO(id, month, year, number, securityCode);
             _logger.LogInformation("Check if this bank");
             if (cardDTO.Number.StartsWith(Pan))
             {
-                return _mapper.Map<BankPaymentDTO>(_bankService.Pay(cardDTO));
+                var payment = _mapper.Map<BankPaymentDTO>(_bankService.Pay(cardDTO));
+                if (payment != null)
+                {
+                    var jss = new JavaScriptSerializer();
+                    var httpRequest = (HttpWebRequest)HttpWebRequest.Create("https://localhost:5050/psp/update");
+                    httpRequest.Method = "POST";
+                    httpRequest.ContentType = "application/json";
+                    var streamWriter = new StreamWriter(httpRequest.GetRequestStream());
+                    streamWriter.Write(jss.Serialize(payment));
+                    streamWriter.Close();
+                    httpRequest.GetResponse();
+                }
+                return;
             }
 
             _logger.LogWarning("You don't have access.");
-            return null;
         }
 
         [HttpGet("get")]
