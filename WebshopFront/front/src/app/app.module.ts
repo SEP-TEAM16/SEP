@@ -10,6 +10,7 @@ import { HomePageComponent } from './components/home-page/home-page.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoggedCompanyPageComponent } from './components/logged-company-page/logged-company-page.component';
 import { ServicesPageComponent } from './components/services-page/services-page.component';
+import { ChoosePaymentTypePageComponent } from './components/choose-payment-type-page/choose-payment-type-page.component';
 
 @NgModule({
   declarations: [
@@ -19,6 +20,7 @@ import { ServicesPageComponent } from './components/services-page/services-page.
     HomePageComponent,
     LoggedCompanyPageComponent,
     ServicesPageComponent,
+    ChoosePaymentTypePageComponent,
   ],
   imports: [
     BrowserModule,

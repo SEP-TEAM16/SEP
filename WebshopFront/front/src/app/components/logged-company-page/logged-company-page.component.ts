@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { SubscriptionOption } from 'src/app/model/subscription-option';
 import { PaymentService } from 'src/app/services/payment.service';
 import { SubscribeOptionsService } from 'src/app/services/subscribe-options.service';
@@ -10,10 +11,10 @@ import { SubscribeOptionsService } from 'src/app/services/subscribe-options.serv
 })
 export class LoggedCompanyPageComponent implements OnInit {
 
-  constructor(private paymentService: PaymentService, private subscribeOptionsService: SubscribeOptionsService) { }
+  constructor(private router: Router, private subscribeOptionsService: SubscribeOptionsService) { }
 
   options : Array<SubscriptionOption> = new Array<SubscriptionOption>();
-  checked : number = 2;
+  checked : number = 0;
 
   ngOnInit(): void {
     this.subscribeOptionsService.getAllSubscriptionOptions().subscribe(response => {
@@ -22,10 +23,7 @@ export class LoggedCompanyPageComponent implements OnInit {
   }
 
   makePayment() {
-    this.paymentService.makePayment(this.checked).subscribe(ret => {
-
-    })
-    
+    this.router.navigate(['/paymentMethod'])
   }
 
   onOptionSelect(type: number) : void {

@@ -1,0 +1,24 @@
+<div style="background-color: rgba(128, 128, 128, 0.259);">
+    <div class="row">
+        <div class="col-5">
+            <label style=" font-size: 20px; margin-top: 50px; margin-left: 250px;"> Choose a payment method:
+            </label>
+        </div>
+        <div class="col-3" style=" font-size: 20px; margin-top: 50px;">
+            <div class="subscription-option" *ngFor="let item of methods; let indexOfelement = index;">
+                <input type="radio" id="indexOfelement" name="item" value="item"
+                    (click)="methodSelected(item)" style="margin-left: 10px;">
+                  <label for="item">{{item}}</label><br>
+
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-5">
+        </div>
+        <div class="col-3" style=" font-size: 20px; margin-top: 30px; margin-left: 15px;">
+            <button class="btn btn-primary" (click)="makePayment()">Next</button>
+        </div>
+    </div>
+    <div class="row" style="height: 520px;"></div>
+</div>
