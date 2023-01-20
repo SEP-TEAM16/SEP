@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AdminPageComponent } from './components/admin-page/admin-page.component';
 import { ChoosePaymentTypePageComponent } from './components/choose-payment-type-page/choose-payment-type-page.component';
 import { HomePageComponent } from './components/home-page/home-page.component';
 import { LoggedCompanyPageComponent } from './components/logged-company-page/logged-company-page.component';
@@ -13,7 +14,8 @@ const routes: Routes = [
   { path: 'register', component: RegisterComponent},
   { path: 'loggedCompany', component: LoggedCompanyPageComponent},
   { path: 'servicesPage', component: ServicesPageComponent},
-  { path: 'paymentMethod', component: ChoosePaymentTypePageComponent}
+  { path: 'paymentMethod', component: ChoosePaymentTypePageComponent},
+  { path: 'adminPage', component: AdminPageComponent}
 ];
 
 @NgModule({

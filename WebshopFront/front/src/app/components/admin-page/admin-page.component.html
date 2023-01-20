@@ -1,0 +1,21 @@
+<div style="background-color: rgba(128, 128, 128, 0.259);">
+    <div class="row">
+        <div class="col-6">
+            <label style=" font-size: 20px; margin-top: 50px; margin-left: 250px;"> Subscribe webshop on payment method:
+            </label>
+        </div>
+        <div class="col-3" style=" font-size: 20px; margin-top: 50px;">
+            <select name="methods" class="form-control" id="method" style="width: 130px; margin-left: 15px;" [(ngModel)]="selectedMethod">
+                <option *ngFor="let method of methods; let indexOfelement = index;" [ngValue]="indexOfelement">{{method}}</option>
+            </select>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-6">
+        </div>
+        <div class="col-3" style=" font-size: 20px; margin-top: 20px; margin-left: 15px;">
+            <button class="btn btn-primary" (click)="subscribe()">Subscribe</button>
+        </div>
+    </div>
+    <div class="row" style="height: 520px;"></div>
+</div>

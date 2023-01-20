@@ -65,7 +65,7 @@ namespace SEP.WebShop.Web.Controllers
             paymentDto.Amount = 100;
             paymentDto.Description = "description";
             paymentDto.Key = "sadasdnasd";
-            var payment = _paymentService.Create(Payment.Create(Guid.NewGuid(), paymentDto.ItemName, paymentDto.Amount, paymentDto.Currency, Guid.NewGuid(), PaymentStatus.pending, paymentDto.IdentityToken).Value);
+            //var payment = _paymentService.Create(Payment.Create(Guid.NewGuid(), paymentDto.ItemName, paymentDto.Amount, paymentDto.Currency, Guid.NewGuid(), PaymentStatus.pending, paymentDto.IdentityToken).Value);
             //_messageProducer.SendMessage<PaymentDto>(paymentDto, "makePayment", "7035");
 
             var jss = new JavaScriptSerializer();

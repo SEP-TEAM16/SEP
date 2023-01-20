@@ -97,7 +97,10 @@ namespace SEP.PSP.Controllers
 
             subscription = _PSPService.SubscribeWebshopToPayment(subscription);
             _logger.LogWarning("PSP make subscription ended...");
-            return subscription.Merchant.Key;
+            if (subscription != null)
+                return subscription.Merchant.Key;
+            else
+                return "";
         }
 
         [HttpPost("continue")]

@@ -11,6 +11,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LoggedCompanyPageComponent } from './components/logged-company-page/logged-company-page.component';
 import { ServicesPageComponent } from './components/services-page/services-page.component';
 import { ChoosePaymentTypePageComponent } from './components/choose-payment-type-page/choose-payment-type-page.component';
+import { AdminPageComponent } from './components/admin-page/admin-page.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { ChoosePaymentTypePageComponent } from './components/choose-payment-type
     LoggedCompanyPageComponent,
     ServicesPageComponent,
     ChoosePaymentTypePageComponent,
+    AdminPageComponent,
   ],
   imports: [
     BrowserModule,

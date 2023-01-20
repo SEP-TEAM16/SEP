@@ -1,3 +1,4 @@
+using Azure.Core.Pipeline;
 using Microsoft.EntityFrameworkCore;
 using Nancy.Json;
 using SEP.Common.DTO;
@@ -7,6 +8,7 @@ using SEP.PSP.Interfaces;
 using SEP.PSP.Services;
 using Serilog;
 using System.Net;
+using System.Net.Security;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +19,7 @@ var logger = new LoggerConfiguration()
 builder.Logging.ClearProviders();
 builder.Logging.AddSerilog(logger);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddNewtonsoftJson();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

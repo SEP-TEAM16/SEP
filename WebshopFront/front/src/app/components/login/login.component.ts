@@ -27,12 +27,14 @@ export class LoginComponent implements OnInit {
     this.userService.loginUser(this.user).subscribe(ret => {
       this.notFounded = false
       localStorage.setItem('token', ret.token)
-      console.log('token from back: ' + ret.token)
-      console.log('token from storage: ' + localStorage.getItem('token'))
       if(ret.userType === 1)
         this.router.navigate(['loggedCompany'])
-      else
-        this.router.navigate(['servicesPage'])
+      else {
+        if(ret.username === 'admin')
+          this.router.navigate(['adminPage'])
+        else
+          this.router.navigate(['servicesPage'])
+      }
     }, _ => {
       this.notFounded = true
     })

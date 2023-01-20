@@ -10,6 +10,7 @@ export class PaymentService {
   makeBitCoinPaymentUrl: string = 'https://localhost:7035/api/payment/bitcoin'
   makeQrCodePaymentUrl: string = 'https://localhost:7035/api/payment/qr'
   makeCardPaymentUrl: string = 'https://localhost:7035/api/payment/bank'
+  getUnsubscribedUrl: string = 'https://localhost:7035/api/payment/unsubscribed'
 
   constructor(private http: HttpClient) { }
 
@@ -17,7 +18,7 @@ export class PaymentService {
     
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${localStorage.getItem('token')}`
+      'Authorization': 'Bearer ' + localStorage.getItem('token')
     });
     
     return this.http.post<any>(this.makePayPalPaymentUrl, null, {headers: headers});
