@@ -7,6 +7,7 @@ import { LoggedCompanyPageComponent } from './components/logged-company-page/log
 import { LoginComponent } from './components/login/login.component';
 import { RegisterComponent } from './components/register/register.component';
 import { ServicesPageComponent } from './components/services-page/services-page.component';
+import { SubscribedServicesPageComponent } from './components/subscribed-services-page/subscribed-services-page.component';
 
 const routes: Routes = [
   { path: '', component: HomePageComponent},
@@ -15,7 +16,8 @@ const routes: Routes = [
   { path: 'loggedCompany', component: LoggedCompanyPageComponent},
   { path: 'servicesPage', component: ServicesPageComponent},
   { path: 'paymentMethod', component: ChoosePaymentTypePageComponent},
-  { path: 'adminPage', component: AdminPageComponent}
+  { path: 'adminPage', component: AdminPageComponent},
+  { path: 'subscribedServices', component: SubscribedServicesPageComponent}
 ];
 
 @NgModule({

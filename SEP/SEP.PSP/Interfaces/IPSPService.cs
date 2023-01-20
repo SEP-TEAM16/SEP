@@ -12,5 +12,7 @@ namespace SEP.PSP.Interfaces
         public string MakeQRPayment(PSPPaymentDTO PSPPaymentDTO);
         public void EditPayPalPayment(PSPPayment PSPPayment);
         public void UpdatePayment(PSPPayment PSPPayment);
+        public List<Subscription> GetSubscribedByPort(string port);
+        public Boolean RemoveServiceType(string serviceType, string port);
     }
 }

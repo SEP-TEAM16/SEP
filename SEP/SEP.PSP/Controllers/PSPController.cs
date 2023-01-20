@@ -153,5 +153,26 @@ namespace SEP.PSP.Controllers
             _logger.LogInformation("PSP cancel payment executing...");
             _PSPService.EditPayPalPayment(pspPayPalPaymentDTO.ConvertToPSPPayment());
         }
+
+        [HttpGet("subscribed")]
+        [Consumes(MediaTypeNames.Application.Json)]
+        public IActionResult GetSubscribedByPort()
+        {
+            return Ok(_PSPService.GetSubscribedByPort(Request.Headers["senderPort"].ToString()));
+        }
+
+        [HttpPost("removeServiceType")]
+        [Consumes(MediaTypeNames.Application.Json)]
+        public Boolean RemoveServiceType([FromBody] int serviceType)
+        {
+            if(serviceType == 0)
+                return _PSPService.RemoveServiceType("Paypal", Request.Headers["senderPort"].ToString());
+            else if (serviceType == 1)
+                return _PSPService.RemoveServiceType("QR", Request.Headers["senderPort"].ToString());
+            else if (serviceType == 2)
+                return _PSPService.RemoveServiceType("Card", Request.Headers["senderPort"].ToString());
+            else
+                return _PSPService.RemoveServiceType("Bitcoin", Request.Headers["senderPort"].ToString());
+        }
     }
 }

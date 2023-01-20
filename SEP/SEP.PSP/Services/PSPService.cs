@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Connections;
+using Microsoft.AspNetCore.SignalR;
 using Nancy.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -348,6 +349,47 @@ namespace SEP.PSP.Services
             }
 
             return jss.Deserialize<AuthTokenDTO>(getdata);
+        }
+        public List<Subscription> GetSubscribedByPort(string port) {
+            return _PSPDbContext.Subscriptions.Where(sub => sub.Merchant.Port.Equals(port)).ToList();
+        }
+
+        public Boolean RemoveServiceType(string serviceType, string port) {
+            List<Subscription> subscriptionsFromDatabase = _PSPDbContext.Subscriptions.Where(sub => sub.Merchant.Port.Equals(port)).ToList();
+            foreach (Subscription sub in subscriptionsFromDatabase) {
+                if (sub.PaymentMicroserviceType.ToString().Equals(serviceType))
+                {
+                    subscriptionsFromDatabase.Remove(sub);
+                    _PSPDbContext.Subscriptions.Remove(sub);
+                    checkMerchants(subscriptionsFromDatabase, port);
+                    _PSPDbContext.SaveChanges();
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        private void checkMerchants(List<Subscription> subscriptions, string port) {
+            Boolean exist = false;
+            foreach (Subscription sub in subscriptions) {
+                if (sub.Merchant.Port.Equals(port)) {
+                    exist = true;
+                    break;
+                }    
+            }
+            if (!exist)
+                RemoveMerchant(port);
+        }
+
+        private void RemoveMerchant(string port) {
+            List<Merchant> merchantsFromDatabase = _PSPDbContext.Merchants.Where(mer => mer.Port.Equals(port)).ToList();
+            foreach (Merchant mer in merchantsFromDatabase) {
+                if(mer.Port.Equals(port))
+                {
+                    _PSPDbContext.Merchants.Remove(mer);
+                }
+            }
         }
     }
 }

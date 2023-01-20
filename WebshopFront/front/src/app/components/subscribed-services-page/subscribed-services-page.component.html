@@ -1,0 +1,29 @@
+<div style="background-color: rgba(128, 128, 128, 0.259);"> 
+    <div class="container" *ngIf="subscriptions.length !== 0">
+        <div class="row">
+            <div class="col-12">
+                <div class="card" style="margin-top: 60px;">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th scope="col">Service</th>
+                                </tr>
+                            </thead>
+                            <tbody *ngFor="let subscription of subscriptions;let indexOfelement=index;">
+                                <tr>
+                                    <td scope="col" style="vertical-align: middle; font-size: 18px;">{{returnEnumValue(subscription.paymentMicroserviceType)}}</td>
+                                    <td style="vertical-align: middle; "> <button class="btn btn-danger" (click)="removeServiceFromSubscriptions(subscription.paymentMicroserviceType, indexOfelement)"> Remove </button> </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container" *ngIf="subscriptions.length === 0">
+        <label style="color: brown; margin-left: 500px; margin-top: 60px; font-size: 20px;"> There are no subscriptions yet! </label>
+    </div>
+    <div class="row" style="height: 520px;"></div>
+</div>

@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Route, Router } from '@angular/router';
 import { PaymentService } from 'src/app/services/payment.service';
 import { SubscribeService } from 'src/app/services/subscribe.service';
 
@@ -11,7 +12,7 @@ export class AdminPageComponent implements OnInit {
   selectedMethod: number = -1;
   methods: Array<String> = []
 
-  constructor(private subscribeService: SubscribeService) { }
+  constructor(private subscribeService: SubscribeService, private router: Router) { }
 
   ngOnInit(): void {
     this.methods.push('Paypal')
@@ -32,5 +33,9 @@ export class AdminPageComponent implements OnInit {
       else
         alert('You are already subscribed on this payment method!')
     })
+  }
+
+  seeMethods() {
+    this.router.navigate(['/subscribedServices'])
   }
 }

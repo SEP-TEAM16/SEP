@@ -87,5 +87,52 @@ namespace SEP.WebShop.Web.Controllers
             else
                 return true;
         }
+
+        [HttpGet("subscribedByPort")]
+        [AllowAnonymous]
+        public IActionResult GetSubscribedMethods() {
+            var jss = new JavaScriptSerializer();
+
+            var httpRequest = (HttpWebRequest)HttpWebRequest.Create("https://localhost:7038/api/psp/subscribed");
+            httpRequest.Method = "GET";
+            httpRequest.ContentType = "application/json";
+            httpRequest.Headers.Add("senderPort", Request.Headers["senderPort"].ToString());
+
+            var getdata = string.Empty;
+            using (var webresponse = (HttpWebResponse)httpRequest.GetResponse())
+            using (var stream = webresponse.GetResponseStream())
+            using (var reader = new StreamReader(stream))
+            {
+                getdata = reader.ReadToEnd();
+            }
+
+            return Ok(getdata);
+        }
+
+        [HttpPost("removeServiceType")]
+        [AllowAnonymous]
+        public IActionResult RemoveMethod([FromBody] int serviceType)
+        {
+            var jss = new JavaScriptSerializer();
+
+            var httpRequest = (HttpWebRequest)HttpWebRequest.Create("https://localhost:7038/api/psp/removeServiceType");
+            httpRequest.Method = "POST";
+            httpRequest.ContentType = "application/json";
+            httpRequest.Headers.Add("senderPort", Request.Headers["senderPort"].ToString());
+
+            var streamWriter = new StreamWriter(httpRequest.GetRequestStream());
+            streamWriter.Write(jss.Serialize(serviceType));
+            streamWriter.Close();
+
+            var getdata = string.Empty;
+            using (var webresponse = (HttpWebResponse)httpRequest.GetResponse())
+            using (var stream = webresponse.GetResponseStream())
+            using (var reader = new StreamReader(stream))
+            {
+                getdata = reader.ReadToEnd();
+            }
+
+            return Ok(getdata);
+        }
     }
 }
