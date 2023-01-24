@@ -23,7 +23,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SEP.Authorization", "SEP.Au
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SEP.Bank", "SEP.Bank\SEP.Bank.csproj", "{97C55EE0-4E38-4431-A65D-368220299961}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SEP.Bitcoin", "SEP.Bitcoin\SEP.Bitcoin.csproj", "{0284BF37-B62F-470D-AF61-EBE3DD214E12}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SEP.Bitcoin", "SEP.Bitcoin\SEP.Bitcoin.csproj", "{0284BF37-B62F-470D-AF61-EBE3DD214E12}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SEP.PCC", "SEP.PCC\SEP.PCC.csproj", "{44564147-CC3E-49FF-B476-DAE33C549A7D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SEP.Bank2", "SEP.Bank2\SEP.Bank2.csproj", "{BABEBF99-06AA-43B4-B372-616BB5D4B187}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,6 +75,14 @@ Global
 		{0284BF37-B62F-470D-AF61-EBE3DD214E12}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0284BF37-B62F-470D-AF61-EBE3DD214E12}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0284BF37-B62F-470D-AF61-EBE3DD214E12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44564147-CC3E-49FF-B476-DAE33C549A7D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44564147-CC3E-49FF-B476-DAE33C549A7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44564147-CC3E-49FF-B476-DAE33C549A7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44564147-CC3E-49FF-B476-DAE33C549A7D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BABEBF99-06AA-43B4-B372-616BB5D4B187}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BABEBF99-06AA-43B4-B372-616BB5D4B187}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BABEBF99-06AA-43B4-B372-616BB5D4B187}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BABEBF99-06AA-43B4-B372-616BB5D4B187}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

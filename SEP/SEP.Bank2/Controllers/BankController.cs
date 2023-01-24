@@ -3,18 +3,18 @@ using Microsoft.AspNetCore.Mvc;
 using Nancy.Json;
 using System.Net.Mime;
 using System.Net;
-using SEP.Bank.DTO;
-using SEP.Bank.Models;
-using SEP.Bank.Interfaces;
+using SEP.Bank2.DTO;
+using SEP.Bank2.Models;
+using SEP.Bank2.Interfaces;
 using SEP.Common.Enums;
 using QRCoder;
 using System.Drawing;
 using System.Drawing.Imaging;
 
-namespace SEP.Bank.Controllers
+namespace SEP.Bank2.Controllers
 {
 
-    [Route("api/bank")]
+    [Route("api/bank2")]
     [ApiController]
     public class BankController : ControllerBase
     {
@@ -74,39 +74,20 @@ namespace SEP.Bank.Controllers
         {
             CardDTO cardDTO = new CardDTO(id, month, year, number, securityCode);
             _logger.LogInformation("Check if this bank");
-            if (cardDTO.Number.StartsWith(Pan))
+            var payment = _mapper.Map<BankPaymentDTO>(_bankService.Pay(cardDTO));
+            if (payment != null)
             {
-                var payment = _mapper.Map<BankPaymentDTO>(_bankService.Pay(cardDTO));
-                if (payment != null)
-                {
-                    var jss = new JavaScriptSerializer();
-                    var httpRequest = (HttpWebRequest)HttpWebRequest.Create("https://localhost:5050/psp/update");
-                    httpRequest.Method = "POST";
-                    httpRequest.ContentType = "application/json";
-                    var streamWriter = new StreamWriter(httpRequest.GetRequestStream());
-                    streamWriter.Write(jss.Serialize(payment));
-                    streamWriter.Close();
-                    httpRequest.GetResponse();
-                }
-                return;
-            } else
-            {
-                var payment = _mapper.Map<BankPaymentDTO>(_bankService.Convert(cardDTO));
-                if (payment != null)
-                {
-                    _logger.LogInformation("Redirect");
-                    var jss = new JavaScriptSerializer();
-                    var httpRequest = (HttpWebRequest)HttpWebRequest.Create("https://localhost:5050/psp/pcc");
-                    httpRequest.Method = "POST";
-                    httpRequest.ContentType = "application/json";
-                    var streamWriter = new StreamWriter(httpRequest.GetRequestStream());
-                    streamWriter.Write(jss.Serialize(payment));
-                    streamWriter.Close();
-                    httpRequest.GetResponse();
-                }
+                var jss = new JavaScriptSerializer();
+                var httpRequest = (HttpWebRequest)HttpWebRequest.Create("https://localhost:5050/psp/update");
+                httpRequest.Method = "POST";
+                httpRequest.ContentType = "application/json";
+                var streamWriter = new StreamWriter(httpRequest.GetRequestStream());
+                streamWriter.Write(jss.Serialize(payment));
+                streamWriter.Close();
+                httpRequest.GetResponse();
             }
-
-            _logger.LogWarning("You don't have access.");
+            return;
+            
         }
 
         [HttpGet("get")]

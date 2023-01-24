@@ -8,6 +8,7 @@
         Bitcoin,
         PSP,
         None,
-        Card1
+        Card1,
+        PCC
     }
 }

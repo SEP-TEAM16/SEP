@@ -1,11 +1,11 @@
-﻿using SEP.Bank.DTO;
-using SEP.Bank.Infrastructure;
-using SEP.Bank.Interfaces;
-using SEP.Bank.Models;
+﻿using SEP.Bank2.DTO;
+using SEP.Bank2.Infrastructure;
+using SEP.Bank2.Interfaces;
+using SEP.Bank2.Models;
 using SEP.Common.Enums;
 using Stripe;
 
-namespace SEP.Bank.Services
+namespace SEP.Bank2.Services
 {
     public class BankService : IBankService
     {
