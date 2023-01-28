@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { WebShopUser } from 'src/app/model/webshopuser';
+import { SubscribeService } from 'src/app/services/subscribe.service';
 import { UserService } from '../../services/user.service';
 
 @Component({
@@ -12,7 +13,7 @@ export class LoginComponent implements OnInit {
   notFounded: Boolean = false;
   user: WebShopUser = {} as WebShopUser;
 
-  constructor(private userService: UserService, private router: Router) { }
+  constructor(private userService: UserService, private router: Router, private subscriptionService: SubscribeService) { }
 
   ngOnInit(): void {
     this.user.emailAddress = ''
@@ -26,10 +27,15 @@ export class LoginComponent implements OnInit {
   loginUser() {
     this.userService.loginUser(this.user).subscribe(ret => {
       this.notFounded = false
-      localStorage.setItem('token', ret.token)
-      if(ret.userType === 1)
-        this.router.navigate(['loggedCompany'])
-      else {
+      localStorage.setItem('token', ret.token) 
+      if(ret.userType === 1) {
+        this.subscriptionService.isCompanySubscribed(ret).subscribe(ret => {
+          if(ret)
+            this.router.navigate(['servicesPage'])
+          else
+            this.router.navigate(['loggedCompany'])
+        })
+      } else {
         if(ret.username === 'admin')
           this.router.navigate(['adminPage'])
         else

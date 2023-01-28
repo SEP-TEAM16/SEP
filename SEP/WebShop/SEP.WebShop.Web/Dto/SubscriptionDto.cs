@@ -2,11 +2,11 @@
 {
     public class SubscriptionDto
     {
-        public Guid Id { get; }
-        public DateTime ExpirationDateTime { get; }
-        public string SubscriptionOptionName { get; }
-        public string SubscriptionOptionType { get; }
-        public string CompanyName { get; }
+        public Guid Id { get; set; }
+        public DateTime ExpirationDateTime { get; set;  }
+        public string SubscriptionOptionName { get; set;  }
+        public string SubscriptionOptionType { get; set;  }
+        public string CompanyName { get; set; }
 
         public SubscriptionDto()
         {

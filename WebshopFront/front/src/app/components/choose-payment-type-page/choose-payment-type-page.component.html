@@ -6,9 +6,9 @@
         </div>
         <div class="col-3" style=" font-size: 20px; margin-top: 50px;">
             <div class="subscription-option" *ngFor="let subs of subscriptions; let indexOfelement = index;">
-                <input type="radio" id="indexOfelement" name="item" value="{{indexOfelement}}"
+                <input type="radio" id={{returnEnumValue(subs.paymentMicroserviceType)}} name="item" value="{{returnEnumValue(subs.paymentMicroserviceType)}}"
                     (click)="methodSelected(subs)" style="margin-left: 10px;">
-                  <label for="{{indexOfelement}}">{{returnEnumValue(subs.paymentMicroserviceType)}}</label><br>
+                  <label for="{{returnEnumValue(subs.paymentMicroserviceType)}}">{{returnEnumValue(subs.paymentMicroserviceType)}}</label><br>
 
             </div>
         </div>

@@ -63,5 +63,14 @@ namespace SEP.WebShop.Core.Services
             _unitOfWork.Commmit();
             return Result.Success();
         }
+
+        public Boolean IsCompanySubscribed(Guid id) {
+            foreach (Subscription subscription in _subscriptionRepository.FindAll()) {
+                if (subscription.Company.Id.Equals(id))
+                    return true;
+            }
+            
+            return false;
+        }
     }
 }

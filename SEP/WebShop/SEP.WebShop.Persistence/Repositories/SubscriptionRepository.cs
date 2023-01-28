@@ -23,7 +23,7 @@ namespace SEP.WebShop.Persistence.Repositories
         public IEnumerable<Subscription> FindAll()
         {
             List<Subscription> subscriptions = new List<Subscription>();
-            using SqlCommand command = new SqlCommand("select subs.id, subs.expirationDateTime, sub.subscriptionStatus, subs.subscriptionOptionId, subs.companyId, " + //0-4
+            using SqlCommand command = new SqlCommand("select subs.id, subs.expirationDateTime, subs.subscriptionStatus, subs.subscriptionOptionId, subs.companyId, " + //0-4
                 "subOpts.id, subOpts.subscriptionType, subOpts.name, subOpts.price, subOpts.currency, " + //5-9
                 "usr.id, usr.username, usr.password, usr.emailAddress, usr.name, usr.city, usr.street, usr.userType " + //10-17
                 "from dbo.Subscriptions as subs join dbo.SubscriptionOptions as subOpts on subs.subscriptionOptionId = subOpts.id " +
@@ -45,7 +45,7 @@ namespace SEP.WebShop.Persistence.Repositories
 
         public Maybe<Subscription> FindById(Guid id)
         {
-            using SqlCommand command = new SqlCommand("select subs.id, subs.expirationDateTime, sub.subscriptionStatus, subs.subscriptionOptionId, subs.companyId, " + //0-4
+            using SqlCommand command = new SqlCommand("select subs.id, subs.expirationDateTime, subs.subscriptionStatus, subs.subscriptionOptionId, subs.companyId, " + //0-4
                "subOpts.id, subOpts.subscriptionType, subOpts.name, subOpts.price, subOpts.currency, " + //5-9
                "usr.id, usr.username, usr.password, usr.emailAddress, usr.name, usr.city, usr.street, usr.userType " + //10-17
                "from dbo.Subscriptions as subs join dbo.SubscriptionOptions as subOpts on subs.subscriptionOptionId = subOpts.id " +

@@ -1,7 +1,9 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { AuthenticationResponse } from '../model/authentication-response';
 import { Subscription } from '../model/subscription';
+import { WebShopUser } from '../model/webshopuser';
 
 @Injectable({
   providedIn: 'root'
@@ -10,6 +12,7 @@ export class SubscribeService {
   private makeSubscriptionUrl: string = 'https://localhost:7035/api/subscriptions'
   private getSubscribedByPortUrl: string = 'https://localhost:7035/api/subscriptions/subscribedByPort'
   private removeServiceTypeUrl: string = 'https://localhost:7035/api/subscriptions/removeServiceType'
+  private isCompanySubscribedUrl: string = 'https://localhost:7035/api/subscriptions/isCompanySubscribed'
 
   constructor(private http: HttpClient) { }
 
@@ -41,5 +44,9 @@ export class SubscribeService {
     });
     
     return this.http.post<Boolean>(this.removeServiceTypeUrl, type, {headers: headers});
+  }
+
+  public isCompanySubscribed(authRes: AuthenticationResponse): Observable<Boolean> {
+    return this.http.post<Boolean>(this.isCompanySubscribedUrl, authRes);
   }
 }

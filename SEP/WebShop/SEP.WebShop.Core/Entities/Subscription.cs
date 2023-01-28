@@ -5,11 +5,13 @@ namespace SEP.WebShop.Core.Entities
 {
     public class Subscription
     {
-        public Guid Id { get; }
-        public DateTime ExpirationDateTime { get; }
-        public SubscriptionStatus SubscriptionStatus { get; }
-        public SubscriptionOption SubscriptionOption { get; }
-        public Company Company { get; }
+        public Guid Id { get; set; }
+        public DateTime ExpirationDateTime { get; set; }
+        public SubscriptionStatus SubscriptionStatus { get; set; }
+        public SubscriptionOption SubscriptionOption { get; set; }
+        public Company Company { get; set; }
+
+        public Subscription() { }
         
         private Subscription(Guid id, DateTime expirationDateTime, SubscriptionStatus subscriptionStatus, SubscriptionOption subscriptionOption, Company company)
         {
