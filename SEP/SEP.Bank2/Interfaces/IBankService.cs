@@ -1,7 +1,7 @@
-﻿using SEP.Bank.DTO;
-using SEP.Bank.Models;
+﻿using SEP.Bank2.DTO;
+using SEP.Bank2.Models;
 
-namespace SEP.Bank.Interfaces
+namespace SEP.Bank2.Interfaces
 {
     public interface IBankService
     {
