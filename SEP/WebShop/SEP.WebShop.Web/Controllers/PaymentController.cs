@@ -103,8 +103,8 @@ namespace SEP.WebShop.Web.Controllers
             var user = _userRepository.FindById(_jwtUtils.ValidateToken(Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last()).Value).Value;
             paymentDto.Merchant = new MerchantDto(0, "dasd", "7035");
             paymentDto.Currency = "USD";
-            paymentDto.PublicKey = "jdaskjdjasdjaskdaskjdjkas";
-            paymentDto.PrivateKey = "jdaskjdjasdjaskdaskjdjkas";
+            paymentDto.PublicKey = "04d59539b497081d0cdf5ae989200291c3f4f2e3fa610adc81927252be81c5e588e76474cf8acff1037cc631b4f349afbb811e9cc84cf683e49dd466b484ff6bed";
+            paymentDto.PrivateKey = "5032554e9d661af4e3fe58ef485231358925d39996830dac9eace8cadfbea9cd";
             paymentDto.Email = user.EmailAddress;
             if (user.UserType.Equals(UserType.candidate))
             {

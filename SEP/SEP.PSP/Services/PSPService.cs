@@ -91,7 +91,7 @@ namespace SEP.PSP.Services
             _PSPDbContext.SaveChanges();
             return getdata;
         }
-        public void MakeBitcoinPayment(PSPBitcoinPaymentDTO pspBitcoinPaymentDtoo)
+        public void MakeBitcoinPayment(PSPBitcoinPaymentDTOForReceive pspBitcoinPaymentDtoo)
         {
             var merchant = _PSPDbContext.Merchants.FirstOrDefault(mer => mer.Key.Equals(pspBitcoinPaymentDtoo.Key));
             if (merchant is null)

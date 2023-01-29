@@ -36,11 +36,13 @@ namespace SEP.Bitcoin.Services
         }
         public BitcoinPayment Pay(BitcoinPayment bitcoinPayment)
         {
-            var privateKey = new BitcoinSecret(bitcoinPayment.PrivateKey, Network.TestNet);
+            Key privateKeyy = new Key(StringToByteArray(bitcoinPayment.PrivateKey));
+            var privateKey = new BitcoinSecret(privateKeyy, Network.TestNet);
             var client = new QBitNinjaClient(Network.TestNet);
             var destinationAddress = new BitcoinPubKeyAddress(DestinationAddress, Network.TestNet);
-            var address = privateKey.GetAddress(ScriptPubKeyType.Segwit);
-            var balance = client.GetBalance(address, unspentOnly: true).Result;
+            var address = privateKey.GetAddress(ScriptPubKeyType.Legacy);
+            //mw2DzXinK8KaqunpYgjnGyCYcgHVb3SJWc
+            var balance = client.GetBalance(address, true).Result;
             var builder = Network.TestNet.CreateTransactionBuilder();
             var jss = new JavaScriptSerializer();
             var getdata = string.Empty;
@@ -52,12 +54,17 @@ namespace SEP.Bitcoin.Services
             {
                 getdata = reader.ReadToEnd();
             }
-        
+
+            var coin = balance.Operations
+            .SelectMany(op => op.ReceivedCoins)
+            .FirstOrDefault(c => c.Amount == balance.Operations.SelectMany(op => op.ReceivedCoins).Max(c => c.Amount));
+            var feeAmount = new Money(0.001m, MoneyUnit.BTC);
             var transaction = builder
-                .AddCoins(balance.Operations.SelectMany(op => op.ReceivedCoins))
+                .AddCoins(coin)
                 .AddKeys(privateKey)
-                .Send(destinationAddress, new Money(Decimal.Parse(getdata), MoneyUnit.BTC))
-                .SetChange(privateKey.GetAddress(ScriptPubKeyType.Segwit))
+                .Send(destinationAddress, new Money(Decimal.Parse(getdata.Replace(".", ",00")), MoneyUnit.BTC))
+                .SetChange(privateKey.GetAddress(ScriptPubKeyType.Legacy))
+                .SendFees(feeAmount)
                 .BuildTransaction(false);
 
             var broadcastResponse = client.Broadcast(transaction).Result;
@@ -86,6 +93,14 @@ namespace SEP.Bitcoin.Services
             _bitcoinDbContext.BitcoinPayment.Add(bitcoinPayment);
             _bitcoinDbContext.SaveChanges();
             return bitcoinPayment.Id.ToString();
+        }
+
+        private byte[] StringToByteArray(string hex)
+        {
+            return Enumerable.Range(0, hex.Length)
+                             .Where(x => x % 2 == 0)
+                             .Select(x => Convert.ToByte(hex.Substring(x, 2), 16))
+                             .ToArray();
         }
 
     }
