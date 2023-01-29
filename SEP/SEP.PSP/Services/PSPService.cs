@@ -142,7 +142,7 @@ namespace SEP.PSP.Services
 
             var getdata = string.Empty;
             var jss = new JavaScriptSerializer();
-            var authKey = AuthKeys.FirstOrDefault(a => a.PaymentMicroserviceType.Equals(PaymentMicroserviceType.Card));
+            var authKey = AuthKeys.FirstOrDefault(a => a.PaymentMicroserviceType.Equals(PaymentMicroserviceType.Card) && !a.Route.Contains("2"));
 
             var httpRequest = (HttpWebRequest)HttpWebRequest.Create("https://localhost:5050/" + authKey.Route);
             httpRequest.Method = "POST";
@@ -180,7 +180,7 @@ namespace SEP.PSP.Services
 
             var getdata = string.Empty;
             var jss = new JavaScriptSerializer();
-            var authKey = AuthKeys.FirstOrDefault(a => a.PaymentMicroserviceType.Equals(PaymentMicroserviceType.QR));
+            var authKey = AuthKeys.FirstOrDefault(a => a.PaymentMicroserviceType.Equals(PaymentMicroserviceType.QR) && !a.Route.Contains("2"));
 
             var httpRequest = (HttpWebRequest)HttpWebRequest.Create("https://localhost:5050/" + authKey.Route);
             httpRequest.Method = "POST";

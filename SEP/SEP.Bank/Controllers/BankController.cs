@@ -10,6 +10,7 @@ using SEP.Common.Enums;
 using QRCoder;
 using System.Drawing;
 using System.Drawing.Imaging;
+using Newtonsoft.Json;
 
 namespace SEP.Bank.Controllers
 {
@@ -70,7 +71,7 @@ namespace SEP.Bank.Controllers
         }
 
         [HttpPost("pay")]
-        public void Pay([FromForm] string id, [FromForm] string securityCode, [FromForm] string number, [FromForm] string month, [FromForm] string year)
+        public RedirectResult Pay([FromForm] string id, [FromForm] string securityCode, [FromForm] string number, [FromForm] string month, [FromForm] string year)
         {
             CardDTO cardDTO = new CardDTO(id, month, year, number, securityCode);
             _logger.LogInformation("Check if this bank");
@@ -88,33 +89,39 @@ namespace SEP.Bank.Controllers
                     streamWriter.Close();
                     httpRequest.GetResponse();
                 }
-                return;
+                return RedirectPermanent("https://localhost:7035/");
             } else
             {
                 var payment = _mapper.Map<BankPaymentDTO>(_bankService.Convert(cardDTO));
                 if (payment != null)
                 {
                     _logger.LogInformation("Redirect");
-                    var jss = new JavaScriptSerializer();
-                    var httpRequest = (HttpWebRequest)HttpWebRequest.Create("https://localhost:5050/psp/pcc");
+                    var httpRequest = (HttpWebRequest)HttpWebRequest.Create("https://localhost:5050/pcc");
                     httpRequest.Method = "POST";
                     httpRequest.ContentType = "application/json";
                     var streamWriter = new StreamWriter(httpRequest.GetRequestStream());
-                    streamWriter.Write(jss.Serialize(payment));
+                    streamWriter.Write(JsonConvert.SerializeObject(payment));
                     streamWriter.Close();
                     httpRequest.GetResponse();
                 }
+                return RedirectPermanent("https://localhost:7035/");
             }
 
             _logger.LogWarning("You don't have access.");
+
         }
 
         [HttpGet("get")]
         [Consumes(MediaTypeNames.Application.Json)]
         public ActionResult Get(string id)
         {
+            var html = "<!DOCTYPE html>\r\n<html>\r\n<body>\r\n<script>\r\ndocument.addEventListener(\"DOMContentLoaded\", function(){\r\ndocument.getElementById(\"id\").value = " + id + ";\r\n});\r\n</script>\r\n<div>\r\n    <div>\r\n        <h1>Confirm Purchase</h1>\r\n    </div>\r\n    <div>\r\n        <form action=\"" + Front + "\" method=\"post\">\r\n            <input hidden type=\"text\" name=\"id\" id=\"id\">\r\n            <div>\r\n                <label>CVV</label>\r\n                <input type=\"text\" name=\"securityCode\" id=\"securityCode\">\r\n            </div>\r\n            <div id=\"card-number-field\">\r\n                <label>Card Number</label>\r\n                <input type=\"text\" name=\"number\" id=\"number\">\r\n            </div>\r\n            <div id=\"expiration-date\">\r\n                <label>Expiration Date</label>\r\n                <select name=\"month\">\r\n                    <option value=\"1\">January</option>\r\n                    <option value=\"2\">February </option>\r\n                    <option value=\"3\">March</option>\r\n                    <option value=\"4\">April</option>\r\n                    <option value=\"5\">May</option>\r\n                    <option value=\"6\">June</option>\r\n                    <option value=\"7\">July</option>\r\n                    <option value=\"8\">August</option>\r\n                    <option value=\"9\">September</option>\r\n                    <option value=\"10\">October</option>\r\n                    <option value=\"11\">November</option>\r\n                    <option value=\"12\">December</option>\r\n                </select>\r\n                <select name=\"year\">\r\n                    <option value=\"2016\"> 2016</option>\r\n                    <option value=\"2017\"> 2017</option>\r\n                    <option value=\"2018\"> 2018</option>\r\n                    <option value=\"2019\"> 2019</option>\r\n                    <option value=\"2020\"> 2020</option>\r\n                    <option value=\"2021\"> 2021</option>\r\n                    <option value=\"2022\"> 2022</option>\r\n                    <option value=\"2023\"> 2023</option>\r\n\t     <option value=\"2024\"> 2024</option>\r\n                </select>\r\n            </div>\r\n            <div id=\"pay-now\">\r\n                <button type=\"submit\" id=\"confirm-purchase\">Confirm</button>\r\n            </div>\r\n        </form>\r\n    </div>\r\n</div>\r\n</body>\r\n</html>";
 
-            return base.Content("<!DOCTYPE html>\r\n<html>\r\n<body>\r\n<script>\r\ndocument.addEventListener(\"DOMContentLoaded\", function(){\r\ndocument.getElementById(\"id\").value = " + id + ";\r\n});\r\n</script>\r\n<div>\r\n    <div>\r\n        <h1>Confirm Purchase</h1>\r\n    </div>\r\n    <div>\r\n        <form action=\"" + Front + "\" method=\"post\">\r\n            <input hidden type=\"text\" name=\"id\" id=\"id\">\r\n            <div>\r\n                <label>CVV</label>\r\n                <input type=\"text\" name=\"securityCode\" id=\"securityCode\">\r\n            </div>\r\n            <div id=\"card-number-field\">\r\n                <label>Card Number</label>\r\n                <input type=\"text\" name=\"number\" id=\"number\">\r\n            </div>\r\n            <div id=\"expiration-date\">\r\n                <label>Expiration Date</label>\r\n                <select name=\"month\">\r\n                    <option value=\"1\">January</option>\r\n                    <option value=\"2\">February </option>\r\n                    <option value=\"3\">March</option>\r\n                    <option value=\"4\">April</option>\r\n                    <option value=\"5\">May</option>\r\n                    <option value=\"6\">June</option>\r\n                    <option value=\"7\">July</option>\r\n                    <option value=\"8\">August</option>\r\n                    <option value=\"9\">September</option>\r\n                    <option value=\"10\">October</option>\r\n                    <option value=\"11\">November</option>\r\n                    <option value=\"12\">December</option>\r\n                </select>\r\n                <select name=\"year\">\r\n                    <option value=\"2016\"> 2016</option>\r\n                    <option value=\"2017\"> 2017</option>\r\n                    <option value=\"2018\"> 2018</option>\r\n                    <option value=\"2019\"> 2019</option>\r\n                    <option value=\"2020\"> 2020</option>\r\n                    <option value=\"2021\"> 2021</option>\r\n\t     <option value=\"2022\"> 2022</option>\r\n                </select>\r\n            </div>\r\n            <div id=\"pay-now\">\r\n                <button type=\"submit\" id=\"confirm-purchase\">Confirm</button>\r\n            </div>\r\n        </form>\r\n    </div>\r\n</div>\r\n</body>\r\n</html>");
+            return new ContentResult
+            {
+                Content = html,
+                ContentType = "text/html"
+            };
         }
 
         [HttpGet("get/qr")]
@@ -140,7 +147,7 @@ namespace SEP.Bank.Controllers
             
 
             _logger.LogWarning("You don't have access.");
-            var html = "<!DOCTYPE html>\r\n<html>\r\n<body><img src=\"" + QrUri + "\"/><a href=\""+ Front + "?id=" + id+"\">Pay!</a></body>\r\n</html>";
+            var html = "<!DOCTYPE html>\r\n<html>\r\n<body><img src=\"" + QrUri + "\"/><a href=\""+ "https://localhost:5860/api/bank/get" + "?id=" + id+"\">Pay!</a></body>\r\n</html>";
             return new ContentResult
             {
                 Content = html,

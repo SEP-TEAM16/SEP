@@ -35,8 +35,8 @@ namespace SEP.Bank.Services
             StripeConfiguration.ApiKey = API_KEY;
             bankPaymentDetails.Number = cardDTO.Number;
             bankPaymentDetails.Expiration = new DateTime();
-            bankPaymentDetails.Expiration.AddYears(int.Parse(cardDTO.Year) - bankPaymentDetails.Expiration.Year);
-            bankPaymentDetails.Expiration.AddMonths((int.Parse(cardDTO.Month) - 1) - bankPaymentDetails.Expiration.Month);
+            bankPaymentDetails.Expiration = bankPaymentDetails.Expiration.AddYears(int.Parse(cardDTO.Year) - bankPaymentDetails.Expiration.Year);
+            bankPaymentDetails.Expiration = bankPaymentDetails.Expiration.AddMonths((int.Parse(cardDTO.Month)) - bankPaymentDetails.Expiration.Month);
             bankPaymentDetails.SecurityCode = cardDTO.SecurityCode;
             var chargeService = new ChargeService();
             String value = bankPaymentDetails.Amount.ToString("0.00").Replace(',', '.');
@@ -54,7 +54,7 @@ namespace SEP.Bank.Services
                     AddressLine1 = "Puskinova",
                     AddressCity = "Novi Sad",
                     AddressCountry = "Serbia",
-                },
+                }
             };
             var service = new TokenService();
             Token token = service.Create(options);
@@ -68,7 +68,8 @@ namespace SEP.Bank.Services
                 {
                     { "customer_id", bankPaymentDetails.MerchantId},
                     { "customer_email", bankPaymentDetails.Email },
-                }
+                },
+                Source = token.Id
             };
 
             try
@@ -94,10 +95,10 @@ namespace SEP.Bank.Services
             BankPayment bankPaymentDetails = _bankDbContext.BankPayment.SingleOrDefault(b => b.Id == int.Parse(cardDTO.Id));
             bankPaymentDetails.Number = cardDTO.Number;
             bankPaymentDetails.Expiration = new DateTime();
-            bankPaymentDetails.Expiration.AddYears(int.Parse(cardDTO.Year) - bankPaymentDetails.Expiration.Year);
-            bankPaymentDetails.Expiration.AddMonths((int.Parse(cardDTO.Month) - 1) - bankPaymentDetails.Expiration.Month);
+            bankPaymentDetails.Expiration = bankPaymentDetails.Expiration.AddYears(int.Parse(cardDTO.Year) - bankPaymentDetails.Expiration.Year);
+            bankPaymentDetails.Expiration = bankPaymentDetails.Expiration.AddMonths((int.Parse(cardDTO.Month)) - bankPaymentDetails.Expiration.Month);
             bankPaymentDetails.SecurityCode = cardDTO.SecurityCode;
-            bankPaymentDetails.PaymentApproval = PaymentApprovalType.Pending;
+            bankPaymentDetails.PaymentApproval = PaymentApprovalType.Success;
             _bankDbContext.BankPayment.Update(bankPaymentDetails);
             _bankDbContext.SaveChanges();
             return bankPaymentDetails;

@@ -62,14 +62,16 @@ namespace SEP.Bank2.Services
                 {
                     { "customer_id", bankPayment.MerchantId},
                     { "customer_email", bankPayment.Email },
-                }
+                },
+                Source = token.Id
             };
 
             try
             {
                 Charge charge = chargeService.Create(chargeOptions);
                 bankPayment.PaymentApproval = PaymentApprovalType.Success;
-                _bankDbContext.BankPayment.Update(bankPayment);
+                bankPayment.Id = 0;
+                _bankDbContext.BankPayment.Add(bankPayment);
                 _bankDbContext.SaveChanges();
                 return bankPayment;
             }
@@ -77,7 +79,8 @@ namespace SEP.Bank2.Services
             {
                 _logger.LogError(e.Message);
                 bankPayment.PaymentApproval = PaymentApprovalType.Rejected;
-                _bankDbContext.BankPayment.Update(bankPayment);
+                bankPayment.Id = 0;
+                _bankDbContext.BankPayment.Add(bankPayment);
                 _bankDbContext.SaveChanges();
                 return bankPayment;
             }
@@ -88,8 +91,8 @@ namespace SEP.Bank2.Services
             BankPayment bankPaymentDetails = _bankDbContext.BankPayment.SingleOrDefault(b => b.Id == int.Parse(cardDTO.Id));
             bankPaymentDetails.Number = cardDTO.Number;
             bankPaymentDetails.Expiration = new DateTime();
-            bankPaymentDetails.Expiration.AddYears(int.Parse(cardDTO.Year) - bankPaymentDetails.Expiration.Year);
-            bankPaymentDetails.Expiration.AddMonths((int.Parse(cardDTO.Month) - 1) - bankPaymentDetails.Expiration.Month);
+            bankPaymentDetails.Expiration = bankPaymentDetails.Expiration.AddYears(int.Parse(cardDTO.Year) - bankPaymentDetails.Expiration.Year);
+            bankPaymentDetails.Expiration = bankPaymentDetails.Expiration.AddMonths((int.Parse(cardDTO.Month)) - bankPaymentDetails.Expiration.Month);
             bankPaymentDetails.SecurityCode = cardDTO.SecurityCode;
             bankPaymentDetails.PaymentApproval = PaymentApprovalType.Pending;
             _bankDbContext.BankPayment.Update(bankPaymentDetails);
