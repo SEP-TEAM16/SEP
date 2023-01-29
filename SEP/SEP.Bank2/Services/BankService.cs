@@ -28,29 +28,23 @@ namespace SEP.Bank2.Services
             BankPayment bankPaymentDetails = _bankDbContext.BankPayment.SingleOrDefault(b => b.Id == int.Parse(id));
             return bankPaymentDetails;
         }
-        public BankPayment Pay(CardDTO cardDTO)
+        public BankPayment Pay(BankPayment bankPayment)
         {
-            BankPayment bankPaymentDetails = _bankDbContext.BankPayment.SingleOrDefault(b => b.Id == int.Parse(cardDTO.Id));
             _logger.LogInformation("Creating stripe payment");
             StripeConfiguration.ApiKey = API_KEY;
-            bankPaymentDetails.Number = cardDTO.Number;
-            bankPaymentDetails.Expiration = new DateTime();
-            bankPaymentDetails.Expiration.AddYears(int.Parse(cardDTO.Year) - bankPaymentDetails.Expiration.Year);
-            bankPaymentDetails.Expiration.AddMonths((int.Parse(cardDTO.Month) - 1) - bankPaymentDetails.Expiration.Month);
-            bankPaymentDetails.SecurityCode = cardDTO.SecurityCode;
             var chargeService = new ChargeService();
-            String value = bankPaymentDetails.Amount.ToString("0.00").Replace(',', '.');
+            String value = bankPayment.Amount.ToString("0.00").Replace(',', '.');
             float amount = float.Parse(value);
 
             var options = new TokenCreateOptions
             {
                 Card = new TokenCardOptions
                 {
-                    Number = bankPaymentDetails.Number,
-                    ExpMonth = bankPaymentDetails.Expiration.Month.ToString(),
-                    ExpYear = bankPaymentDetails.Expiration.Year.ToString(),
-                    Name = bankPaymentDetails.FirstName + " " + bankPaymentDetails.LastName,
-                    Cvc = bankPaymentDetails.SecurityCode,
+                    Number = bankPayment.Number,
+                    ExpMonth = bankPayment.Expiration.Month.ToString(),
+                    ExpYear = bankPayment.Expiration.Year.ToString(),
+                    Name = bankPayment.FirstName + " " + bankPayment.LastName,
+                    Cvc = bankPayment.SecurityCode,
                     AddressLine1 = "Puskinova",
                     AddressCity = "Novi Sad",
                     AddressCountry = "Serbia",
@@ -66,26 +60,26 @@ namespace SEP.Bank2.Services
                 Description = "example",
                 Metadata = new Dictionary<string, string>
                 {
-                    { "customer_id", bankPaymentDetails.MerchantId},
-                    { "customer_email", bankPaymentDetails.Email },
+                    { "customer_id", bankPayment.MerchantId},
+                    { "customer_email", bankPayment.Email },
                 }
             };
 
             try
             {
                 Charge charge = chargeService.Create(chargeOptions);
-                bankPaymentDetails.PaymentApproval = PaymentApprovalType.Success;
-                _bankDbContext.BankPayment.Update(bankPaymentDetails);
+                bankPayment.PaymentApproval = PaymentApprovalType.Success;
+                _bankDbContext.BankPayment.Update(bankPayment);
                 _bankDbContext.SaveChanges();
-                return bankPaymentDetails;
+                return bankPayment;
             }
             catch (Exception e)
             {
                 _logger.LogError(e.Message);
-                bankPaymentDetails.PaymentApproval = PaymentApprovalType.Rejected;
-                _bankDbContext.BankPayment.Update(bankPaymentDetails);
+                bankPayment.PaymentApproval = PaymentApprovalType.Rejected;
+                _bankDbContext.BankPayment.Update(bankPayment);
                 _bankDbContext.SaveChanges();
-                return bankPaymentDetails;
+                return bankPayment;
             }
         }
 

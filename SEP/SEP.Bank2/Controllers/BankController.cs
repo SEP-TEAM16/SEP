@@ -70,11 +70,10 @@ namespace SEP.Bank2.Controllers
         }
 
         [HttpPost("pay")]
-        public void Pay([FromForm] string id, [FromForm] string securityCode, [FromForm] string number, [FromForm] string month, [FromForm] string year)
+        public void Pay([FromBody] BankPaymentDTO bankPaymentDTO)
         {
-            CardDTO cardDTO = new CardDTO(id, month, year, number, securityCode);
-            _logger.LogInformation("Check if this bank");
-            var payment = _mapper.Map<BankPaymentDTO>(_bankService.Pay(cardDTO));
+            _logger.LogInformation("Pay");
+            var payment = _mapper.Map<BankPaymentDTO>(_bankService.Pay(_mapper.Map<BankPayment>(bankPaymentDTO)));
             if (payment != null)
             {
                 var jss = new JavaScriptSerializer();
