@@ -38,22 +38,31 @@ export class ChoosePaymentTypePageComponent implements OnInit {
   }
 
   makePayment() {
-    // if(this.method === 'PayPal') {
-    //   this.paymentService.makePayPalPayment().subscribe(ret => {
+    let chosedInput = ""
+    for(let val of this.subscriptions) {
+      let input = document.getElementById(this.returnEnumValue(val.paymentMicroserviceType)) as HTMLInputElement;
+      if(input.checked) {
+        chosedInput = this.returnEnumValue(val.paymentMicroserviceType)
+        break
+      }
+    }
 
-    //   })
-    // } else if(this.method === 'Card'){
-    //   this.paymentService.makeCardPayment().subscribe(ret => {
-
-    //   })
-    // } else if(this.method === 'BitCoin'){
-    //   this.paymentService.makeBitCoinPayment().subscribe(ret => {
-
-    //   })
-    // } else {
-    //   this.paymentService.makeQrCodePayment().subscribe(ret => {
-
-    //   })
-    // }
+    if(chosedInput === 'Paypal') {
+      this.paymentService.makePayPalPayment().subscribe(ret => {
+        document.location.href = ret;
+      })
+    } else if(chosedInput === 'Card'){
+      this.paymentService.makeCardPayment().subscribe(ret => {
+        document.location.href = ret;
+      })
+    } else if(chosedInput === 'Bitcoin'){
+      this.paymentService.makeBitCoinPayment().subscribe(ret => {
+        alert(ret)
+      })
+    } else {
+      this.paymentService.makeQrCodePayment().subscribe(ret => {
+        document.location.href = ret;
+      })
+    }
   }
 }

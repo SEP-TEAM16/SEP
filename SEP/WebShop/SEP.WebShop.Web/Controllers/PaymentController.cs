@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Nancy.Json;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SEP.WebShop.Core.Entities;
 using SEP.WebShop.Core.Entities.Enums;
 using SEP.WebShop.Core.Entities.ValueObjects;
@@ -11,6 +13,8 @@ using SEP.WebShop.Web.Authorization;
 using SEP.WebShop.Web.Dto;
 using SEP.WebShop.Web.RabbitMQ;
 using System.Net;
+using System.Net.Mime;
+using System.Text.Json.Nodes;
 
 namespace SEP.WebShop.Web.Controllers
 {
@@ -85,7 +89,7 @@ namespace SEP.WebShop.Web.Controllers
             {
                 getdata = reader.ReadToEnd();
             }
-
+            
             return Ok(getdata);
         }
 
@@ -118,7 +122,7 @@ namespace SEP.WebShop.Web.Controllers
             paymentDto.Amount = 100;
             paymentDto.Description = "description";
             paymentDto.Key = "sadasdnasd";
-            var payment = _paymentService.Create(Payment.Create(Guid.NewGuid(), paymentDto.ItemName, paymentDto.Amount, paymentDto.Currency, Guid.NewGuid(), PaymentStatus.pending, paymentDto.IdentityToken).Value);
+            //var payment = _paymentService.Create(Payment.Create(Guid.NewGuid(), paymentDto.ItemName, paymentDto.Amount, paymentDto.Currency, Guid.NewGuid(), PaymentStatus.pending, paymentDto.IdentityToken).Value);
             //_messageProducer.SendMessage<PaymentDto>(paymentDto, "makePayment", "7035");
 
             var jss = new JavaScriptSerializer();
@@ -169,7 +173,7 @@ namespace SEP.WebShop.Web.Controllers
             paymentDto.Amount = 100;
             paymentDto.Description = "description";
             paymentDto.Key = "sadasdnasd";
-            var payment = _paymentService.Create(Payment.Create(Guid.NewGuid(), paymentDto.ItemName, paymentDto.Amount, paymentDto.Currency, Guid.NewGuid(), PaymentStatus.pending, paymentDto.IdentityToken).Value);
+            //var payment = _paymentService.Create(Payment.Create(Guid.NewGuid(), paymentDto.ItemName, paymentDto.Amount, paymentDto.Currency, Guid.NewGuid(), PaymentStatus.pending, paymentDto.IdentityToken).Value);
             //_messageProducer.SendMessage<PaymentDto>(paymentDto, "makePayment", "7035");
 
             var jss = new JavaScriptSerializer();

@@ -3,12 +3,13 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Nancy.Json;
 using SEP.WebShop.Core.Entities;
+using SEP.WebShop.Core.Entities.Enums;
 using SEP.WebShop.Core.Repositories;
 using SEP.WebShop.Core.Services;
+using SEP.WebShop.Web.Authorization;
 using SEP.WebShop.Web.Dto;
 using SEP.WebShop.Web.DtoFactories;
 using System.Net;
-using System.Net.Mime;
 
 namespace SEP.WebShop.Web.Controllers
 {
@@ -21,13 +22,20 @@ namespace SEP.WebShop.Web.Controllers
         private readonly ISubscriptionRepository _subscriptionRepository;
         private readonly SubscriptionService _subscriptionService;
         private readonly SubscriptionDtoFactory _subscriptionDtoFactory;
+        private readonly IWebShopUserRepository _userRepository;
+        private readonly IJwtUtils _jwtUtils;
+        private readonly ISubscriptionOptionRepository _subscriptionOptionRepository;
 
-        public SubscriptionsController(ILogger<SubscriptionsController> logger, ISubscriptionRepository subscriptionRepository, SubscriptionService subscriptionService)
+        public SubscriptionsController(ILogger<SubscriptionsController> logger, ISubscriptionRepository subscriptionRepository, SubscriptionService subscriptionService,
+            IWebShopUserRepository userRepository, IJwtUtils jwtUtils, ISubscriptionOptionRepository subscriptionOptionRepository)
         {
             _logger = logger;
             _subscriptionRepository = subscriptionRepository;
             _subscriptionService = subscriptionService;
             _subscriptionDtoFactory = new SubscriptionDtoFactory();
+            _userRepository = userRepository;
+            _jwtUtils = jwtUtils;
+            _subscriptionOptionRepository = subscriptionOptionRepository;
         }
 
         [HttpGet]
@@ -133,6 +141,32 @@ namespace SEP.WebShop.Web.Controllers
             }
 
             return Ok(getdata);
+        }
+
+        [HttpPost("subscribeCompany")]
+        public IActionResult SubscribeCompany([FromBody] int subscriptionType) {
+            _logger.LogInformation("Make company subscription...");
+            //var subscription = new Subscription();
+            if (!_jwtUtils.ValidateToken(Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last()).HasValue)
+                return null;
+            var user = _userRepository.FindById(_jwtUtils.ValidateToken(Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last()).Value).Value;
+            /*subscription.Id = Guid.NewGuid();
+            subscription.SubscriptionStatus = SubscriptionStatus.active;
+            subscription.SubscriptionOption = _subscriptionOptionRepository.FindAll().Where(sub => sub.SubscriptionType.Equals((SubscriptionType)subscriptionType)).FirstOrDefault();
+            if (subscriptionType == 0)
+                subscription.ExpirationDateTime = DateTime.Now.AddYears(1);
+            else
+                subscription.ExpirationDateTime = DateTime.Now.AddMonths(1);
+            subscription.Company = (Company)user;*/
+            _subscriptionService.MakeSubscription(_subscriptionOptionRepository.FindAll().Where(sub => sub.SubscriptionType.Equals((SubscriptionType)subscriptionType)).FirstOrDefault(), (Company) user);
+
+            return Ok();
+        }
+
+        [HttpPost("isCompanySubscribed")]
+        [AllowAnonymous]
+        public Boolean IsCompanySubscribed([FromBody] AuthenticationResponse authResponse) {
+            return _subscriptionService.IsCompanySubscribed(authResponse.Id);
         }
     }
 }

@@ -20,34 +20,49 @@ export class PaymentService {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + localStorage.getItem('token')
     });
-    
-    return this.http.post<any>(this.makePayPalPaymentUrl, null, {headers: headers});
+    const requestOptions: Object = {
+      headers: headers,
+      responseType: 'text'
+    }
+    return this.http.post<any>(this.makePayPalPaymentUrl, null, requestOptions );
   }
 
   public makeCardPayment(): Observable<any> {
     var headers = new HttpHeaders({ 
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + localStorage.getItem('token')
-   });
+    });
 
-    return this.http.post<any>(this.makeCardPaymentUrl, null, {headers: headers});
+    const requestOptions: Object = {
+      headers: headers,
+      responseType: 'text'
+    }
+    return this.http.post<any>(this.makeCardPaymentUrl, null, requestOptions);
   }
 
   public makeBitCoinPayment(): Observable<any> {
     var headers = new HttpHeaders({ 
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + localStorage.getItem('token')
-   });
+    });
+    const requestOptions: Object = {
+      headers: headers,
+      responseType: 'text'
+    }
 
-    return this.http.post<any>(this.makeBitCoinPaymentUrl, null, {headers: headers});
+    return this.http.post<any>(this.makeBitCoinPaymentUrl, null, requestOptions);
   }
 
   public makeQrCodePayment(): Observable<any> {
     var headers = new HttpHeaders({ 
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + localStorage.getItem('token')
-   });
+    });
+    const requestOptions: Object = {
+      headers: headers,
+      responseType: 'text'
+    }
 
-    return this.http.post<any>(this.makeQrCodePaymentUrl, null, {headers: headers});
+    return this.http.post<any>(this.makeQrCodePaymentUrl, null, requestOptions);
   }
 }
