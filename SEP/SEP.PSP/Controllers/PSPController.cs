@@ -45,7 +45,7 @@ namespace SEP.PSP.Controllers
 
         [HttpPost("payBitcoin")]
         [Consumes(MediaTypeNames.Application.Json)]
-        public void MakeBitcoinPayment([FromBody] PSPBitcoinPaymentDTO PSPBitcoinPaymentDTO)
+        public void MakeBitcoinPayment([FromBody] PSPBitcoinPaymentDTOForReceive PSPBitcoinPaymentDTO)
         {
             _logger.LogInformation("PSP make payment executing...");
             _PSPService.MakeBitcoinPayment(PSPBitcoinPaymentDTO);

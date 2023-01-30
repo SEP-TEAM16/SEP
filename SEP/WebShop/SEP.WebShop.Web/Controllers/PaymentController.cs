@@ -12,6 +12,7 @@ using SEP.WebShop.Core.Repositories;
 using SEP.WebShop.Core.Services;
 using SEP.WebShop.Web.Authorization;
 using SEP.WebShop.Web.Dto;
+using SEP.WebShop.Web.MerchantInfo;
 using SEP.WebShop.Web.RabbitMQ;
 using System.Net;
 using System.Net.Mime;
@@ -84,7 +85,7 @@ namespace SEP.WebShop.Web.Controllers
             paymentDto.ItemName = packageDto.Name;
             paymentDto.Amount = (float) packageDto.Price;
             paymentDto.Description = "Buying package";
-            paymentDto.Key = "sadasdnasd";
+            paymentDto.Key = MerchantData.Key;
             //var payment = _paymentService.Create(Payment.Create(Guid.NewGuid(), paymentDto.ItemName, paymentDto.Amount, paymentDto.Currency, Guid.NewGuid(), PaymentStatus.pending, paymentDto.IdentityToken).Value);
             //_messageProducer.SendMessage<PaymentDto>(paymentDto, "makePayment", "7035");
 
@@ -133,8 +134,10 @@ namespace SEP.WebShop.Web.Controllers
             }
 
             paymentDto.Currency = packageDto.Currency;
-            paymentDto.PublicKey = "jdaskjdjasdjaskdaskjdjkas";
-            paymentDto.PrivateKey = "jdaskjdjasdjaskdaskjdjkas";
+
+            paymentDto.PublicKey = "04d59539b497081d0cdf5ae989200291c3f4f2e3fa610adc81927252be81c5e588e76474cf8acff1037cc631b4f349afbb811e9cc84cf683e49dd466b484ff6bed";
+            paymentDto.PrivateKey = "5032554e9d661af4e3fe58ef485231358925d39996830dac9eace8cadfbea9cd";
+
             paymentDto.Email = user.EmailAddress;
             if (user.UserType.Equals(UserType.candidate))
             {
@@ -151,7 +154,8 @@ namespace SEP.WebShop.Web.Controllers
             paymentDto.ItemName = packageDto.Name;
             paymentDto.Amount = (float) packageDto.Price;
             paymentDto.Description = "Buying package";
-            paymentDto.Key = "sadasdnasd";
+            paymentDto.Key = MerchantData.Key;
+
             //var payment = _paymentService.Create(Payment.Create(Guid.NewGuid(), paymentDto.ItemName, paymentDto.Amount, paymentDto.Currency, Guid.NewGuid(), PaymentStatus.pending, paymentDto.IdentityToken).Value);
             //_messageProducer.SendMessage<PaymentDto>(paymentDto, "makePayment", "7035");
 
@@ -217,6 +221,8 @@ namespace SEP.WebShop.Web.Controllers
             paymentDto.Amount = (float)packageDto.Price;
             paymentDto.Description = "Buying package";
             paymentDto.Key = "sadasdnasd";
+            paymentDto.Key = MerchantData.Key;
+
             //var payment = _paymentService.Create(Payment.Create(Guid.NewGuid(), paymentDto.ItemName, paymentDto.Amount, paymentDto.Currency, Guid.NewGuid(), PaymentStatus.pending, paymentDto.IdentityToken).Value);
             //_messageProducer.SendMessage<PaymentDto>(paymentDto, "makePayment", "7035");
 
@@ -282,6 +288,8 @@ namespace SEP.WebShop.Web.Controllers
             paymentDto.Amount = (float)packageDto.Price;
             paymentDto.Description = "Buying package";
             paymentDto.Key = "sadasdnasd";
+            paymentDto.Key = MerchantData.Key;
+
             //var payment = _paymentService.Create(Payment.Create(Guid.NewGuid(), paymentDto.ItemName, paymentDto.Amount, paymentDto.Currency, Guid.NewGuid(), PaymentStatus.pending, paymentDto.IdentityToken).Value);
             //_messageProducer.SendMessage<PaymentDto>(paymentDto, "makePayment", "7035");
 

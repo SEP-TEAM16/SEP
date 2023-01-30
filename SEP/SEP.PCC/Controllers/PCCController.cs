@@ -3,6 +3,8 @@ using Nancy.Json;
 using System.Net.Mime;
 using System.Net;
 using SEP.PCC.DTO;
+using Newtonsoft.Json;
+using Nancy;
 
 namespace SEP.PCC.Controllers
 {
@@ -20,17 +22,29 @@ namespace SEP.PCC.Controllers
 
         [HttpPost]
         [Consumes(MediaTypeNames.Application.Json)]
-        public void Redirect([FromBody] BankPaymentDTO bankPaymentDTO)
+        public BankPaymentDTO Redirect([FromBody] BankPaymentDTO bankPaymentDTO)
         {
             _logger.LogInformation("Redirect");
-            var jss = new JavaScriptSerializer();
-            var httpRequest = (HttpWebRequest)HttpWebRequest.Create("https://localhost:5050/psp/bank2/pay");
+            var httpRequest = (HttpWebRequest)HttpWebRequest.Create("https://localhost:5050/bank2/pay");
             httpRequest.Method = "POST";
             httpRequest.ContentType = "application/json";
             var streamWriter = new StreamWriter(httpRequest.GetRequestStream());
-            streamWriter.Write(jss.Serialize(bankPaymentDTO));
+            streamWriter.Write(JsonConvert.SerializeObject(bankPaymentDTO));
             streamWriter.Close();
-            httpRequest.GetResponse();
+            //httpRequest.GetResponse();
+
+            var getdata = new BankPaymentDTO();
+            using (var webresponse = (HttpWebResponse)httpRequest.GetResponse())
+            using (var stream = webresponse.GetResponseStream())
+            using (var reader = new StreamReader(stream))
+            {
+                var json = reader.ReadToEnd();
+                getdata = JsonConvert.DeserializeObject<BankPaymentDTO>(json);
+            }
+
+            return getdata;
         }
+
+
     }
 }

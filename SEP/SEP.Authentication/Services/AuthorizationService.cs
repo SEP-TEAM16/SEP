@@ -7,25 +7,35 @@ namespace SEP.Autorization.Services
     public class AuthorizationService : IAuthorizationService
     {
         private readonly AuthorizationDbContext _autorizationDbContext;
+        private readonly object _object = new object();
         public AuthorizationService(AuthorizationDbContext autorizationDbContext)
         {
-            _autorizationDbContext = autorizationDbContext;
-            autorizationDbContext.AuthKeys.RemoveRange(_autorizationDbContext.AuthKeys.ToList());
-            autorizationDbContext.SaveChanges();
+            lock (_object)
+            {
+                _autorizationDbContext = autorizationDbContext;
+                autorizationDbContext.AuthKeys.RemoveRange(_autorizationDbContext.AuthKeys.ToList());
+                autorizationDbContext.SaveChanges();
+            }
         }
 
         public List<AuthKey> GetAuthKeys()
         {
-            return _autorizationDbContext.AuthKeys.ToList();
+            lock (_object)
+            {
+                return _autorizationDbContext.AuthKeys.ToList();
+            }
         }
         public bool AddAuthKey(AuthKey authKey)
         {
-            if (_autorizationDbContext.AuthKeys.FirstOrDefault(key => key.Route.Equals(authKey.Route)) is not null)
-                return false;
+            lock (_object)
+            {
+                if (_autorizationDbContext.AuthKeys.FirstOrDefault(key => key.Route.Equals(authKey.Route)) is not null)
+                    return false;
 
-            _autorizationDbContext.AuthKeys.Add(authKey);
-            _autorizationDbContext.SaveChanges();
-            return true;
+                _autorizationDbContext.AuthKeys.Add(authKey);
+                _autorizationDbContext.SaveChanges();
+                return true;
+            }
         }
     }
 }

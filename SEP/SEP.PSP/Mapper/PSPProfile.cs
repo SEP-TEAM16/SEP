@@ -13,6 +13,8 @@ namespace SEP.PSP.Mapper
             CreateMap<PSPBankPaymentDTO, PSPPayment>();
             CreateMap<PSPPayment, PSPBitcoinPaymentDTO>();
             CreateMap<PSPBitcoinPaymentDTO, PSPPayment>();
+            CreateMap<PSPPayment, PSPBitcoinPaymentDTOForReceive>();
+            CreateMap<PSPBitcoinPaymentDTOForReceive, PSPPayment>();
             CreateMap<Subscription, SubscriptionDTO>();
             CreateMap<SubscriptionDTO, Subscription>();
             CreateMap<Merchant, MerchantDTO>();
