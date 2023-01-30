@@ -59,12 +59,13 @@ namespace SEP.PSP.Services
             if (merchant is null)
                 return null;
 
+            var subscribedServices = _PSPDbContext.Subscriptions.Where(sub => sub.Merchant.Id.Equals(merchant.Id)).Select(sub => sub.PaymentMicroserviceType);
+            if (!subscribedServices.Contains(PaymentMicroserviceType.Paypal))
+                return null;
+
+            var authKey = AuthKeys.FirstOrDefault(a => a.PaymentMicroserviceType.Equals(PaymentMicroserviceType.Paypal));
             var payPalPayment = _mapper.Map<PSPPayment>(pspPaymentDto);
             var authToken = GetBearerToken(PaymentMicroserviceType.Paypal);
-
-            var getdata = string.Empty;
-            var jss = new JavaScriptSerializer();
-            var authKey = AuthKeys.FirstOrDefault(a => a.PaymentMicroserviceType.Equals(PaymentMicroserviceType.Paypal));
 
             var httpRequest = (HttpWebRequest) HttpWebRequest.Create("https://localhost:5050/" + authKey.Route);
             httpRequest.Method = "POST";
@@ -76,6 +77,7 @@ namespace SEP.PSP.Services
             streamWriter.Write(JsonSerializer.Serialize(pspPayPalPaymentDto));
             streamWriter.Close();
 
+            var getdata = string.Empty;
             using (var webresponse = (HttpWebResponse)httpRequest.GetResponse())
             using (var stream = webresponse.GetResponseStream())
             using (var reader = new StreamReader(stream))
@@ -97,12 +99,13 @@ namespace SEP.PSP.Services
             if (merchant is null)
                 return;
 
+            var subscribedServices = _PSPDbContext.Subscriptions.Where(sub => sub.Merchant.Id.Equals(merchant.Id)).Select(sub => sub.PaymentMicroserviceType);
+            if (!subscribedServices.Contains(PaymentMicroserviceType.Bitcoin))
+                return;
+
+            var authKey = AuthKeys.FirstOrDefault(a => a.PaymentMicroserviceType.Equals(PaymentMicroserviceType.Bitcoin));
             var bitcoinPayment = _mapper.Map<PSPPayment>(pspBitcoinPaymentDtoo);
             var authToken = GetBearerToken(PaymentMicroserviceType.Bitcoin);
-
-            var getdata = string.Empty;
-            var jss = new JavaScriptSerializer();
-            var authKey = AuthKeys.FirstOrDefault(a => a.PaymentMicroserviceType.Equals(PaymentMicroserviceType.Bitcoin));
 
             var httpRequest = (HttpWebRequest)HttpWebRequest.Create("https://localhost:5050/" + authKey.Route);
             httpRequest.Method = "POST";
@@ -116,12 +119,15 @@ namespace SEP.PSP.Services
             streamWriter.Write(JsonSerializer.Serialize(pspBitcoinPaymentDto));
             streamWriter.Close();
 
+            var getdata = string.Empty;
             using (var webresponse = (HttpWebResponse)httpRequest.GetResponse())
             using (var stream = webresponse.GetResponseStream())
             using (var reader = new StreamReader(stream))
             {
                 getdata = reader.ReadToEnd();
             }
+
+            var jss = new JavaScriptSerializer();
             PSPBitcoinPaymentDTO fromBack = jss.Deserialize<PSPBitcoinPaymentDTO>(getdata);
             bitcoinPayment.PaymentApproval = fromBack.PaymentApproval;
             bitcoinPayment.Date = DateTime.Now;
@@ -137,12 +143,13 @@ namespace SEP.PSP.Services
             if (merchant is null)
                 return null;
 
+            var subscribedServices = _PSPDbContext.Subscriptions.Where(sub => sub.Merchant.Id.Equals(merchant.Id)).Select(sub => sub.PaymentMicroserviceType);
+            if (!subscribedServices.Contains(PaymentMicroserviceType.Card))
+                return null;
+
+            var authKey = AuthKeys.FirstOrDefault(a => a.PaymentMicroserviceType.Equals(PaymentMicroserviceType.Card) && !a.Route.Contains("2"));
             var bankPayment = _mapper.Map<PSPPayment>(pspPaymentDto);
             var authToken = GetBearerToken(PaymentMicroserviceType.Card);
-
-            var getdata = string.Empty;
-            var jss = new JavaScriptSerializer();
-            var authKey = AuthKeys.FirstOrDefault(a => a.PaymentMicroserviceType.Equals(PaymentMicroserviceType.Card) && !a.Route.Contains("2"));
 
             var httpRequest = (HttpWebRequest)HttpWebRequest.Create("https://localhost:5050/" + authKey.Route);
             httpRequest.Method = "POST";
@@ -154,6 +161,7 @@ namespace SEP.PSP.Services
             streamWriter.Write(JsonSerializer.Serialize(pspBankPaymentDto));
             streamWriter.Close();
 
+            var getdata = string.Empty;
             using (var webresponse = (HttpWebResponse)httpRequest.GetResponse())
             using (var stream = webresponse.GetResponseStream())
             using (var reader = new StreamReader(stream))
@@ -174,12 +182,13 @@ namespace SEP.PSP.Services
             var merchant = _PSPDbContext.Merchants.FirstOrDefault(mer => mer.Key.Equals(pspPaymentDto.Key));
             if (merchant is null)
                 return null;
+            
+            var subscribedServices = _PSPDbContext.Subscriptions.Where(sub => sub.Merchant.Id.Equals(merchant.Id)).Select(sub => sub.PaymentMicroserviceType);
+            if (!subscribedServices.Contains(PaymentMicroserviceType.QR))
+                return null;
 
             var bankPayment = _mapper.Map<PSPPayment>(pspPaymentDto);
             var authToken = GetBearerToken(PaymentMicroserviceType.QR);
-
-            var getdata = string.Empty;
-            var jss = new JavaScriptSerializer();
             var authKey = AuthKeys.FirstOrDefault(a => a.PaymentMicroserviceType.Equals(PaymentMicroserviceType.QR) && !a.Route.Contains("2"));
 
             var httpRequest = (HttpWebRequest)HttpWebRequest.Create("https://localhost:5050/" + authKey.Route);
@@ -192,6 +201,7 @@ namespace SEP.PSP.Services
             streamWriter.Write(JsonSerializer.Serialize(pspBankPaymentDto));
             streamWriter.Close();
 
+            var getdata = string.Empty;
             using (var webresponse = (HttpWebResponse)httpRequest.GetResponse())
             using (var stream = webresponse.GetResponseStream())
             using (var reader = new StreamReader(stream))
@@ -278,11 +288,13 @@ namespace SEP.PSP.Services
                 merchant = new Merchant
                 {
                     Port = subscription.Merchant.Port,
-                    Key = "sadasdnasd" //random kljuc
+                    Key = /*Guid.NewGuid().ToString()*/"sadasdnasd"
                 };
                 subscription.Merchant = merchant;
                 _PSPDbContext.Subscriptions.Add(subscription);
-            } else {
+            }
+            else
+            {
                 List<Subscription> subscriptionsFromDatabase = _PSPDbContext.Subscriptions.Where(sub => sub.Merchant.Port.Equals(subscription.Merchant.Port)).ToList();
                 foreach (var sub in subscriptionsFromDatabase)
                 {
@@ -298,9 +310,7 @@ namespace SEP.PSP.Services
             foreach (var aut in AuthKeys)
             {
                 if (aut.PaymentMicroserviceType.Equals(subscription.PaymentMicroserviceType))
-                {
                     return subscription;
-                }
             }
             AuthKeys = GetAuthKeys();
             return subscription;
