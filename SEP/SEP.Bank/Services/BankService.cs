@@ -98,7 +98,7 @@ namespace SEP.Bank.Services
             bankPaymentDetails.Expiration = bankPaymentDetails.Expiration.AddYears(int.Parse(cardDTO.Year) - bankPaymentDetails.Expiration.Year);
             bankPaymentDetails.Expiration = bankPaymentDetails.Expiration.AddMonths((int.Parse(cardDTO.Month)) - bankPaymentDetails.Expiration.Month);
             bankPaymentDetails.SecurityCode = cardDTO.SecurityCode;
-            bankPaymentDetails.PaymentApproval = PaymentApprovalType.Success;
+            bankPaymentDetails.PaymentApproval = PaymentApprovalType.Pending;
             _bankDbContext.BankPayment.Update(bankPaymentDetails);
             _bankDbContext.SaveChanges();
             return bankPaymentDetails;
@@ -115,5 +115,13 @@ namespace SEP.Bank.Services
             return bankPayment.Id.ToString();
         }
 
+        public BankPayment Update(BankPayment bankPayment)
+        {
+            var payment = _bankDbContext.BankPayment.FirstOrDefault(p => p.IdentityToken.Equals(bankPayment.IdentityToken));
+            payment.PaymentApproval = PaymentApprovalType.Success;
+            _bankDbContext.BankPayment.Update(payment);
+            _bankDbContext.SaveChanges();
+            return payment;
+        }
     }
 }

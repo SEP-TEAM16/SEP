@@ -9,5 +9,6 @@ namespace SEP.Bank.Interfaces
         public BankPayment Convert(CardDTO cardDTO);
         public BankPayment GetById(string id);
         public string Save(BankPayment bankPayment);
+        public BankPayment Update(BankPayment bankPayment);
     }
 }
