@@ -1,6 +1,7 @@
 ﻿using CSharpFunctionalExtensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Nancy.Extensions;
 using Nancy.Json;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -43,20 +44,35 @@ namespace SEP.WebShop.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult MakeAPayment()
+        public IActionResult MakeAPayment([FromBody] PackageDto packageDto)
         {
             _logger.LogInformation("WebShop make payment executing...");
             var paymentDto = new PaymentDto();
             if (!_jwtUtils.ValidateToken(Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last()).HasValue)
                 return null;
             var user = _userRepository.FindById(_jwtUtils.ValidateToken(Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last()).Value).Value;
-            paymentDto.Merchant = new MerchantDto(0, "dasd", "7035");
-            paymentDto.Currency = "USD";
+
+            var httpMerchantRequest = (HttpWebRequest)HttpWebRequest.Create("https://localhost:7038/api/psp/getMerchantByPort");
+            httpMerchantRequest.Method = "GET";
+            httpMerchantRequest.ContentType = "application/json";
+            httpMerchantRequest.Headers.Add("senderPort", Request.Headers["senderPort"].ToString());
+
+            var s = string.Empty;
+            using (var webresponse = (HttpWebResponse)httpMerchantRequest.GetResponse())
+            using (var stream = webresponse.GetResponseStream())
+            using (var reader = new StreamReader(stream))
+            {
+                s = reader.ReadLine();
+                paymentDto.Merchant = new MerchantDto(0, s.Split(",")[0], s.Split(",")[1]);
+            }
+
+            paymentDto.Currency = packageDto.Currency;
             paymentDto.Email = user.EmailAddress;
             if (user.UserType.Equals(UserType.candidate))
             {
                 paymentDto.FirstName = user.Name.ToString().Split(" ")[0];
                 paymentDto.LastName = user.Name.ToString().Split(" ")[1];
+                paymentDto.Name = "Buy package";
             } 
             else
             {
@@ -65,9 +81,9 @@ namespace SEP.WebShop.Web.Controllers
                 paymentDto.Name = user.Name.ToString();
             }
             paymentDto.IdentityToken = Guid.NewGuid().ToString();
-            paymentDto.ItemName = "Package 1";
-            paymentDto.Amount = 100;
-            paymentDto.Description = "description";
+            paymentDto.ItemName = packageDto.Name;
+            paymentDto.Amount = (float) packageDto.Price;
+            paymentDto.Description = "Buying package";
             paymentDto.Key = "sadasdnasd";
             //var payment = _paymentService.Create(Payment.Create(Guid.NewGuid(), paymentDto.ItemName, paymentDto.Amount, paymentDto.Currency, Guid.NewGuid(), PaymentStatus.pending, paymentDto.IdentityToken).Value);
             //_messageProducer.SendMessage<PaymentDto>(paymentDto, "makePayment", "7035");
@@ -94,15 +110,29 @@ namespace SEP.WebShop.Web.Controllers
         }
 
         [HttpPost("bitcoin")]
-        public IActionResult MakeABitcoinPayment()
+        public IActionResult MakeABitcoinPayment([FromBody] PackageDto packageDto)
         {
             _logger.LogInformation("WebShop make payment executing...");
             var paymentDto = new PaymentBitcoinDto();
             if (!_jwtUtils.ValidateToken(Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last()).HasValue)
                 return null;
             var user = _userRepository.FindById(_jwtUtils.ValidateToken(Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last()).Value).Value;
-            paymentDto.Merchant = new MerchantDto(0, "dasd", "7035");
-            paymentDto.Currency = "USD";
+
+            var httpMerchantRequest = (HttpWebRequest)HttpWebRequest.Create("https://localhost:7038/api/psp/getMerchantByPort");
+            httpMerchantRequest.Method = "GET";
+            httpMerchantRequest.ContentType = "application/json";
+            httpMerchantRequest.Headers.Add("senderPort", Request.Headers["senderPort"].ToString());
+
+            var s = string.Empty;
+            using (var webresponse = (HttpWebResponse)httpMerchantRequest.GetResponse())
+            using (var stream = webresponse.GetResponseStream())
+            using (var reader = new StreamReader(stream))
+            {
+                s = reader.ReadLine();
+                paymentDto.Merchant = new MerchantDto(0, s.Split(",")[0], s.Split(",")[1]);
+            }
+
+            paymentDto.Currency = packageDto.Currency;
             paymentDto.PublicKey = "jdaskjdjasdjaskdaskjdjkas";
             paymentDto.PrivateKey = "jdaskjdjasdjaskdaskjdjkas";
             paymentDto.Email = user.EmailAddress;
@@ -118,9 +148,9 @@ namespace SEP.WebShop.Web.Controllers
                 paymentDto.Name = user.Name.ToString();
             }
             paymentDto.IdentityToken = Guid.NewGuid().ToString();
-            paymentDto.ItemName = "Package 1";
-            paymentDto.Amount = 100;
-            paymentDto.Description = "description";
+            paymentDto.ItemName = packageDto.Name;
+            paymentDto.Amount = (float) packageDto.Price;
+            paymentDto.Description = "Buying package";
             paymentDto.Key = "sadasdnasd";
             //var payment = _paymentService.Create(Payment.Create(Guid.NewGuid(), paymentDto.ItemName, paymentDto.Amount, paymentDto.Currency, Guid.NewGuid(), PaymentStatus.pending, paymentDto.IdentityToken).Value);
             //_messageProducer.SendMessage<PaymentDto>(paymentDto, "makePayment", "7035");
@@ -147,15 +177,29 @@ namespace SEP.WebShop.Web.Controllers
         }
 
         [HttpPost("bank")]
-        public IActionResult MakeABankPayment()
+        public IActionResult MakeABankPayment([FromBody] PackageDto packageDto)
         {
             _logger.LogInformation("WebShop make payment executing...");
             var paymentDto = new PaymentBankDto();
             if (!_jwtUtils.ValidateToken(Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last()).HasValue)
                 return null;
             var user = _userRepository.FindById(_jwtUtils.ValidateToken(Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last()).Value).Value;
-            paymentDto.Merchant = new MerchantDto(0, "dasd", "7035");
-            paymentDto.Currency = "USD";
+
+            var httpMerchantRequest = (HttpWebRequest)HttpWebRequest.Create("https://localhost:7038/api/psp/getMerchantByPort");
+            httpMerchantRequest.Method = "GET";
+            httpMerchantRequest.ContentType = "application/json";
+            httpMerchantRequest.Headers.Add("senderPort", Request.Headers["senderPort"].ToString());
+
+            var s = string.Empty;
+            using (var webresponse = (HttpWebResponse)httpMerchantRequest.GetResponse())
+            using (var stream = webresponse.GetResponseStream())
+            using (var reader = new StreamReader(stream))
+            {
+                s = reader.ReadLine();
+                paymentDto.Merchant = new MerchantDto(0, s.Split(",")[0], s.Split(",")[1]);
+            }
+
+            paymentDto.Currency = packageDto.Currency;
             paymentDto.Email = user.EmailAddress;
             if (user.UserType.Equals(UserType.candidate))
             {
@@ -169,9 +213,9 @@ namespace SEP.WebShop.Web.Controllers
                 paymentDto.Name = user.Name.ToString();
             }
             paymentDto.IdentityToken = Guid.NewGuid().ToString();
-            paymentDto.ItemName = "Package 1";
-            paymentDto.Amount = 100;
-            paymentDto.Description = "description";
+            paymentDto.ItemName = packageDto.Name;
+            paymentDto.Amount = (float)packageDto.Price;
+            paymentDto.Description = "Buying package";
             paymentDto.Key = "sadasdnasd";
             //var payment = _paymentService.Create(Payment.Create(Guid.NewGuid(), paymentDto.ItemName, paymentDto.Amount, paymentDto.Currency, Guid.NewGuid(), PaymentStatus.pending, paymentDto.IdentityToken).Value);
             //_messageProducer.SendMessage<PaymentDto>(paymentDto, "makePayment", "7035");
@@ -198,15 +242,29 @@ namespace SEP.WebShop.Web.Controllers
         }
 
         [HttpPost("qr")]
-        public IActionResult MakeAQRPayment()
+        public IActionResult MakeAQRPayment([FromBody] PackageDto packageDto)
         {
             _logger.LogInformation("WebShop make payment executing...");
             var paymentDto = new PaymentBankDto();
             if (!_jwtUtils.ValidateToken(Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last()).HasValue)
                 return null;
             var user = _userRepository.FindById(_jwtUtils.ValidateToken(Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last()).Value).Value;
-            paymentDto.Merchant = new MerchantDto(0, "dasd", "7035");
-            paymentDto.Currency = "USD";
+
+            var httpMerchantRequest = (HttpWebRequest)HttpWebRequest.Create("https://localhost:7038/api/psp/getMerchantByPort");
+            httpMerchantRequest.Method = "GET";
+            httpMerchantRequest.ContentType = "application/json";
+            httpMerchantRequest.Headers.Add("senderPort", Request.Headers["senderPort"].ToString());
+
+            var s = string.Empty;
+            using (var webresponse = (HttpWebResponse)httpMerchantRequest.GetResponse())
+            using (var stream = webresponse.GetResponseStream())
+            using (var reader = new StreamReader(stream))
+            {
+                s = reader.ReadLine();
+                paymentDto.Merchant = new MerchantDto(0, s.Split(",")[0], s.Split(",")[1]);
+            }
+
+            paymentDto.Currency = packageDto.Currency;
             paymentDto.Email = user.EmailAddress;
             if (user.UserType.Equals(UserType.candidate))
             {
@@ -220,9 +278,9 @@ namespace SEP.WebShop.Web.Controllers
                 paymentDto.Name = user.Name.ToString();
             }
             paymentDto.IdentityToken = Guid.NewGuid().ToString();
-            paymentDto.ItemName = "Package 1";
-            paymentDto.Amount = 100;
-            paymentDto.Description = "description";
+            paymentDto.ItemName = packageDto.Name;
+            paymentDto.Amount = (float)packageDto.Price;
+            paymentDto.Description = "Buying package";
             paymentDto.Key = "sadasdnasd";
             //var payment = _paymentService.Create(Payment.Create(Guid.NewGuid(), paymentDto.ItemName, paymentDto.Amount, paymentDto.Currency, Guid.NewGuid(), PaymentStatus.pending, paymentDto.IdentityToken).Value);
             //_messageProducer.SendMessage<PaymentDto>(paymentDto, "makePayment", "7035");

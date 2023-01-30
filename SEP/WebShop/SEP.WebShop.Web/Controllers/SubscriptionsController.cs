@@ -146,18 +146,9 @@ namespace SEP.WebShop.Web.Controllers
         [HttpPost("subscribeCompany")]
         public IActionResult SubscribeCompany([FromBody] int subscriptionType) {
             _logger.LogInformation("Make company subscription...");
-            //var subscription = new Subscription();
             if (!_jwtUtils.ValidateToken(Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last()).HasValue)
                 return null;
             var user = _userRepository.FindById(_jwtUtils.ValidateToken(Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last()).Value).Value;
-            /*subscription.Id = Guid.NewGuid();
-            subscription.SubscriptionStatus = SubscriptionStatus.active;
-            subscription.SubscriptionOption = _subscriptionOptionRepository.FindAll().Where(sub => sub.SubscriptionType.Equals((SubscriptionType)subscriptionType)).FirstOrDefault();
-            if (subscriptionType == 0)
-                subscription.ExpirationDateTime = DateTime.Now.AddYears(1);
-            else
-                subscription.ExpirationDateTime = DateTime.Now.AddMonths(1);
-            subscription.Company = (Company)user;*/
             _subscriptionService.MakeSubscription(_subscriptionOptionRepository.FindAll().Where(sub => sub.SubscriptionType.Equals((SubscriptionType)subscriptionType)).FirstOrDefault(), (Company) user);
 
             return Ok();

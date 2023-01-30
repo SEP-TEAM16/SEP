@@ -1,9 +1,28 @@
 <div style="background-color: rgba(128, 128, 128, 0.259);"> 
-    <div class="center">
-        <label style="font-size: 20px; margin-top: 100px;"> If you want to buy premium service(our employees will help you find a job), click on button buy!</label>
-      </div>
-    <div class="center">
-        <button class="btn btn-success" style="margin-top: 20px; font-size: 20px;"> Buy </button>
+    <div class="row">
+        <div class="col-5">
+            <label style=" font-size: 20px; margin-top: 50px; margin-left: 250px;"> Choose a package:
+            </label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-3" style=" font-size: 20px; margin-top: 20px; margin-left: 240px;">
+            <div class="package" *ngFor="let package of packages; let indexOfelement = index;">
+                <input type="radio" id={{package.id}} name="item" value={{package.name}}
+                     style="margin-left: 10px;" (click)="methodSelected(package)">
+                  <label for={{package.name}}>{{package.name}}({{package.price}}{{package.currency}})</label><br>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-3">
+            <select name="method" class="form-control" id="method" style="width: 130px; margin-left: 250px; margin-top: 20px;" >
+                <option *ngFor="let subs of subscriptions; let indexOfelement = index;" [ngValue]="subs.paymentMicroserviceType"> {{returnEnumValue(subs.paymentMicroserviceType)}} </option>
+            </select>
+        </div>
+        <div class="col-3">
+            <button class="btn btn-success" style=" margin-left: 100px; margin-top: 20px;" (click)="buyPackage()"> Buy </button>
+        </div>
     </div>
     <div class="row" style="height: 510px;"></div>
 </div>

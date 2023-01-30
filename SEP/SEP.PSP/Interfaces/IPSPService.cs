@@ -14,5 +14,6 @@ namespace SEP.PSP.Interfaces
         public void UpdatePayment(PSPPayment PSPPayment);
         public List<Subscription> GetSubscribedByPort(string port);
         public Boolean RemoveServiceType(string serviceType, string port);
+        public Merchant GetMerchantByPort(string port);
     }
 }

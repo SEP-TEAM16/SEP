@@ -174,5 +174,11 @@ namespace SEP.PSP.Controllers
             else
                 return _PSPService.RemoveServiceType("Bitcoin", Request.Headers["senderPort"].ToString());
         }
+
+        [HttpGet("getMerchantByPort")]
+        public IActionResult GetMerchantByPort() {
+            Merchant merchant = _PSPService.GetMerchantByPort(Request.Headers["senderPort"].ToString());
+            return Ok(merchant.Port + "," + merchant.Key);
+        }
     }
 }

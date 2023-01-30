@@ -77,11 +77,13 @@ builder.Services.AddScoped<IWebShopUserRepository, WebShopUserRepository>();
 builder.Services.AddScoped<ISubscriptionOptionRepository, SubscriptionOptionRepository>();
 builder.Services.AddScoped<ISubscriptionRepository, SubscriptionRepository>();
 builder.Services.AddScoped<IPaymentRepository, PaymentRepository>();
+builder.Services.AddScoped<IPackageRepository, PackageRepository>();
 
 builder.Services.AddScoped<WebShopUserService>();
 builder.Services.AddScoped<SubscriptionOptionService>();
 builder.Services.AddScoped<SubscriptionService>();
 builder.Services.AddScoped<PaymentService>();
+builder.Services.AddScoped<PackageService>();
 builder.Services.AddScoped<IMessageProducer, RabbitMQProducer>();
 
 builder.Services.AddControllersWithViews();

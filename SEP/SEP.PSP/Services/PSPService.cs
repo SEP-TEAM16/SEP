@@ -391,5 +391,9 @@ namespace SEP.PSP.Services
                 }
             }
         }
+
+        public Merchant GetMerchantByPort(string port) {
+            return _PSPDbContext.Merchants.FirstOrDefault(mer => mer.Port.Equals(port));
+        }
     }
 }
