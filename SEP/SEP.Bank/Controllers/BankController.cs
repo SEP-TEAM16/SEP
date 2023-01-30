@@ -49,7 +49,7 @@ namespace SEP.Bank.Controllers
             _logger.LogInformation("Redirect");
             if (Request.Headers["senderPort"].ToString().Equals("5050"))
             {         
-               return Front + "?id=" + _bankService.Save(_mapper.Map<BankPayment>(bankPaymentDTO));
+               return "https://localhost:5860/api/bank/get" + "?id=" + _bankService.Save(_mapper.Map<BankPayment>(bankPaymentDTO));
             }
 
             _logger.LogWarning("You don't have access.");
