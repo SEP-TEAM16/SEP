@@ -9,6 +9,7 @@ using SEP.WebShop.Core.Services;
 using SEP.WebShop.Web.Authorization;
 using SEP.WebShop.Web.Dto;
 using SEP.WebShop.Web.DtoFactories;
+using SEP.WebShop.Web.MerchantInfo;
 using System.Net;
 
 namespace SEP.WebShop.Web.Controllers
@@ -92,8 +93,9 @@ namespace SEP.WebShop.Web.Controllers
 
             if (getdata == "")
                 return false;
-            else
-                return true;
+
+            MerchantData.Key = getdata;
+            return true;
         }
 
         [HttpGet("subscribedByPort")]

@@ -288,7 +288,7 @@ namespace SEP.PSP.Services
                 merchant = new Merchant
                 {
                     Port = subscription.Merchant.Port,
-                    Key = /*Guid.NewGuid().ToString()*/"sadasdnasd"
+                    Key = Guid.NewGuid().ToString()
                 };
                 subscription.Merchant = merchant;
                 _PSPDbContext.Subscriptions.Add(subscription);
