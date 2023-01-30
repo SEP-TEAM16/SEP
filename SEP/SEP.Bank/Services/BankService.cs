@@ -61,7 +61,7 @@ namespace SEP.Bank.Services
 
             var chargeOptions = new ChargeCreateOptions
             {
-                Amount = (int)Math.Round(amount * 100f),
+                Amount = (int)amount,
                 Currency = "usd",
                 Description = "example",
                 Metadata = new Dictionary<string, string>
