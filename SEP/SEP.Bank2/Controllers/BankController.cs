@@ -70,23 +70,11 @@ namespace SEP.Bank2.Controllers
         }
 
         [HttpPost("pay")]
-        public void Pay([FromBody] BankPaymentDTO bankPaymentDTO)
+        public BankPaymentDTO Pay([FromBody] BankPaymentDTO bankPaymentDTO)
         {
             _logger.LogInformation("Pay");
             var payment = _mapper.Map<BankPaymentDTO>(_bankService.Pay(_mapper.Map<BankPayment>(bankPaymentDTO)));
-            if (payment != null)
-            {
-                var jss = new JavaScriptSerializer();
-                var httpRequest = (HttpWebRequest)HttpWebRequest.Create("https://localhost:5050/psp/update");
-                httpRequest.Method = "POST";
-                httpRequest.ContentType = "application/json";
-                var streamWriter = new StreamWriter(httpRequest.GetRequestStream());
-                streamWriter.Write(jss.Serialize(payment));
-                streamWriter.Close();
-                httpRequest.GetResponse();
-            }
-            return;
-            
+            return payment;
         }
 
         [HttpGet("get")]

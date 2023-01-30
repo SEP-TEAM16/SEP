@@ -90,7 +90,8 @@ namespace SEP.Bank.Controllers
                     httpRequest.GetResponse();
                 }
                 return RedirectPermanent("https://localhost:7035/");
-            } else
+            } 
+            else
             {
                 var payment = _mapper.Map<BankPaymentDTO>(_bankService.Convert(cardDTO));
                 if (payment != null)
@@ -102,7 +103,27 @@ namespace SEP.Bank.Controllers
                     var streamWriter = new StreamWriter(httpRequest.GetRequestStream());
                     streamWriter.Write(JsonConvert.SerializeObject(payment));
                     streamWriter.Close();
-                    httpRequest.GetResponse();
+                    
+                    var getdata = new BankPaymentDTO();
+                    using (var webresponse = (HttpWebResponse)httpRequest.GetResponse())
+                    using (var stream = webresponse.GetResponseStream())
+                    using (var reader = new StreamReader(stream))
+                    {
+                        var json = reader.ReadToEnd();
+                        getdata = JsonConvert.DeserializeObject<BankPaymentDTO>(json);
+                    }
+
+                    var newPayment = _bankService.Update(_mapper.Map<BankPayment>(getdata));
+                    var newPaymentDto = _mapper.Map<BankPaymentDTO>(newPayment);
+
+                    var jss = new JavaScriptSerializer();
+                    var httpRequest2 = (HttpWebRequest)HttpWebRequest.Create("https://localhost:5050/psp/update");
+                    httpRequest2.Method = "POST";
+                    httpRequest2.ContentType = "application/json";
+                    var streamWriter2 = new StreamWriter(httpRequest2.GetRequestStream());
+                    streamWriter2.Write(jss.Serialize(newPaymentDto));
+                    streamWriter2.Close();
+                    httpRequest2.GetResponse();
                 }
                 return RedirectPermanent("https://localhost:7035/");
             }
