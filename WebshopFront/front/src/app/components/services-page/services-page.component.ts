@@ -36,19 +36,19 @@ export class ServicesPageComponent implements OnInit {
     let select = document.getElementById('method') as HTMLSelectElement;
 
     if(select.value === 'Paypal') {
-      this.paymentService.makePayPalPayment(this.selectedPackage).subscribe(ret => {
+      this.paymentService.makePayPalPaymentForPackage(this.selectedPackage).subscribe(ret => {
         document.location.href = ret;
       })
     } else if(select.value === 'Card'){
-      this.paymentService.makeCardPayment(this.selectedPackage).subscribe(ret => {
+      this.paymentService.makeCardPaymentForPackage(this.selectedPackage).subscribe(ret => {
         document.location.href = ret;
       })
     } else if(select.value === 'Bitcoin'){
-      this.paymentService.makeBitCoinPayment(this.selectedPackage).subscribe(ret => {
+      this.paymentService.makeBitCoinPaymentForPackage(this.selectedPackage).subscribe(ret => {
         alert(ret)
       })
     } else {
-      this.paymentService.makeQrCodePayment(this.selectedPackage).subscribe(ret => {
+      this.paymentService.makeQrCodePaymentForPackage(this.selectedPackage).subscribe(ret => {
         document.location.href = ret;
       })
     }

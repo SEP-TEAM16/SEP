@@ -23,6 +23,12 @@ export class LoggedCompanyPageComponent implements OnInit {
   }
 
   makePayment() {
+    for(let opt of this.options) {
+      let input = document.getElementById(opt.name) as HTMLInputElement;
+      if(input.checked)
+        localStorage.setItem('checkedSubs', opt.name)
+    }
+
     this.router.navigate(['/paymentMethod'])
   }
 

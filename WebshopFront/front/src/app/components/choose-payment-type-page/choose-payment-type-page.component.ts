@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { PaymentMicroserviceType } from 'src/app/enums/payment-microservice-type';
 import { Subscription } from 'src/app/model/subscription';
+import { SubscriptionOption } from 'src/app/model/subscription-option';
 import { PaymentService } from 'src/app/services/payment.service';
+import { SubscribeOptionsService } from 'src/app/services/subscribe-options.service';
 import { SubscribeService } from 'src/app/services/subscribe.service';
 
 @Component({
@@ -13,13 +15,20 @@ export class ChoosePaymentTypePageComponent implements OnInit {
   methods: Array<String> = []
   selectedSubs: Subscription = {} as Subscription;
   subscriptions: Array<Subscription> = []
+  checkedSub : SubscriptionOption = {} as SubscriptionOption;
 
-  constructor(private paymentService: PaymentService, private subscribeService: SubscribeService) { }
+  constructor(private paymentService: PaymentService, private subscribeService: SubscribeService , private subscribeOptionsService: SubscribeOptionsService) { }
 
   ngOnInit(): void {
     this.subscribeService.getSubscribedByPort().subscribe(ret => {
       this.subscriptions = ret;
     })
+    this.subscribeOptionsService.getAllSubscriptionOptions().subscribe(response => {
+      for(let opt of response){
+        if(opt.name === localStorage.getItem('checkedSubs'))
+          this.checkedSub = opt
+      }
+    });
   }
 
   returnEnumValue(type: PaymentMicroserviceType) {
@@ -46,23 +55,26 @@ export class ChoosePaymentTypePageComponent implements OnInit {
         break
       }
     }
+    
 
-    // if(chosedInput === 'Paypal') {
-    //   this.paymentService.makePayPalPayment().subscribe(ret => {
-    //     document.location.href = ret;
-    //   })
-    // } else if(chosedInput === 'Card'){
-    //   this.paymentService.makeCardPayment().subscribe(ret => {
-    //     document.location.href = ret;
-    //   })
-    // } else if(chosedInput === 'Bitcoin'){
-    //   this.paymentService.makeBitCoinPayment().subscribe(ret => {
-    //     alert(ret)
-    //   })
-    // } else {
-    //   this.paymentService.makeQrCodePayment().subscribe(ret => {
-    //     document.location.href = ret;
-    //   })
-    //}
+    if(chosedInput === 'Paypal') {
+      this.paymentService.makePayPalPaymentForSubs(this.checkedSub).subscribe(ret => {
+        document.location.href = ret;
+      })
+    } else if(chosedInput === 'Card'){
+      this.paymentService.makeCardPaymentForSubs(this.checkedSub).subscribe(ret => {
+        document.location.href = ret;
+      })
+    } else if(chosedInput === 'Bitcoin'){
+      this.paymentService.makeBitCoinPaymentForSubs(this.checkedSub).subscribe(ret => {
+        alert(ret)
+      })
+    } else {
+      this.paymentService.makeQrCodePaymentForSubs(this.checkedSub).subscribe(ret => {
+        document.location.href = ret;
+      })
+    }
   }
+
+  
 }

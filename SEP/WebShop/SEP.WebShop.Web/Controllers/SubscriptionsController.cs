@@ -153,7 +153,7 @@ namespace SEP.WebShop.Web.Controllers
             var user = _userRepository.FindById(_jwtUtils.ValidateToken(Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last()).Value).Value;
             _subscriptionService.MakeSubscription(_subscriptionOptionRepository.FindAll().Where(sub => sub.SubscriptionType.Equals((SubscriptionType)subscriptionType)).FirstOrDefault(), (Company) user);
 
-            return Ok();
+            return Ok(true);
         }
 
         [HttpPost("isCompanySubscribed")]
