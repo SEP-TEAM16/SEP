@@ -53,6 +53,46 @@ namespace SEP.PSP.Services
             Console.ReadKey();*/
         }
 
+        public string MakePayPalSubscribe(PSPPaymentDTO pspPaymentDto)
+        {
+            var merchant = _PSPDbContext.Merchants.FirstOrDefault(mer => mer.Key.Equals(pspPaymentDto.Key));
+            if (merchant is null)
+                return null;
+
+            var subscribedServices = _PSPDbContext.Subscriptions.Where(sub => sub.Merchant.Id.Equals(merchant.Id)).Select(sub => sub.PaymentMicroserviceType);
+            if (!subscribedServices.Contains(PaymentMicroserviceType.Paypal))
+                return null;
+
+            var authKey = AuthKeys.FirstOrDefault(a => a.PaymentMicroserviceType.Equals(PaymentMicroserviceType.Paypal) && !a.Route.Contains("subscribe"));
+            var payPalPayment = _mapper.Map<PSPPayment>(pspPaymentDto);
+            var authToken = GetBearerToken(PaymentMicroserviceType.Paypal);
+
+            var httpRequest = (HttpWebRequest)HttpWebRequest.Create("https://localhost:5050/" + authKey.Route +"/subscribe");
+            httpRequest.Method = "POST";
+            httpRequest.ContentType = "application/json";
+            httpRequest.Headers.Add("Authorization", $"Bearer {authToken.Token}");
+            var streamWriter = new StreamWriter(httpRequest.GetRequestStream());
+            var pspPayPalPaymentDto = payPalPayment.ConvertToPSPPayPalPaymentDTO();
+            pspPayPalPaymentDto.MerchantId = merchant.Id.ToString();
+            streamWriter.Write(JsonSerializer.Serialize(pspPayPalPaymentDto));
+            streamWriter.Close();
+
+            var getdata = string.Empty;
+            using (var webresponse = (HttpWebResponse)httpRequest.GetResponse())
+            using (var stream = webresponse.GetResponseStream())
+            using (var reader = new StreamReader(stream))
+            {
+                getdata = reader.ReadToEnd();
+            }
+
+            payPalPayment.PaymentApproval = PaymentApprovalType.Pending;
+            payPalPayment.Date = DateTime.Now;
+            payPalPayment.Currency = "USD";
+            payPalPayment.Merchant = merchant;
+            _PSPDbContext.PSPPayments.Add(payPalPayment);
+            _PSPDbContext.SaveChanges();
+            return getdata;
+        }
         public string MakePayPalPayment(PSPPaymentDTO pspPaymentDto)
         {
             var merchant = _PSPDbContext.Merchants.FirstOrDefault(mer => mer.Key.Equals(pspPaymentDto.Key));

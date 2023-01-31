@@ -86,7 +86,7 @@ namespace SEP.WebShop.Web.Controllers
             paymentDto.Amount = (float) packageDto.Price;
             paymentDto.Description = "Buying package";
             paymentDto.Key = MerchantData.Key;
-            //var payment = _paymentService.Create(Payment.Create(Guid.NewGuid(), paymentDto.ItemName, paymentDto.Amount, paymentDto.Currency, Guid.NewGuid(), PaymentStatus.pending, paymentDto.IdentityToken).Value);
+            var payment = _paymentService.Create(Payment.Create(Guid.NewGuid(), paymentDto.ItemName, paymentDto.Amount, paymentDto.Currency, Guid.NewGuid(), PaymentStatus.pending, paymentDto.IdentityToken).Value);
             //_messageProducer.SendMessage<PaymentDto>(paymentDto, "makePayment", "7035");
 
             var jss = new JavaScriptSerializer();
@@ -107,6 +107,72 @@ namespace SEP.WebShop.Web.Controllers
                 getdata = reader.ReadToEnd();
             }
             
+            return Ok(getdata);
+        }
+
+        [HttpPost("paypal/subscribe")]
+        public IActionResult MakeAPaypalSubscribe([FromBody] PackageDto packageDto)
+        {
+            _logger.LogInformation("WebShop make payment executing...");
+            var paymentDto = new PaymentDto();
+            if (!_jwtUtils.ValidateToken(Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last()).HasValue)
+                return null;
+            var user = _userRepository.FindById(_jwtUtils.ValidateToken(Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last()).Value).Value;
+
+            var httpMerchantRequest = (HttpWebRequest)HttpWebRequest.Create("https://localhost:7038/api/psp/getMerchantByPort");
+            httpMerchantRequest.Method = "GET";
+            httpMerchantRequest.ContentType = "application/json";
+            httpMerchantRequest.Headers.Add("senderPort", Request.Headers["senderPort"].ToString());
+
+            var s = string.Empty;
+            using (var webresponse = (HttpWebResponse)httpMerchantRequest.GetResponse())
+            using (var stream = webresponse.GetResponseStream())
+            using (var reader = new StreamReader(stream))
+            {
+                s = reader.ReadLine();
+                paymentDto.Merchant = new MerchantDto(0, s.Split(",")[0], s.Split(",")[1]);
+            }
+
+            paymentDto.Currency = packageDto.Currency;
+            paymentDto.Email = user.EmailAddress;
+            if (user.UserType.Equals(UserType.candidate))
+            {
+                paymentDto.FirstName = user.Name.ToString().Split(" ")[0];
+                paymentDto.LastName = user.Name.ToString().Split(" ")[1];
+                paymentDto.Name = "Buy package";
+            }
+            else
+            {
+                paymentDto.FirstName = user.Name.ToString();
+                paymentDto.LastName = user.Name.ToString();
+                paymentDto.Name = user.Name.ToString();
+            }
+            paymentDto.IdentityToken = Guid.NewGuid().ToString();
+            paymentDto.ItemName = packageDto.Name;
+            paymentDto.Amount = (float)packageDto.Price;
+            paymentDto.Description = "Buying package";
+            paymentDto.Key = MerchantData.Key;
+            var payment = _paymentService.Create(Payment.Create(Guid.NewGuid(), paymentDto.ItemName, paymentDto.Amount, paymentDto.Currency, Guid.NewGuid(), PaymentStatus.pending, paymentDto.IdentityToken).Value);
+            //_messageProducer.SendMessage<PaymentDto>(paymentDto, "makePayment", "7035");
+
+            var jss = new JavaScriptSerializer();
+
+            var httpRequest = (HttpWebRequest)HttpWebRequest.Create("https://localhost:7038/api/psp/subscribePaypal");
+            httpRequest.Method = "POST";
+            httpRequest.ContentType = "application/json";
+
+            var streamWriter = new StreamWriter(httpRequest.GetRequestStream());
+            streamWriter.Write(jss.Serialize(paymentDto));
+            streamWriter.Close();
+
+            var getdata = string.Empty;
+            using (var webresponse = (HttpWebResponse)httpRequest.GetResponse())
+            using (var stream = webresponse.GetResponseStream())
+            using (var reader = new StreamReader(stream))
+            {
+                getdata = reader.ReadToEnd();
+            }
+
             return Ok(getdata);
         }
 
@@ -156,7 +222,7 @@ namespace SEP.WebShop.Web.Controllers
             paymentDto.Description = "Buying package";
             paymentDto.Key = MerchantData.Key;
 
-            //var payment = _paymentService.Create(Payment.Create(Guid.NewGuid(), paymentDto.ItemName, paymentDto.Amount, paymentDto.Currency, Guid.NewGuid(), PaymentStatus.pending, paymentDto.IdentityToken).Value);
+            var payment = _paymentService.Create(Payment.Create(Guid.NewGuid(), paymentDto.ItemName, paymentDto.Amount, paymentDto.Currency, Guid.NewGuid(), PaymentStatus.pending, paymentDto.IdentityToken).Value);
             //_messageProducer.SendMessage<PaymentDto>(paymentDto, "makePayment", "7035");
 
             var jss = new JavaScriptSerializer();
@@ -223,7 +289,7 @@ namespace SEP.WebShop.Web.Controllers
             paymentDto.Key = "sadasdnasd";
             paymentDto.Key = MerchantData.Key;
 
-            //var payment = _paymentService.Create(Payment.Create(Guid.NewGuid(), paymentDto.ItemName, paymentDto.Amount, paymentDto.Currency, Guid.NewGuid(), PaymentStatus.pending, paymentDto.IdentityToken).Value);
+            var payment = _paymentService.Create(Payment.Create(Guid.NewGuid(), paymentDto.ItemName, paymentDto.Amount, paymentDto.Currency, Guid.NewGuid(), PaymentStatus.pending, paymentDto.IdentityToken).Value);
             //_messageProducer.SendMessage<PaymentDto>(paymentDto, "makePayment", "7035");
 
             var jss = new JavaScriptSerializer();
@@ -290,7 +356,7 @@ namespace SEP.WebShop.Web.Controllers
             paymentDto.Key = "sadasdnasd";
             paymentDto.Key = MerchantData.Key;
 
-            //var payment = _paymentService.Create(Payment.Create(Guid.NewGuid(), paymentDto.ItemName, paymentDto.Amount, paymentDto.Currency, Guid.NewGuid(), PaymentStatus.pending, paymentDto.IdentityToken).Value);
+            var payment = _paymentService.Create(Payment.Create(Guid.NewGuid(), paymentDto.ItemName, paymentDto.Amount, paymentDto.Currency, Guid.NewGuid(), PaymentStatus.pending, paymentDto.IdentityToken).Value);
             //_messageProducer.SendMessage<PaymentDto>(paymentDto, "makePayment", "7035");
 
             var jss = new JavaScriptSerializer();

@@ -54,8 +54,11 @@ var appSettings = new ConfigurationBuilder().AddJsonFile("appsettings.Developmen
 var authKeys = new List<AuthKeyWithPortDTO>
 {
     new AuthKeyWithPortDTO(appSettings.GetValue<string>("Info:Key"), appSettings.GetValue<string>("Info:Route"), int.Parse(appSettings.GetValue<string>("Info:Port")), true, appSettings.GetValue<string>("Info:RouteType"), 0),
+    new AuthKeyWithPortDTO(appSettings.GetValue<string>("Info:Key"), appSettings.GetValue<string>("Info:Route")+"/subscribe", int.Parse(appSettings.GetValue<string>("Info:Port")), true, appSettings.GetValue<string>("Info:RouteType"), 0),
     new AuthKeyWithPortDTO(appSettings.GetValue<string>("Info:Key"), appSettings.GetValue<string>("Info:Route1"), int.Parse(appSettings.GetValue<string>("Info:Port")), false, appSettings.GetValue<string>("Info:Route1Type"), 5),
-    new AuthKeyWithPortDTO(appSettings.GetValue<string>("Info:Key"), appSettings.GetValue<string>("Info:Route2"), int.Parse(appSettings.GetValue<string>("Info:Port")), false, appSettings.GetValue<string>("Info:Route2Type"), 5)
+    new AuthKeyWithPortDTO(appSettings.GetValue<string>("Info:Key"), appSettings.GetValue<string>("Info:Route2"), int.Parse(appSettings.GetValue<string>("Info:Port")), false, appSettings.GetValue<string>("Info:Route2Type"), 5),
+     new AuthKeyWithPortDTO(appSettings.GetValue<string>("Info:Key"), appSettings.GetValue<string>("Info:Route1")+"-sub", int.Parse(appSettings.GetValue<string>("Info:Port")), false, appSettings.GetValue<string>("Info:Route1Type"), 5),
+    new AuthKeyWithPortDTO(appSettings.GetValue<string>("Info:Key"), appSettings.GetValue<string>("Info:Route2")+"-sub", int.Parse(appSettings.GetValue<string>("Info:Port")), false, appSettings.GetValue<string>("Info:Route2Type"), 5)
 };
 streamWriter.Write(jss.Serialize(authKeys));
 streamWriter.Close();
