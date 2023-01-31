@@ -7,7 +7,7 @@
         <div class="col-3" style=" font-size: 20px; margin-top: 50px;">
 
             <div class="subscription-option" *ngFor="let item of options">
-                <input type="radio" id="{{'sub-' + item.id}}" name="{{item.name}}" value="{{item.id}}"
+                <input type="radio" id="{{item.name}}" name="{{item.name}}" value="{{item.id}}"
                     (click)="onOptionSelect(item.subscriptionType)" style="margin-left: 10px;" [checked]="checked === item.subscriptionType">
                   <label for="{{'sub-' + item.id}}">{{item.name}}</label><br>
 
