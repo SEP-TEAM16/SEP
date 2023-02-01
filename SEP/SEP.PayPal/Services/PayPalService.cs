@@ -1,8 +1,15 @@
-﻿using PayPal.Api;
+﻿using Newtonsoft.Json;
+using PayPal.Api;
 using SEP.Common.Enums;
+using SEP.Common.Models;
 using SEP.PayPal.Infrastructure;
 using SEP.PayPal.Interfaces;
 using SEP.PayPal.Models;
+using System.Net;
+using System.Net.Http.Headers;
+using System.Numerics;
+using System.Text;
+using Payment = PayPal.Api.Payment;
 
 namespace SEP.PayPal.Services
 {
@@ -40,6 +47,75 @@ namespace SEP.PayPal.Services
                 _logger.LogError(ex.Message);
                 return null;
             }
+        }
+
+        public string Subscribe(PayPalPayment payPalPayment)
+        {
+            using (var client = new HttpClient())
+            {
+                payPalPayment.Date = DateTime.Now;
+                payPalPayment.Date = payPalPayment.Date.AddDays(1);
+                string authHeaderValue = Convert.ToBase64String(Encoding.UTF8.GetBytes(CLIENT_ID + ":" + CLIENT_SECRET));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authHeaderValue);
+                //string requestBody = "{\"name\":\""+payPalPayment.Name+"\",\"description\":\""+payPalPayment.Description+"\",\"start_date\":\""+payPalPayment.Date.ToString("s")+"Z"+ "\",\"plan\":{\"id\":\"P-4VX409764F671362VMPMSKEY\"},\"payer\":{\"payment_method\":\"paypal\"},\"override_merchant_preferences\": {\"return_url\":\"https://localhost:5050/paypal/continue\",\"cancel_url\":\"https://localhost:5050/paypal/cancel\"}}";
+                //string requestBody2 = "{\"product_id\":\"PROD-9R10736519993944T\",\"name\":\"" + payPalPayment.Name + "\",\"billing_cycles\":[{\"tenure_type\":\"REGULAR\", \"sequence\":1, \"frequency\":{\"interval_unit\":\"MONTH\"}, \"pricing_scheme\": {\"fixed_price\": {\"value\": \"50\",\"currency_code\": \"USD\"}}}],\"payment_preferences\":{\"payment_preferences\":true}}";
+                //string requestBody3 = "{\"name\":\"" + payPalPayment.Name + "\",\"type\":\"SERVICE\"}";
+                string requestBody = "{\"plan_id\": \"P-4VX409764F671362VMPMSKEY\",\r\n    \"start_time\": \"" + payPalPayment.Date.ToString("s") + "Z" + "\",\r\n    \"shipping_amount\": {\r\n        \"currency_code\": \"USD\",\r\n        \"value\": \""+ payPalPayment.Amount.ToString("0.00").Replace(',', '.')+ "\"\r\n    },\r\n    \"subscriber\": {\r\n        \"name\": {\r\n            \"given_name\": \"" + payPalPayment.FirstName + "\",\r\n            \"surname\": \"" + payPalPayment.LastName + "\"\r\n        },\r\n        \"email_address\": \"" + payPalPayment.Email + "\",\r\n        \"shipping_address\": {\r\n            \"name\": {\r\n                \"full_name\": \"" + payPalPayment.FirstName + " " + payPalPayment.LastName + "\"\r\n            },\r\n            \"address\": {\r\n                \"address_line_1\": \"2211 N First Street\",\r\n                \"address_line_2\": \"Building 17\",\r\n                \"admin_area_2\": \"San Jose\",\r\n                \"admin_area_1\": \"CA\",\r\n                \"postal_code\": \"95131\",\r\n                \"country_code\": \"US\"\r\n            }\r\n        }\r\n    },\r\n    \"application_context\": {\r\n        \"brand_name\": \"Example Inc\",\r\n        \"locale\": \"en-US\",\r\n        \"shipping_preference\": \"SET_PROVIDED_ADDRESS\",\r\n        \"user_action\": \"SUBSCRIBE_NOW\",\r\n        \"payment_method\": {\r\n            \"payer_selected\": \"PAYPAL\",\r\n            \"payee_preferred\": \"IMMEDIATE_PAYMENT_REQUIRED\"\r\n        },\r\n        \"return_url\": \"https://localhost:5050/paypal/continue-sub\",\r\n        \"cancel_url\": \"https://localhost:5050/paypal/cancel-sub\"\r\n    }}";
+                /*
+                var content = new StringContent(requestBody, Encoding.UTF8, "application/json");
+
+                var result = client.PostAsync("https://api.sandbox.paypal.com/v1/payments/billing-agreements", content).Result;
+                var responseContent = result.Content.ReadAsStringAsync().Result;*/
+                var httpRequest = (HttpWebRequest)HttpWebRequest.Create("https://api.sandbox.paypal.com/v1/billing/subscriptions");
+                //var httpRequest = (HttpWebRequest)HttpWebRequest.Create("https://api.sandbox.paypal.com/v1/billing/plans");
+                //var httpRequest = (HttpWebRequest)HttpWebRequest.Create("https://api.sandbox.paypal.com/v1/catalogs/products");
+                //var httpRequest = (HttpWebRequest)HttpWebRequest.Create("https://api.sandbox.paypal.com/v1/payments/billing-plans/4VX409764F671362VMPMSKEY");
+                httpRequest.Method = "POST";
+                //httpRequest.Method = "GET";
+                httpRequest.ContentType = "application/json";
+                httpRequest.Headers.Add("Authorization:" + new AuthenticationHeaderValue("Basic", authHeaderValue));
+                var streamWriter = new StreamWriter(httpRequest.GetRequestStream());
+                streamWriter.Write(requestBody);
+                //streamWriter.Write(requestBody2);
+                //streamWriter.Write(requestBody3);
+                streamWriter.Close();
+
+                var getdata = new Agreement();
+                using (var webresponse = (HttpWebResponse)httpRequest.GetResponse())
+                using (var stream = webresponse.GetResponseStream())
+                using (var reader = new StreamReader(stream))
+                {
+                    var json = reader.ReadToEnd();
+                    getdata = JsonConvert.DeserializeObject<Agreement>(json);
+                }
+                var url = getdata.links.FirstOrDefault(l => l.rel.Equals("approve")).href;
+                payPalPayment.Token = url.Split("=")[1];
+                _payPalDbContext.PayPalPayment.Add(payPalPayment);
+                _payPalDbContext.SaveChanges();
+                return url;
+            }
+        }
+
+        public PayPalPayment Pay2(string subscription_id, string ba_token, string token)
+        {
+            var payPalPayment = _payPalDbContext.PayPalPayment.FirstOrDefault(x => x.Token == ba_token);
+            if (payPalPayment != null)
+            {
+                try
+                {
+                    payPalPayment.PaymentApproval = PaymentApprovalType.Success;
+                    _payPalDbContext.SaveChanges();
+                    return payPalPayment;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex.Message);
+                    payPalPayment.PaymentApproval = PaymentApprovalType.Rejected;
+                    _payPalDbContext.SaveChanges();
+                    return payPalPayment;
+                }
+            }
+            return null;
         }
         public PayPalPayment Pay(string paymentId, string payerId, string token)
         {
