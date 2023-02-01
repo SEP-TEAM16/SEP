@@ -16,6 +16,7 @@ export class ServicesPageComponent implements OnInit {
   packages: Array<Package> = []
   selectedPackage: Package = {} as Package;
   subscriptions: Array<Subscription> = []
+  privateKey: String = '';
 
   constructor(private packageService: PackageService, private paymentService: PaymentService, 
     private subscribeService: SubscribeService, private router: Router) { }
@@ -27,6 +28,8 @@ export class ServicesPageComponent implements OnInit {
     this.subscribeService.getSubscribedByPort().subscribe(ret => {
       this.subscriptions = ret;
     })
+    let input = document.getElementById('private') as HTMLInputElement
+    input.hidden = true
   }
 
   buyPackage() {
@@ -49,7 +52,12 @@ export class ServicesPageComponent implements OnInit {
           document.location.href = ret;
         })
       } else if(select.value === 'Bitcoin'){
-        this.paymentService.makeBitCoinPaymentForPackage(this.selectedPackage).subscribe(ret => {
+        let input = document.getElementById('private') as HTMLInputElement
+        if(input.value === '' || input.value === undefined) {
+          alert('Enter private key')
+          return;
+        }
+        this.paymentService.makeBitCoinPaymentForPackage(this.selectedPackage, input.value).subscribe(ret => {
           this.router.navigate(['success'])
         })
       } else {
@@ -85,5 +93,14 @@ export class ServicesPageComponent implements OnInit {
     this.paymentService.makePayPalSubscription(this.selectedPackage).subscribe(ret => {
       document.location.href = ret;
     })
+  }
+
+  methodChanged() {
+    let select = document.getElementById('method') as HTMLSelectElement;
+    let input = document.getElementById('private') as HTMLInputElement
+    if(select.value === 'Bitcoin')
+      input.hidden = false
+    else
+      input.hidden = true
   }
 }
