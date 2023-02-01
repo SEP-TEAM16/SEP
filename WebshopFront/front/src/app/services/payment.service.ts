@@ -49,11 +49,12 @@ export class PaymentService {
     return this.http.post<any>(this.makeCardPaymentForPackageUrl, chosenPackage, requestOptions);
   }
 
-  public makeBitCoinPaymentForPackage(chosenPackage: Package): Observable<any> {
+  public makeBitCoinPaymentForPackage(chosenPackage: Package, privateKey: string): Observable<any> {
     var headers = new HttpHeaders({ 
       'Content-Type': 'application/json',
       'Authorization': 'Bearer ' + localStorage.getItem('token'),
-      'senderPort': '7035'
+      'senderPort': '7035',
+      'privateKey': privateKey
     });
     const requestOptions: Object = {
       headers: headers,

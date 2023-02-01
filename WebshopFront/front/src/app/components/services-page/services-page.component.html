@@ -16,12 +16,15 @@
     </div>
     <div class="row">
         <div class="col-3">
-            <select name="method" class="form-control" id="method" style="width: 130px; margin-left: 250px; margin-top: 20px;" >
-                <option *ngFor="let subs of subscriptions; let indexOfelement = index;" [ngValue]="subs.paymentMicroserviceType"> {{returnEnumValue(subs.paymentMicroserviceType)}} </option>
+            <select name="method" class="form-control" id="method" style="width: 130px; margin-left: 250px; margin-top: 20px;" (change)="methodChanged()">
+                <option *ngFor="let subs of subscriptions; let indexOfelement = index;" [ngValue]="subs.paymentMicroserviceType" > {{returnEnumValue(subs.paymentMicroserviceType)}} </option>
             </select>
         </div>
-        <div class="col-3">
+        <div class="col-2">
             <button class="btn btn-success" style=" margin-left: 100px; margin-top: 20px;" (click)="buyPackage()"> Buy </button>
+        </div>
+        <div class="col-2" id="">
+            <input id="private" class="form-control" placeholder="Enter private key" [ngModel]="privateKey" style="margin-top: 20px;">
         </div>
     </div>
     <div class="row" style="height: 510px;"></div>
