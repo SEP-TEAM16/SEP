@@ -89,7 +89,7 @@ namespace SEP.Bank.Controllers
                     streamWriter.Close();
                     httpRequest.GetResponse();
                 }
-                return RedirectPermanent("https://localhost:7035/");
+                return RedirectPermanent("http://localhost:4200/success");
             } 
             else
             {
@@ -125,7 +125,7 @@ namespace SEP.Bank.Controllers
                     streamWriter2.Close();
                     httpRequest2.GetResponse();
                 }
-                return RedirectPermanent("https://localhost:7035/");
+                return RedirectPermanent("http://localhost:4200/success");
             }
 
             _logger.LogWarning("You don't have access.");
