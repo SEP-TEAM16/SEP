@@ -67,7 +67,7 @@ export class ChoosePaymentTypePageComponent implements OnInit {
       })
     } else if(chosedInput === 'Bitcoin'){
       this.paymentService.makeBitCoinPaymentForSubs(this.checkedSub).subscribe(ret => {
-        alert(ret)
+        document.location.href = ret;
       })
     } else {
       this.paymentService.makeQrCodePaymentForSubs(this.checkedSub).subscribe(ret => {

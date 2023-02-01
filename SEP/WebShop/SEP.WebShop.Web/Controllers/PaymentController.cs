@@ -143,6 +143,7 @@ namespace SEP.WebShop.Web.Controllers
             {
                 paymentDto.FirstName = user.Name.ToString().Split(" ")[0];
                 paymentDto.LastName = user.Name.ToString().Split(" ")[1];
+                paymentDto.Name = "Buy package";
             }
             else
             {
@@ -209,6 +210,7 @@ namespace SEP.WebShop.Web.Controllers
             {
                 paymentDto.FirstName = user.Name.ToString().Split(" ")[0];
                 paymentDto.LastName = user.Name.ToString().Split(" ")[1];
+                paymentDto.Name = "Buy package";
             }
             else
             {
@@ -276,6 +278,7 @@ namespace SEP.WebShop.Web.Controllers
             {
                 paymentDto.FirstName = user.Name.ToString().Split(" ")[0];
                 paymentDto.LastName = user.Name.ToString().Split(" ")[1];
+                paymentDto.Name = "Buy package";
             }
             else
             {
@@ -415,7 +418,7 @@ namespace SEP.WebShop.Web.Controllers
             {
                 paymentDto.FirstName = user.Name.ToString().Split(" ")[0];
                 paymentDto.LastName = user.Name.ToString().Split(" ")[1];
-                paymentDto.Name = "Buy package";
+                paymentDto.Name = "Make subscription";
             }
             else
             {
@@ -485,6 +488,7 @@ namespace SEP.WebShop.Web.Controllers
             {
                 paymentDto.FirstName = user.Name.ToString().Split(" ")[0];
                 paymentDto.LastName = user.Name.ToString().Split(" ")[1];
+                paymentDto.Name = "Make subscription";
             }
             else
             {
@@ -551,6 +555,7 @@ namespace SEP.WebShop.Web.Controllers
             {
                 paymentDto.FirstName = user.Name.ToString().Split(" ")[0];
                 paymentDto.LastName = user.Name.ToString().Split(" ")[1];
+                paymentDto.Name = "Make subscription";
             }
             else
             {
@@ -617,6 +622,7 @@ namespace SEP.WebShop.Web.Controllers
             {
                 paymentDto.FirstName = user.Name.ToString().Split(" ")[0];
                 paymentDto.LastName = user.Name.ToString().Split(" ")[1];
+                paymentDto.Name = "Make subscription";
             }
             else
             {

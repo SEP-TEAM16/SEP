@@ -45,7 +45,7 @@ export class ServicesPageComponent implements OnInit {
       })
     } else if(select.value === 'Bitcoin'){
       this.paymentService.makeBitCoinPaymentForPackage(this.selectedPackage).subscribe(ret => {
-        alert(ret)
+        document.location.href = ret;
       })
     } else {
       this.paymentService.makeQrCodePaymentForPackage(this.selectedPackage).subscribe(ret => {
