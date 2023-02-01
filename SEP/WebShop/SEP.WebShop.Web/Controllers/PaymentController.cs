@@ -497,7 +497,7 @@ namespace SEP.WebShop.Web.Controllers
             paymentDto.Amount = (float)subscriptionOptionDto.Price;
             paymentDto.Description = "Making subscription " + subscriptionOptionDto.SubscriptionType.ToString();
             paymentDto.Key = MerchantData.Key;
-            //var payment = _paymentService.Create(Payment.Create(Guid.NewGuid(), paymentDto.ItemName, paymentDto.Amount, paymentDto.Currency, Guid.NewGuid(), PaymentStatus.pending, paymentDto.IdentityToken).Value);
+            var payment = _paymentService.Create(Payment.Create(Guid.NewGuid(), paymentDto.ItemName, paymentDto.Amount, paymentDto.Currency, Guid.NewGuid(), PaymentStatus.pending, paymentDto.IdentityToken).Value);
             //_messageProducer.SendMessage<PaymentDto>(paymentDto, "makePayment", "7035");
 
             var jss = new JavaScriptSerializer();
@@ -568,7 +568,7 @@ namespace SEP.WebShop.Web.Controllers
             paymentDto.Description = "Making subscription " + subscriptionOptionDto.SubscriptionType.ToString();
             paymentDto.Key = MerchantData.Key;
 
-            //var payment = _paymentService.Create(Payment.Create(Guid.NewGuid(), paymentDto.ItemName, paymentDto.Amount, paymentDto.Currency, Guid.NewGuid(), PaymentStatus.pending, paymentDto.IdentityToken).Value);
+            var payment = _paymentService.Create(Payment.Create(Guid.NewGuid(), paymentDto.ItemName, paymentDto.Amount, paymentDto.Currency, Guid.NewGuid(), PaymentStatus.pending, paymentDto.IdentityToken).Value);
             //_messageProducer.SendMessage<PaymentDto>(paymentDto, "makePayment", "7035");
 
             var jss = new JavaScriptSerializer();
@@ -635,7 +635,7 @@ namespace SEP.WebShop.Web.Controllers
             paymentDto.Description = "Making subscription " + subscriptionOptionDto.SubscriptionType.ToString();
             paymentDto.Key = MerchantData.Key;
 
-            //var payment = _paymentService.Create(Payment.Create(Guid.NewGuid(), paymentDto.ItemName, paymentDto.Amount, paymentDto.Currency, Guid.NewGuid(), PaymentStatus.pending, paymentDto.IdentityToken).Value);
+            var payment = _paymentService.Create(Payment.Create(Guid.NewGuid(), paymentDto.ItemName, paymentDto.Amount, paymentDto.Currency, Guid.NewGuid(), PaymentStatus.pending, paymentDto.IdentityToken).Value);
             //_messageProducer.SendMessage<PaymentDto>(paymentDto, "makePayment", "7035");
 
             var jss = new JavaScriptSerializer();
@@ -702,7 +702,7 @@ namespace SEP.WebShop.Web.Controllers
             paymentDto.Description = "Making subscription " + subscriptionOptionDto.SubscriptionType.ToString();
             paymentDto.Key = MerchantData.Key;
 
-            //var payment = _paymentService.Create(Payment.Create(Guid.NewGuid(), paymentDto.ItemName, paymentDto.Amount, paymentDto.Currency, Guid.NewGuid(), PaymentStatus.pending, paymentDto.IdentityToken).Value);
+            var payment = _paymentService.Create(Payment.Create(Guid.NewGuid(), paymentDto.ItemName, paymentDto.Amount, paymentDto.Currency, Guid.NewGuid(), PaymentStatus.pending, paymentDto.IdentityToken).Value);
             //_messageProducer.SendMessage<PaymentDto>(paymentDto, "makePayment", "7035");
 
             var jss = new JavaScriptSerializer();

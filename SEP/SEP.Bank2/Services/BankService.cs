@@ -30,6 +30,7 @@ namespace SEP.Bank2.Services
         }
         public BankPayment Pay(BankPayment bankPayment)
         {
+            bankPayment.Date = DateTime.Now;
             _logger.LogInformation("Creating stripe payment");
             StripeConfiguration.ApiKey = API_KEY;
             var chargeService = new ChargeService();

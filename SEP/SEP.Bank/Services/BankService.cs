@@ -75,6 +75,7 @@ namespace SEP.Bank.Services
             try
             {
                 Charge charge = chargeService.Create(chargeOptions);
+                bankPaymentDetails.Date = DateTime.Now;
                 bankPaymentDetails.PaymentApproval = PaymentApprovalType.Success;
                 _bankDbContext.BankPayment.Update(bankPaymentDetails);
                 _bankDbContext.SaveChanges();
@@ -119,6 +120,7 @@ namespace SEP.Bank.Services
         {
             var payment = _bankDbContext.BankPayment.FirstOrDefault(p => p.IdentityToken.Equals(bankPayment.IdentityToken));
             payment.PaymentApproval = PaymentApprovalType.Success;
+            payment.Date = DateTime.Now;
             _bankDbContext.BankPayment.Update(payment);
             _bankDbContext.SaveChanges();
             return payment;

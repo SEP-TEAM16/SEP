@@ -71,6 +71,7 @@ namespace SEP.Bitcoin.Services
 
             if (broadcastResponse.Success)
             {
+                bitcoinPayment.Date = DateTime.Now;
                 bitcoinPayment.PaymentApproval = PaymentApprovalType.Success;
                 _bitcoinDbContext.BitcoinPayment.Add(bitcoinPayment);
                 _bitcoinDbContext.SaveChanges();
@@ -79,6 +80,7 @@ namespace SEP.Bitcoin.Services
             }
             else
             {
+                bitcoinPayment.Date = DateTime.Now;
                 bitcoinPayment.PaymentApproval = PaymentApprovalType.Rejected;
                 _bitcoinDbContext.BitcoinPayment.Add(bitcoinPayment);
                 _bitcoinDbContext.SaveChanges();
