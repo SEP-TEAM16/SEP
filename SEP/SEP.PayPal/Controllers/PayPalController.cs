@@ -71,7 +71,7 @@ namespace SEP.PayPal.Controllers
             streamWriter.Write(jss.Serialize(payPalPaymentDTO));
             streamWriter.Close();
             httpRequest.GetResponse();
-            return RedirectPermanent("https://localhost:4200/success");
+            return RedirectPermanent("http://localhost:4200/success");
         }
 
         [HttpGet("continue-sub")]
@@ -89,7 +89,7 @@ namespace SEP.PayPal.Controllers
             streamWriter.Write(jss.Serialize(payPalPaymentDTO));
             streamWriter.Close();
             httpRequest.GetResponse();
-            return RedirectPermanent("https://localhost:4200/success");
+            return RedirectPermanent("http://localhost:4200/success");
         }
 
         [HttpGet("cancel")]
@@ -106,7 +106,7 @@ namespace SEP.PayPal.Controllers
             streamWriter.Write(jss.Serialize(payPalPaymentDTO));
             streamWriter.Close();
             httpRequest.GetResponse();
-            return RedirectPermanent("https://localhost:4200/cancel");
+            return RedirectPermanent("http://localhost:4200/cancel");
         }
 
         [HttpGet("cancel-sub")]
@@ -123,7 +123,7 @@ namespace SEP.PayPal.Controllers
             streamWriter.Write(jss.Serialize(payPalPaymentDTO));
             streamWriter.Close();
             httpRequest.GetResponse();
-            return RedirectPermanent("https://localhost:4200/cancel");
+            return RedirectPermanent("http://localhost:4200/cancel");
         }
     }
 }
