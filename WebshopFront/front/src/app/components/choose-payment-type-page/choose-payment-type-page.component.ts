@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { PaymentMicroserviceType } from 'src/app/enums/payment-microservice-type';
 import { Subscription } from 'src/app/model/subscription';
 import { SubscriptionOption } from 'src/app/model/subscription-option';
@@ -17,7 +18,8 @@ export class ChoosePaymentTypePageComponent implements OnInit {
   subscriptions: Array<Subscription> = []
   checkedSub : SubscriptionOption = {} as SubscriptionOption;
 
-  constructor(private paymentService: PaymentService, private subscribeService: SubscribeService , private subscribeOptionsService: SubscribeOptionsService) { }
+  constructor(private paymentService: PaymentService, private subscribeService: SubscribeService, 
+    private subscribeOptionsService: SubscribeOptionsService, private router: Router) { }
 
   ngOnInit(): void {
     this.subscribeService.getSubscribedByPort().subscribe(ret => {
@@ -67,7 +69,7 @@ export class ChoosePaymentTypePageComponent implements OnInit {
       })
     } else if(chosedInput === 'Bitcoin'){
       this.paymentService.makeBitCoinPaymentForSubs(this.checkedSub).subscribe(ret => {
-        document.location.href = ret;
+        this.router.navigate(['success'])
       })
     } else {
       this.paymentService.makeQrCodePaymentForSubs(this.checkedSub).subscribe(ret => {
@@ -75,6 +77,5 @@ export class ChoosePaymentTypePageComponent implements OnInit {
       })
     }
   }
-
   
 }

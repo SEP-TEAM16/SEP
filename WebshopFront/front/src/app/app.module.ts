@@ -13,6 +13,8 @@ import { ServicesPageComponent } from './components/services-page/services-page.
 import { ChoosePaymentTypePageComponent } from './components/choose-payment-type-page/choose-payment-type-page.component';
 import { AdminPageComponent } from './components/admin-page/admin-page.component';
 import { SubscribedServicesPageComponent } from './components/subscribed-services-page/subscribed-services-page.component';
+import { SuccessPageComponent } from './components/success-page/success-page.component';
+import { CancelPageComponent } from './components/cancel-page/cancel-page.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +27,8 @@ import { SubscribedServicesPageComponent } from './components/subscribed-service
     ChoosePaymentTypePageComponent,
     AdminPageComponent,
     SubscribedServicesPageComponent,
+    SuccessPageComponent,
+    CancelPageComponent,
   ],
   imports: [
     BrowserModule,

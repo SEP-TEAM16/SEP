@@ -156,6 +156,7 @@ namespace SEP.PSP.Services
             pspBitcoinPaymentDto.MerchantId = merchant.Id.ToString();
             pspBitcoinPaymentDto.PublicKey = pspBitcoinPaymentDtoo.PublicKey;
             pspBitcoinPaymentDto.PrivateKey = pspBitcoinPaymentDtoo.PrivateKey;
+            pspBitcoinPaymentDto.Key = "asfasfa";
             streamWriter.Write(JsonSerializer.Serialize(pspBitcoinPaymentDto));
             streamWriter.Close();
 

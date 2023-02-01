@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { PaymentMicroserviceType } from 'src/app/enums/payment-microservice-type';
 import { Package } from 'src/app/model/package';
 import { Subscription } from 'src/app/model/subscription';
@@ -16,7 +17,8 @@ export class ServicesPageComponent implements OnInit {
   selectedPackage: Package = {} as Package;
   subscriptions: Array<Subscription> = []
 
-  constructor(private packageService: PackageService, private paymentService: PaymentService, private subscribeService: SubscribeService) { }
+  constructor(private packageService: PackageService, private paymentService: PaymentService, 
+    private subscribeService: SubscribeService, private router: Router) { }
 
   ngOnInit(): void {
     this.packageService.getAll().subscribe(ret => {
@@ -33,24 +35,28 @@ export class ServicesPageComponent implements OnInit {
       return;
     }
 
-    let select = document.getElementById('method') as HTMLSelectElement;
+    if(this.selectedPackage.name === 'Subscribe to paypal') 
+      this.makeSubscriptionToPaypal()
+    else {
+      let select = document.getElementById('method') as HTMLSelectElement;
 
-    if(select.value === 'Paypal') {
-      this.paymentService.makePayPalPaymentForPackage(this.selectedPackage).subscribe(ret => {
-        document.location.href = ret;
-      })
-    } else if(select.value === 'Card'){
-      this.paymentService.makeCardPaymentForPackage(this.selectedPackage).subscribe(ret => {
-        document.location.href = ret;
-      })
-    } else if(select.value === 'Bitcoin'){
-      this.paymentService.makeBitCoinPaymentForPackage(this.selectedPackage).subscribe(ret => {
-        document.location.href = ret;
-      })
-    } else {
-      this.paymentService.makeQrCodePaymentForPackage(this.selectedPackage).subscribe(ret => {
-        document.location.href = ret;
-      })
+      if(select.value === 'Paypal') {
+        this.paymentService.makePayPalPaymentForPackage(this.selectedPackage).subscribe(ret => {
+          document.location.href = ret;
+        })
+      } else if(select.value === 'Card'){
+        this.paymentService.makeCardPaymentForPackage(this.selectedPackage).subscribe(ret => {
+          document.location.href = ret;
+        })
+      } else if(select.value === 'Bitcoin'){
+        this.paymentService.makeBitCoinPaymentForPackage(this.selectedPackage).subscribe(ret => {
+          this.router.navigate(['success'])
+        })
+      } else {
+        this.paymentService.makeQrCodePaymentForPackage(this.selectedPackage).subscribe(ret => {
+          document.location.href = ret;
+        })
+      }
     }
 
   }
@@ -68,5 +74,16 @@ export class ServicesPageComponent implements OnInit {
 
   methodSelected(selected: Package) {
     this.selectedPackage = selected;
+    let select = document.getElementById('method') as HTMLSelectElement
+    if(selected.name === 'Subscribe to paypal')
+      select.hidden = true
+    else
+      select.hidden = false
+  }
+
+  makeSubscriptionToPaypal() {
+    this.paymentService.makePayPalSubscription(this.selectedPackage).subscribe(ret => {
+      document.location.href = ret;
+    })
   }
 }

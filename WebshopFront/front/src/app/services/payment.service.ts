@@ -17,6 +17,7 @@ export class PaymentService {
   makeQrCodePaymentForSubsUrl: string = 'https://localhost:7035/api/payment/qrSubs'
   makeCardPaymentForSubsUrl: string = 'https://localhost:7035/api/payment/bankSubs'
   getUnsubscribedUrl: string = 'https://localhost:7035/api/payment/unsubscribed'
+  makePayPalSubscriptionUrl: string = 'https://localhost:7035/api/payment/paypal/subscribe'
 
   constructor(private http: HttpClient) { }
 
@@ -131,5 +132,19 @@ export class PaymentService {
     }
 
     return this.http.post<any>(this.makeQrCodePaymentForSubsUrl, sub, requestOptions);
+  }
+
+  public makePayPalSubscription(chosenPackage: Package): Observable<any> {
+    
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + localStorage.getItem('token'),
+      'senderPort': '7035'
+    });
+    const requestOptions: Object = {
+      headers: headers,
+      responseType: 'text'
+    }
+    return this.http.post<any>(this.makePayPalSubscriptionUrl, chosenPackage, requestOptions );
   }
 }
