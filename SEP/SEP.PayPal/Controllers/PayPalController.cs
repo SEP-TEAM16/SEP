@@ -57,7 +57,7 @@ namespace SEP.PayPal.Controllers
         }
 
         [HttpGet("continue")]
-        public void Continue(string paymentId, string token, string payerId)
+        public RedirectResult Continue(string paymentId, string token, string payerId)
         {
             _logger.LogInformation("Pay pal continue executing...");
             var payPalPayment = _payPalService.Pay(paymentId, payerId, token);
@@ -71,11 +71,11 @@ namespace SEP.PayPal.Controllers
             streamWriter.Write(jss.Serialize(payPalPaymentDTO));
             streamWriter.Close();
             httpRequest.GetResponse();
-            return;
+            return RedirectPermanent("http://localhost:4200/success");
         }
 
         [HttpGet("continue-sub")]
-        public void ContinueSub(string subscription_id, string ba_token, string token)
+        public RedirectResult ContinueSub(string subscription_id, string ba_token, string token)
         {
             _logger.LogInformation("Pay pal continue executing...");
             var payPalPayment = _payPalService.Pay2(subscription_id, ba_token, token);
@@ -89,11 +89,11 @@ namespace SEP.PayPal.Controllers
             streamWriter.Write(jss.Serialize(payPalPaymentDTO));
             streamWriter.Close();
             httpRequest.GetResponse();
-            return;
+            return RedirectPermanent("http://localhost:4200/success");
         }
 
         [HttpGet("cancel")]
-        public void Cancel(string token)
+        public RedirectResult Cancel(string token)
         {
             _logger.LogInformation("Pay pal cancel executing...");
             var payPalPaymentDTO = _mapper.Map<PayPalPaymentDTO>(_payPalService.Cancel(token));
@@ -106,11 +106,11 @@ namespace SEP.PayPal.Controllers
             streamWriter.Write(jss.Serialize(payPalPaymentDTO));
             streamWriter.Close();
             httpRequest.GetResponse();
-            return;
+            return RedirectPermanent("http://localhost:4200/cancel");
         }
 
         [HttpGet("cancel-sub")]
-        public void CancelSub(string subscription_id, string ba_token, string token)
+        public RedirectResult CancelSub(string subscription_id, string ba_token, string token)
         {
             _logger.LogInformation("Pay pal cancel executing...");
             var payPalPaymentDTO = _mapper.Map<PayPalPaymentDTO>(_payPalService.Cancel(ba_token));
@@ -123,7 +123,7 @@ namespace SEP.PayPal.Controllers
             streamWriter.Write(jss.Serialize(payPalPaymentDTO));
             streamWriter.Close();
             httpRequest.GetResponse();
-            return;
+            return RedirectPermanent("http://localhost:4200/cancel");
         }
     }
 }
