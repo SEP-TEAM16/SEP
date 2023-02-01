@@ -29,7 +29,8 @@ export class ServicesPageComponent implements OnInit {
       this.subscriptions = ret;
     })
     let input = document.getElementById('private') as HTMLInputElement
-    input.hidden = true
+    input.hidden = true;
+    localStorage.setItem('subs', 'no');
   }
 
   buyPackage() {

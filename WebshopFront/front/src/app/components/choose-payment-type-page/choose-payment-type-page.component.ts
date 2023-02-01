@@ -31,6 +31,7 @@ export class ChoosePaymentTypePageComponent implements OnInit {
           this.checkedSub = opt
       }
     });
+    localStorage.setItem('subs', 'yes');
   }
 
   returnEnumValue(type: PaymentMicroserviceType) {

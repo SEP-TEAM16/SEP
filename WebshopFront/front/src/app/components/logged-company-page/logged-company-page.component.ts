@@ -27,6 +27,8 @@ export class LoggedCompanyPageComponent implements OnInit {
       let input = document.getElementById(opt.name) as HTMLInputElement;
       if(input.checked)
         localStorage.setItem('checkedSubs', opt.name)
+        alert('Value ' + input.value)
+        localStorage.setItem('subsType', input.value)
     }
 
     this.router.navigate(['/paymentMethod'])

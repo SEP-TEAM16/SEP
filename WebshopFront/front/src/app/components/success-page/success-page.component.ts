@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { SubscribeService } from 'src/app/services/subscribe.service';
 
 @Component({
   selector: 'app-success-page',
@@ -7,9 +8,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class SuccessPageComponent implements OnInit {
 
-  constructor() { }
+  constructor(private subscribeService: SubscribeService) { }
 
   ngOnInit(): void {
+    if (localStorage.getItem('subs') === 'yes') {
+      this.subscribeService.subscribeCompany().subscribe(ret => {
+        
+      })
+    }
   }
 
 }

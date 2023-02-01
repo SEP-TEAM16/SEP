@@ -13,6 +13,7 @@ export class SubscribeService {
   private getSubscribedByPortUrl: string = 'https://localhost:7035/api/subscriptions/subscribedByPort'
   private removeServiceTypeUrl: string = 'https://localhost:7035/api/subscriptions/removeServiceType'
   private isCompanySubscribedUrl: string = 'https://localhost:7035/api/subscriptions/isCompanySubscribed'
+  private subscribeCompanyUrl: string = 'https://localhost:7035/api/subscriptions/subscribeCompany'
 
   constructor(private http: HttpClient) { }
 
@@ -48,5 +49,16 @@ export class SubscribeService {
 
   public isCompanySubscribed(authRes: AuthenticationResponse): Observable<Boolean> {
     return this.http.post<Boolean>(this.isCompanySubscribedUrl, authRes);
+  }
+
+  public subscribeCompany(): Observable<Boolean> {
+    
+    const headers = new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer ' + localStorage.getItem('token'),
+      'senderPort': '7035'
+    });
+    
+    return this.http.post<Boolean>(this.subscribeCompanyUrl, Number(localStorage.getItem('subsType')), {headers: headers});
   }
 }
