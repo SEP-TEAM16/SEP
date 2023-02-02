@@ -25,10 +25,11 @@ export class LoggedCompanyPageComponent implements OnInit {
   makePayment() {
     for(let opt of this.options) {
       let input = document.getElementById(opt.name) as HTMLInputElement;
-      if(input.checked)
+      if(input.checked) {
         localStorage.setItem('checkedSubs', opt.name)
         alert('Value ' + input.value)
         localStorage.setItem('subsType', input.value)
+      }
     }
 
     this.router.navigate(['/paymentMethod'])
